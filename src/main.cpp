@@ -22,7 +22,6 @@ int main(void)
 
     logger::write("Hello World!\n");
 
-    hacks::install_controllable();
     hacks::install_randomizer();
     hacks::install_skills();
 

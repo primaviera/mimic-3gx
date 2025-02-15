@@ -1,5 +1,4 @@
-/release
-/debug
+/build
 
 *.3gx
 *.elf

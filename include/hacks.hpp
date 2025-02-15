@@ -24,7 +24,6 @@ inline void install_hook(std::vector<uint32_t> pattern, uint32_t offset,
     }
 }
 
-void install_controllable();
 void install_randomizer();
 void install_skills();
 

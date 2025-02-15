@@ -19,6 +19,7 @@ CTRPFLIB ?= $(DEVKITPRO)/libctrpf
 # PSF is a file containing information about the plugin to build
 #---------------------------------------------------------------------------------
 TARGET		:=	$(notdir $(CURDIR))
+BUILD		:=	build
 SOURCES 	:=	src src/hacks
 DATA		:=	data
 INCLUDES	:=	include
@@ -30,16 +31,16 @@ PSF 		:=	$(notdir $(TOPDIR)).plgInfo
 ARCH		:=	-march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft
 
 CFLAGS		:=	-mword-relocations -ffunction-sections -fdata-sections -fno-strict-aliasing \
-			$(ARCH) $(BUILD_FLAGS) $(G)
+			-Os -fomit-frame-pointer $(ARCH)
 
 CFLAGS		+=	$(INCLUDE) -D__3DS__ $(DEFINES) -Wall -Werror
 
 CXXFLAGS	:=	$(CFLAGS) -fno-rtti -fno-exceptions -std=c++17
 
-ASFLAGS		:=	$(ARCH) $(G)
-LDFLAGS		:=	-T $(TOPDIR)/3gx.ld $(ARCH) -Os -Wl,$(WL)--gc-sections,--section-start,.text=0x07000100
+ASFLAGS		:=	-g $(ARCH)
+LDFLAGS		:=	-g -T $(TOPDIR)/3gx.ld $(ARCH) -Os -Wl,--strip-discarded,--strip-debug,--gc-sections,--section-start,.text=0x07000100
 
-LIBS 		:=	$(BUILD_LIBS) -lm
+LIBS 		:=	-lctrpf -lctru -lm
 LIBDIRS		:=	$(CTRPFLIB) $(CTRULIB) $(PORTLIBS)
 
 #---------------------------------------------------------------------------------
@@ -48,6 +49,8 @@ LIBDIRS		:=	$(CTRPFLIB) $(CTRULIB) $(PORTLIBS)
 #---------------------------------------------------------------------------------
 ifneq ($(BUILD),$(notdir $(CURDIR)))
 #---------------------------------------------------------------------------------
+export OUTPUT	:=	$(CURDIR)/$(TARGET)
+
 export VPATH	:= 	$(foreach dir,$(SOURCES),$(CURDIR)/$(dir)) \
 		   	$(foreach dir,$(DATA),$(CURDIR)/$(dir))
 
@@ -77,28 +80,15 @@ export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L $(dir)/lib)
 .PHONY: $(BUILD) clean re all
 
 #---------------------------------------------------------------------------------
-all: $(TARGET).3gx
+all: $(BUILD)
 
-release:
+$(BUILD):
 	@[ -d $@ ] || mkdir -p $@
-
-debug:
-	@[ -d $@ ] || mkdir -p $@
-
-$(TARGET).3gx : release
-	@$(MAKE) BUILD=release OUTPUT=$(CURDIR)/$@ BUILD_LIBS="-lctrpf -lctru" WL=--strip-discarded,--strip-debug, \
-	BUILD_CFLAGS="-DNDEBUG=1 -O2 -fomit-frame-pointer" DEPSDIR=$(CURDIR)/release \
-	--no-print-directory --jobs=$(shell nproc) -C release -f $(CURDIR)/Makefile
-
-$(TARGET)-debug.3gx : debug
-	@$(MAKE) BUILD=debug OUTPUT=$(CURDIR)/$@ BUILD_LIBS="-lctrpfd -lctrud" BUILD_CFLAGS="-DDEBUG=1 -Og" G=-g \
-	DEPSDIR=$(CURDIR)/debug --no-print-directory --jobs=$(shell nproc) -C debug -f $(CURDIR)/Makefile
+	@$(MAKE) --no-print-directory --jobs=$(shell nproc) -C $(BUILD) -f $(CURDIR)/Makefile
 
 #---------------------------------------------------------------------------------
 clean:
-	rm -fr release debug *.elf *.3gx
-
-re: clean all
+	rm -fr build *.elf *.3gx
 
 #---------------------------------------------------------------------------------
 
@@ -110,9 +100,9 @@ else
 
 DEPENDS	:=	$(OFILES:.o=.d)
 
-$(OUTPUT) : $(basename $(OUTPUT)).elf
+$(OUTPUT).3gx : $(OUTPUT).elf
 $(OFILES_SOURCES) : $(HFILES)
-$(basename $(OUTPUT)).elf : $(OFILES)
+$(OUTPUT).elf : $(OFILES)
 
 #---------------------------------------------------------------------------------
 # you need a rule like this for each extension you use as binary data

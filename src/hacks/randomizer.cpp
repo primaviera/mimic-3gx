@@ -20,9 +20,7 @@ namespace hacks {
         return Utils::Random(min, max);
     }
 
-    /*
-     * Randomize battle BGM
-     */
+    /* Randomize battle BGM */
     const char* randomize_battle_bgm()
     {
         return bgm_array[Utils::Random(0, 79)];
@@ -45,9 +43,7 @@ namespace hacks {
             "pop {r0, r2, pc}");
     }
 
-    /*
-     * Randomize battle background
-     */
+    /* Randomize battle background */
     void NAKED randomize_battle_bg()
     {
         asm("push {r0-r2, lr} \n"
@@ -120,9 +116,7 @@ namespace hacks {
             "pop {r0, r2, pc}");
     }
 
-    /*
-     * Randomize title BG
-     */
+    /* Randomize title BG */
     void NAKED randomize_title_bg()
     {
         asm("push {r0, lr} \n"
@@ -135,9 +129,7 @@ namespace hacks {
             "pop {pc}");
     }
 
-    /*
-     * Randomize map BGM
-     */
+    /* Randomize map BGM */
     void NAKED randomize_map_bgm()
     {
         asm("push {r1-r2, lr} \n"
@@ -149,9 +141,7 @@ namespace hacks {
             "pop {r1-r2, pc}");
     }
 
-    /*
-     * Randomize town BGM
-     */
+    /* Randomize town BGM */
     void NAKED randomize_town_bgm()
     {
         asm("push {r1-r2, lr} \n"
@@ -189,27 +179,36 @@ namespace hacks {
     }
 
     struct enemy_status {
-        short hp;
-        short mp;
-        short atk;
-        short def;
-        short mag;
-        short spd;
-        short lvl;
-        short gold;
-        short exp;
-        short common_grub;
-        short common_grub_chance;
-        short rare_grub;
-        short rare_grub_chance;
-        short super_rare_grub;
-        short super_rare_grub_chance;
+        uint16_t hp;
+        uint16_t mp;
+        uint16_t atk;
+        uint16_t def;
+        uint16_t mag;
+        uint16_t spd;
+        uint16_t lvl;
+        uint16_t gold;
+        uint16_t exp;
+        uint16_t common_grub;
+        uint16_t common_grub_chance;
+        uint16_t rare_grub;
+        uint16_t rare_grub_chance;
+        uint16_t super_rare_grub;
+        uint16_t super_rare_grub_chance;
     };
 
     struct enemy_info {
         uint32_t hash; // CRC32 hash of internal name
         const char* model;
         uint32_t id; // Some kind of decimal ID(?)
+        uint16_t unk_0xC; // Possibly size?
+        uint16_t unk_0xE;
+        uint8_t unk_0x10[0x34];
+        float distance[3]; // Distance between models (X, Y, Z)
+        float scale; // Model scale
+        float skill_cam[3]; // (X, Y, Z)
+        const char* bone; // What bone camera targets
+        uint8_t unk_0x64[0x14];
+        enemy_status* status;
     };
 
     /*
@@ -218,17 +217,14 @@ namespace hacks {
      * the enemy stats based on the party's
      * average level
      */
-    uintptr_t handle_enemy_stats(uintptr_t r0)
+    enemy_info* handle_enemy_stats(enemy_info* enemy)
     {
-        if (!r0)
-            return r0;
+        if (!(uintptr_t)enemy)
+            return enemy;
 
-        enemy_status* stats = (enemy_status*)(*(uintptr_t**)(r0 + 0x78));
-        stats->hp = 0x7FFF; // Testing
-        stats->spd = 0x7FFF;
-        stats->exp = 0xFFFF;
-        stats->gold = 0xFFFF;
-        return r0;
+        enemy->status->hp = 0x7FFF;
+        enemy->status->spd = 0x7FFF;
+        return enemy;
     }
 
     /*

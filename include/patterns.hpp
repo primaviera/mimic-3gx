@@ -65,7 +65,9 @@ PATTERN(vacancy_pattern, 0xE92D43F0, 0xE24DD024, 0xE1A04000,
  */
 PATTERN(crc32_pattern, 0xE92D00F0, 0xE59F60C8, 0xE5D62000,
         0xE3520000); // 0x00104FE0 - US
-PATTERN(set_mii_state_pattern, 0xE52DE004, 0xE1D230B0, 0xE24DD014,
+PATTERN(rand_percentage_pattern, 0xE5900008, 0xE1A00000, 0xE92D4070,
+        0xE2800B01); // 0x0043C2EC - US
+PATTERN(play_battle_state_pattern, 0xE52DE004, 0xE1D230B0, 0xE24DD014,
         0xE1D220B2); // 0x00679CCC - US
 PATTERN(set_mii_feeling_pattern, 0xE92D43F0, 0xE1A04000, 0xE24DD02C,
         0xE1A07001); // 0x00368F88 - US

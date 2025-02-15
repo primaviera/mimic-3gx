@@ -11,7 +11,6 @@ namespace logger
 
 File log_file;
 
-// Slightly modified from Anto726's CTRPluginFramework-RevolutionBase
 // https://github.com/Anto726/CTRPluginFramework-RevolutionBase/blob/-/src/base/logger.cpp#L7
 std::string get_log_name()
 {
