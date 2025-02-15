@@ -1,0 +1,77 @@
+#pragma once
+
+#define PATTERN(name, ...) inline std::vector<uint32_t> name = {__VA_ARGS__};
+
+namespace CTRPluginFramework
+{
+
+/*
+ * Used as hooks @ hacks/randomizer.cpp
+ */
+PATTERN(battle_bgm_pattern, 0xE596317C, 0xE1A01000, 0xE3A02001,
+        0xE1A00003); // 0x006B85A8 (-0x4) - US
+PATTERN(trans_bgm_pattern, 0xE8BD87F0, 0xE5940064, 0xE3A02001,
+        0xE28F1060); // 0x004B95A0 (+0x10) - US
+PATTERN(battle_bg_pattern, 0xE3A08000, 0xE320F000, 0xEF000028,
+        0xE28D9FD6); // 0x0042AA9C (+0xC) - US
+PATTERN(battle_intro_pattern, 0xE92D4070, 0xE3510000, 0xE1A05002,
+        0xED2D8B02); // 0x005208AC (0x0) - US
+
+PATTERN(stage_bgm_pattern, 0xE1B05000, 0x0A000063, 0xE59F8198,
+        0xE5D80000); // 0x00342864 (-0x4) - US
+PATTERN(stage_bg_pattern, 0xDA000004, 0xE5900050, 0xE5900000, 0xE3500000,
+        0x12800018, 0x1A000000, 0xE3A00000,
+        0xE12FFF1E); // 0x0072AEB4 (+0x1C) - US
+
+PATTERN(title_bgm_pattern, 0xE59DA04C, 0xE1A0B000, 0xE1A0800A,
+        0xE59D1048); // 0x00699A9C (-0x4 & +0x18) - US
+PATTERN(title_bg_pattern, 0xE5D0001D, 0xE1A0A000, 0xE5980000,
+        0xE2800020); // 0x00699A04 (0x0) - US
+
+PATTERN(map_bgm_pattern, 0xE58401E0, 0xE3A01000, 0xE28D0008,
+        0xE58D1008); // 0x002990CC (-0xC) - US
+
+PATTERN(town_bgm_pattern, 0xE3A02000, 0xE5950004, 0xEEB00A48,
+        0xE1A01002); // 0x0065CE60 (+0x10) - US
+
+PATTERN(enemy_pattern, 0xE58DB020, 0xE3A00001, 0xE5C400E8,
+        0xE59400C8); // 0x0042A0C4 (+0x10) - US
+PATTERN(enemy_stats_pattern, 0xE12FFF1E, 0xE5900018, 0xE3500000, 0x15912000,
+        0x0A000007); // 0x007FCAA8 (+0x38) - US
+PATTERN(enemy_slot1_pattern, 0xE24DD074, 0xE5900038, 0xE5D0100F,
+        0xE2411002); // 0x0040D990 (+0xC) - US
+PATTERN(enemy_slot2_pattern, 0xE5D10015, 0xE5D17017, 0xE3500019,
+        0x379FF100); // 0x0040CFC4 (+0x8) - US
+PATTERN(enemy_slot3_pattern, 0xE3A0201C, 0xE0822108, 0xE0800002,
+        0xED908A00); // 0x0040AA0C (+0x10) - US
+PATTERN(enemy_slot4_pattern, 0xED9F8ABF, 0xE5902000, 0xE5D2000F,
+        0xE350000D); // 0x0040C8D8 (+0xC) - US
+
+PATTERN(enemy_model_pattern, 0xE1A03001, 0xE5902004, 0xE28F1004,
+        0xE1A00003); // 0x0070DC6C (0x0) - US
+PATTERN(grub_stats_pattern, 0xE3540006, 0xE2800014, 0x30800104,
+        0xE5900000); // 0x002DC1E8 (+0xC) - US
+
+/*
+ * Used as hooks @ hacks/skills.cpp
+ */
+PATTERN(frisk_pattern, 0xE1A02008, 0xE3A03001, 0xE28D1008,
+        0xE1A00004); // 0x00391060 (+0x40) - US
+PATTERN(vacancy_pattern, 0xE92D43F0, 0xE24DD024, 0xE1A04000,
+        0xE28D0044); // 0x0040A694 (0x0) - US
+
+/*
+ * Used to determine address for function pointers
+ */
+PATTERN(crc32_pattern, 0xE92D00F0, 0xE59F60C8, 0xE5D62000,
+        0xE3520000); // 0x00104FE0 - US
+PATTERN(set_mii_state_pattern, 0xE52DE004, 0xE1D230B0, 0xE24DD014,
+        0xE1D220B2); // 0x00679CCC - US
+PATTERN(set_mii_feeling_pattern, 0xE92D43F0, 0xE1A04000, 0xE24DD02C,
+        0xE1A07001); // 0x00368F88 - US
+PATTERN(enemy_flee_pattern, 0xE92D40F0, 0xE24DD014, 0xE1A04000,
+        0xEB0BEA71); // 0x00409A90 - US
+PATTERN(show_ptcl_pattern, 0xE92D43F0, 0xE24DD014, 0xE3520000,
+        0xE1A06003); // 0x0067A008 - US
+
+} // namespace CTRPluginFramework

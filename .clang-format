@@ -1,0 +1,14 @@
+---
+BasedOnStyle: LLVM
+IndentWidth: 4
+---
+Language: Cpp
+PointerAlignment: Left
+AllowShortIfStatementsOnASingleLine: WithoutElse
+AllowShortFunctionsOnASingleLine: None
+NamespaceIndentation: None
+FixNamespaceComments: true
+BreakBeforeBraces: Linux
+UseTab: Never
+BreakArrays: true
+ColumnLimit: 0
