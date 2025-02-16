@@ -13,12 +13,13 @@ CTRPFLIB ?= $(DEVKITPRO)/libctrpf
 
 #---------------------------------------------------------------------------------
 # TARGET is the name of the output
+# BUILD is the directory where object files & intermediate files will be placed
 # SOURCES is a list of directories containing source code
 # DATA is a list of directories containing data files
 # INCLUDES is a list of directories containing header files
-# PSF is a file containing information about the plugin to build
+# PSF is a file containing information about the plugin to build (for 3gxtool)
 #---------------------------------------------------------------------------------
-TARGET		:=	$(notdir $(CURDIR))
+TARGET		:=	$(notdir $(TOPDIR))
 BUILD		:=	build
 SOURCES 	:=	src src/hacks
 DATA		:=	data
@@ -30,15 +31,17 @@ PSF 		:=	$(notdir $(TOPDIR)).plgInfo
 #---------------------------------------------------------------------------------
 ARCH		:=	-march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft
 
-CFLAGS		:=	-mword-relocations -ffunction-sections -fdata-sections -fno-strict-aliasing \
-			-Os -fomit-frame-pointer $(ARCH)
+CFLAGS		:=	-g -Os $(ARCH) \
+			-mword-relocations -ffunction-sections -fdata-sections \
+			-fno-strict-aliasing -fomit-frame-pointer
 
 CFLAGS		+=	$(INCLUDE) -D__3DS__ $(DEFINES) -Wall -Werror
 
 CXXFLAGS	:=	$(CFLAGS) -fno-rtti -fno-exceptions -std=c++17
 
 ASFLAGS		:=	-g $(ARCH)
-LDFLAGS		:=	-g -T $(TOPDIR)/3gx.ld $(ARCH) -Os -Wl,--strip-discarded,--strip-debug,--gc-sections,--section-start,.text=0x07000100
+LDFLAGS		:=	-g -Os -T $(TOPDIR)/3gx.ld $(ARCH) \
+			-Wl,--strip-discarded,--strip-debug,--gc-sections,--section-start,.text=0x07000100
 
 LIBS 		:=	-lctrpf -lctru -lm
 LIBDIRS		:=	$(CTRPFLIB) $(CTRULIB) $(PORTLIBS)
@@ -61,6 +64,7 @@ CPPFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
 SFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.s)))
 BINFILES	:=	$(foreach dir,$(DATA),$(notdir $(wildcard $(dir)/*.*)))
 
+# CTRPluginFramework is a C++ library
 export LD 	:= 	$(CXX)
 
 export OFILES_SOURCES 	:=	$(CPPFILES:.cpp=.o) $(CFILES:.c=.o) $(SFILES:.s=.o)
@@ -104,18 +108,19 @@ $(OUTPUT).3gx : $(OUTPUT).elf
 $(OFILES_SOURCES) : $(HFILES)
 $(OUTPUT).elf : $(OFILES)
 
+%.3gx: %.elf
+	@echo creating $(notdir $@)
+	@3gxtool -s $^ $(TOPDIR)/$(PSF) $@
+
 #---------------------------------------------------------------------------------
 # you need a rule like this for each extension you use as binary data
 #---------------------------------------------------------------------------------
-%.bin.o	:	%.bin
+%.toml.o %_toml.h : %.toml
 #---------------------------------------------------------------------------------
 	@echo $(notdir $<)
 	@$(bin2o)
 
 #---------------------------------------------------------------------------------
-%.3gx: %.elf
-	@echo creating $(notdir $@)
-	@3gxtool -s $^ $(TOPDIR)/$(PSF) $@
 
 -include $(DEPENDS)
 
