@@ -55,6 +55,21 @@ PATTERN(grub_stats_pattern, 0xE3540006, 0xE2800014, 0x30800104,
 /*
  * Used as hooks @ hacks/skills.cpp
  */
+PATTERN(enemy_targetting_skills_pattern, 0xE92D41F0, 0xE24DD0F8, 0xE1A08000,
+        0xE5910000); // 0x003A6F7C (0x0) - US
+PATTERN(ally_targetting_skills_pattern, 0xE92D41F0, 0xE24DD098, 0xE1A07000,
+        0xE5910000); // 0x003A0598 (0x0) - US
+PATTERN(does_skill_target_enemy_pattern, 0xE5910000, 0xE350004F,
+        0x0A00003C, 0xCA00001F); // 0x006FDC98 (0x0) - US
+PATTERN(does_skill_target_ally_pattern, 0xE5910000, 0xE350004C,
+        0x0A000035, 0xCA00001B); // 0x006FD61C (0x0) - US
+PATTERN(can_skill_select_enemy_pattern, 0xE92D4010, 0xE5911000,
+        0xE351004F, 0x0A00003B); // 0x006FDDA0 (0x0) - US
+PATTERN(can_skill_select_ally_pattern, 0xE92D4070, 0xE1A05000,
+    0xE5910000, 0xE24DD008); // 0x006FD708 (0x0) - US
+PATTERN(get_skill_status_pattern, 0xE92D43F0, 0xE1A05000, 0xE24DD00C,
+        0xE1A06002); // 0x006FBAD4 (0x0) - US
+
 PATTERN(frisk_pattern, 0xE1A02008, 0xE3A03001, 0xE28D1008,
         0xE1A00004); // 0x00391060 (+0x40) - US
 PATTERN(vacancy_pattern, 0xE92D43F0, 0xE24DD024, 0xE1A04000,
@@ -75,5 +90,11 @@ PATTERN(enemy_flee_pattern, 0xE92D40F0, 0xE24DD014, 0xE1A04000,
         0xEB0BEA71); // 0x00409A90 - US
 PATTERN(show_ptcl_pattern, 0xE92D43F0, 0xE24DD014, 0xE3520000,
         0xE1A06003); // 0x0067A008 - US
+PATTERN(has_enough_mp_for_skill_pattern, 0xE92D40F8, 0xE1A04000, 0xE1A06002,
+        0xE1D006FC); // 0x006F9B74 - US
+PATTERN(spend_skill_mp_pattern, 0xE92D47F0, 0xE1A05000, 0xE1A09003,
+        0xE1A0A001); // 0x006FB6B0 - US
+PATTERN(show_cut_in_pattern, 0xE92D4030, 0xE1A04000, 0xE5910000,
+        0xE24DD01C); // 0x00369D80 - US
 
 } // namespace CTRPluginFramework

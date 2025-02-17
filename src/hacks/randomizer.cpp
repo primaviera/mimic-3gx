@@ -65,7 +65,7 @@ namespace hacks {
     void randomize_battle_intro(uintptr_t r0, uintptr_t r1, int* index)
     {
         *index = Utils::Random(0, 2);
-        CTRPluginFramework::HookContext::GetCurrent().OriginalFunction<void>(r0, r1, index);
+        HookContext::GetCurrent().OriginalFunction<void>(r0, r1, index);
     }
 
     uint32_t stage_bgm = 0;
@@ -223,7 +223,7 @@ namespace hacks {
             return enemy;
 
         enemy->status->hp = 0x7FFF;
-        enemy->status->spd = 0x7FFF;
+        enemy->status->spd = 0x0;
         return enemy;
     }
 

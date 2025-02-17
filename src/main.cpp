@@ -22,7 +22,7 @@ int main(void)
 
     logger::write("Hello World!\n");
 
-    hacks::install_randomizer();
+    //hacks::install_randomizer();
     hacks::install_skills();
 
     Process::WaitForExit();
