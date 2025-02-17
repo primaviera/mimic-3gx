@@ -1,6 +1,6 @@
 #pragma once
 
-#define PATTERN(name, ...) inline std::vector<uint32_t> name = {__VA_ARGS__};
+#define PATTERN(name, ...) inline const std::vector<uint32_t> name = {__VA_ARGS__};
 
 namespace CTRPluginFramework
 {
