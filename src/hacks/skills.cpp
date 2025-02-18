@@ -1,6 +1,7 @@
 #include <3ds.h>
 #include <CTRPluginFramework.hpp>
 
+#include "config.hpp"
 #include "func_ptrs.hpp"
 #include "hacks.hpp"
 #include "patterns.hpp"
@@ -130,6 +131,8 @@ namespace hacks {
 
     void install_skills()
     {
+        if (!config::skills.active) return;
+
         install_hook(enemy_targetting_skills_pattern, 0x0, (MITM_MODE), (uint32_t)enemy_targetting_skills, 0);
         install_hook(ally_targetting_skills_pattern, 0x0, (MITM_MODE), (uint32_t)ally_targetting_skills, 0);
         install_hook(does_skill_target_enemy_pattern, 0x0, (MITM_MODE), (uint32_t)does_skill_target_enemy, 0);

@@ -12,7 +12,12 @@ namespace CTRPluginFramework {
 
 namespace config {
 
+st_randomizer randomizer;
+st_skills skills;
+
 void load(const toml::table& table) {
+    randomizer.active = table["randomizer"]["active"].value_or(false);
+    skills.active = table["skills"]["active"].value_or(false);
 }
 
 int init(const std::string& path) {

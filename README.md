@@ -9,6 +9,7 @@ Currently this plugin has a WIP live randomizer along with changes to a few job 
 - [ ] Setup custom skills
 - [ ] Balance enemy stats (Live Randomizer)
 - [x] Configuration system (TOML)
+- [ ] Limit amount of log files on SD
 
 ## known issues
 

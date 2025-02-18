@@ -1,7 +1,7 @@
 # Configuration for mimic-3gx
 
 [randomizer]
-active = false
+active = true
 
 [skills]
-active = false
+active = true

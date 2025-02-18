@@ -1,6 +1,7 @@
 #include <3ds.h>
 #include <CTRPluginFramework.hpp>
 
+#include "config.hpp"
 #include "func_ptrs.hpp"
 #include "hacks.hpp"
 #include "logger.hpp"
@@ -297,6 +298,8 @@ namespace hacks {
 
     void install_randomizer()
     {
+        if (!config::randomizer.active) return;
+
         // Works
         install_hook(battle_bgm_pattern, -0x4, (WRAP_SUB), 0, (uint32_t)randomize_battle_bgm);
         install_hook(trans_bgm_pattern, 0x10, (WRAP_SUB), (uint32_t)randomize_trans_bgm, 0);
