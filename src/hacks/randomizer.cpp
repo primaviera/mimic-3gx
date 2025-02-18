@@ -214,7 +214,7 @@ namespace hacks {
     /*
      * Handle enemy stats
      * I eventually want to try balancing
-     * the enemy stats based on the party's
+     * enemy stats based on the party's
      * average level
      */
     enemy_info* handle_enemy_stats(enemy_info* enemy)
@@ -222,8 +222,9 @@ namespace hacks {
         if (!(uintptr_t)enemy)
             return enemy;
 
-        enemy->status->hp = 0x7FFF;
-        enemy->status->spd = 0x0;
+        // For testing purposes
+        enemy->status->hp = 1;
+        enemy->status->spd = 0;
         return enemy;
     }
 

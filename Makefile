@@ -23,7 +23,7 @@ TARGET		:=	$(notdir $(TOPDIR))
 BUILD		:=	build
 SOURCES 	:=	src src/hacks
 DATA		:=	data
-INCLUDES	:=	include
+INCLUDES	:=	include external
 PSF 		:=	$(notdir $(TOPDIR)).plgInfo
 
 #---------------------------------------------------------------------------------
@@ -88,7 +88,7 @@ all: $(BUILD)
 
 $(BUILD):
 	@[ -d $@ ] || mkdir -p $@
-	@$(MAKE) --no-print-directory --jobs=$(shell nproc) -C $(BUILD) -f $(CURDIR)/Makefile
+	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
 
 #---------------------------------------------------------------------------------
 clean:

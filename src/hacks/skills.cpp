@@ -23,10 +23,10 @@ namespace hacks {
                     return 0;
                 if (!enemy_info)
                     return 0;
-                play_battle_state(mii_info, "SkillDanceStart", *(uint16_t*)(*(uintptr_t*)(enemy_info + 0x4) + 0x60));
+                play_battle_state(mii_info, "SkillDanceStart", (uint16_t*)(*(uintptr_t*)(enemy_info + 0x4) + 0x60));
                 show_cut_in(mii_info, skill_index);
-                play_battle_state(mii_info, "SkillDance", *(uint16_t*)(*(uintptr_t*)(enemy_info + 0x4) + 0x60));
-                play_battle_state(enemy_info, "ToFeelFever", *(uint16_t*)(*(uintptr_t*)(mii_info + 0x4) + 0x60));
+                play_battle_state(mii_info, "SkillDance", (uint16_t*)(*(uintptr_t*)(enemy_info + 0x4) + 0x60));
+                play_battle_state(enemy_info, "ToFeelFever", (uint16_t*)(*(uintptr_t*)(mii_info + 0x4) + 0x60));
                 enemy_flee(enemy_info);
                 return 1;
         }

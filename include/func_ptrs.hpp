@@ -32,7 +32,7 @@ namespace CTRPluginFramework
 FUNC_PTR(crc32, uint32_t (*)(const void*, uint32_t));
 FUNC_PTR(rand_percentage, uint32_t (*)(uintptr_t, uint32_t));
 
-FUNC_PTR(play_battle_state, void (*)(uintptr_t, const char*, uint16_t));
+FUNC_PTR(play_battle_state, void (*)(uintptr_t, const char*, uint16_t*));
 FUNC_PTR(set_mii_feeling, void (*)(uintptr_t, uint32_t*, uint16_t, uint32_t));
 FUNC_PTR(enemy_flee, void (*)(uintptr_t));
 FUNC_PTR(show_ptcl, void (*)(uintptr_t, const char*, uint32_t, uint32_t, uint32_t));

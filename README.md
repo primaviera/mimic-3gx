@@ -8,7 +8,7 @@ Currently this plugin has a WIP live randomizer along with changes to a few job 
 
 - [ ] Setup custom skills
 - [ ] Balance enemy stats (Live Randomizer)
-- [ ] Configuration system (TOML)
+- [x] Configuration system (TOML)
 
 ## known issues
 
