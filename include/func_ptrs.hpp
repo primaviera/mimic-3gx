@@ -37,7 +37,7 @@ FUNC_PTR(set_mii_feeling, void (*)(uintptr_t, uint32_t*, uint16_t, uint32_t));
 FUNC_PTR(enemy_flee, void (*)(uintptr_t));
 FUNC_PTR(show_ptcl, void (*)(uintptr_t, const char*, uint32_t, uint32_t, uint32_t));
 FUNC_PTR(has_enough_mp_for_skill, uint32_t (*)(uintptr_t, uint32_t*, uint32_t));
-FUNC_PTR(spend_skill_mp, uint32_t (*)(uintptr_t*, uintptr_t, uint32_t*, uintptr_t*));
+FUNC_PTR(spend_skill_mp, void (*)(uintptr_t, uint32_t*));
 FUNC_PTR(show_cut_in, void (*)(uintptr_t, uint32_t*));
 
 } // namespace CTRPluginFramework

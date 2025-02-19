@@ -1,8 +1,10 @@
 #pragma once
 
-namespace CTRPluginFramework {
+namespace CTRPluginFramework
+{
 
-namespace config {
+namespace config
+{
 
 struct st_randomizer {
     bool active;
@@ -17,6 +19,6 @@ extern st_skills skills;
 
 int init(const std::string& path);
 
-}
+} // namespace config
 
-}
+} // namespace CTRPluginFramework

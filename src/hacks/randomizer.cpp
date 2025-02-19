@@ -225,6 +225,9 @@ namespace hacks {
 
         // For testing purposes
         enemy->status->hp = 1;
+        enemy->status->atk = 0;
+        enemy->status->def = 0;
+        enemy->status->mag = 0;
         enemy->status->spd = 0;
         return enemy;
     }
@@ -313,14 +316,10 @@ namespace hacks {
         install_hook(map_bgm_pattern, -0xC, (WRAP_SUB), (uint32_t)randomize_map_bgm, 0);
         install_hook(town_bgm_pattern, 0x10, (WRAP_SUB), (uint32_t)randomize_town_bgm, 0);
 
-        install_hook(enemy_slot1_pattern, 0xC, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)randomize_enemy_slot1,
-            0);
-        install_hook(enemy_slot2_pattern, 0x8, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)randomize_enemy_slot2,
-            0);
-        install_hook(enemy_slot3_pattern, 0x10, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)randomize_enemy_slot3,
-            0);
-        install_hook(enemy_slot4_pattern, 0xC, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)randomize_enemy_slot4,
-            0);
+        install_hook(enemy_slot1_pattern, 0xC, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)randomize_enemy_slot1, 0);
+        install_hook(enemy_slot2_pattern, 0x8, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)randomize_enemy_slot2, 0);
+        install_hook(enemy_slot3_pattern, 0x10, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)randomize_enemy_slot3, 0);
+        install_hook(enemy_slot4_pattern, 0xC, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)randomize_enemy_slot4, 0);
 
         // WIP
         install_hook(enemy_pattern, 0x10, (WRAP_SUB), 0, (uint32_t)randomize_enemy);
@@ -329,8 +328,7 @@ namespace hacks {
         // Low priority
         // install_hook(map_bg_pattern, 0x1C, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)randomize_map_bg, 0);
         // install_hook(enemy_model_pattern, 0x0, (MITM_MODE), (uint32_t)randomize_enemy_model, 0);
-        // install_hook(grub_stats_pattern, 0xC, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)randomize_grub_stats,
-        // 0);
+        // install_hook(grub_stats_pattern, 0xC, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)randomize_grub_stats, 0);
     }
 
     const char* bgm_array[] = {

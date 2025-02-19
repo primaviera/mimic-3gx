@@ -17,7 +17,6 @@ namespace hacks {
         switch (*skill_index) {
             /*
              * PoC: Custom Skill for Warrior
-             * MP usage is broken at the moment
              */
             case 8:
                 if (!has_enough_mp_for_skill(mii_info, skill_index, 0))
@@ -26,6 +25,7 @@ namespace hacks {
                     return 0;
                 play_battle_state(mii_info, "SkillDanceStart", (uint16_t*)(*(uintptr_t*)(enemy_info + 0x4) + 0x60));
                 show_cut_in(mii_info, skill_index);
+                spend_skill_mp(mii_info, skill_index);
                 play_battle_state(mii_info, "SkillDance", (uint16_t*)(*(uintptr_t*)(enemy_info + 0x4) + 0x60));
                 play_battle_state(enemy_info, "ToFeelFever", (uint16_t*)(*(uintptr_t*)(mii_info + 0x4) + 0x60));
                 enemy_flee(enemy_info);
@@ -43,6 +43,7 @@ namespace hacks {
             case 9:
                 if (!has_enough_mp_for_skill(mii_info, skill_index, 0))
                     return 0;
+                spend_skill_mp(mii_info, skill_index);
                 return 1;
         }
         return HookContext::GetCurrent().OriginalFunction<uint32_t>(mii_info, skill_index, target_mii, r3);
