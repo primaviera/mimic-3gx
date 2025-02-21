@@ -12,17 +12,15 @@ namespace hacks {
 
     extern "C" uint32_t gleeful;
 
-    uint32_t enemy_targetting_skills(uintptr_t mii_info, uint32_t* skill_index, uintptr_t enemy_info, uint32_t r3)
+    uint32_t enemy_targetting_skills(uintptr_t mii_info, uint32_t* skill_index, uintptr_t enemy_info, uintptr_t target_mii)
     {
+        if (!has_enough_mp_for_skill(mii_info, skill_index, 0))
+            return 0;
+        if (!enemy_info)
+            return 0;
         switch (*skill_index) {
-            /*
-             * PoC: Custom Skill for Warrior
-             */
+            /* PoC: Custom skill for Warrior that targets an enemy */
             case 8:
-                if (!has_enough_mp_for_skill(mii_info, skill_index, 0))
-                    return 0;
-                if (!enemy_info)
-                    return 0;
                 play_battle_state(mii_info, "SkillDanceStart", (uint16_t*)(*(uintptr_t*)(enemy_info + 0x4) + 0x60));
                 show_cut_in(mii_info, skill_index);
                 spend_skill_mp(mii_info, skill_index);
@@ -30,23 +28,26 @@ namespace hacks {
                 play_battle_state(enemy_info, "ToFeelFever", (uint16_t*)(*(uintptr_t*)(mii_info + 0x4) + 0x60));
                 enemy_flee(enemy_info);
                 return 1;
+            /* WIP: Custom skill for Warrior that targets all enemies */
+            case 10:
+                return 1;
         }
-        return HookContext::GetCurrent().OriginalFunction<uint32_t>(mii_info, skill_index, enemy_info, r3);
+        return HookContext::GetCurrent().OriginalFunction<uint32_t>(mii_info, skill_index, enemy_info, target_mii);
     }
 
-    uint32_t ally_targetting_skills(uintptr_t mii_info, uint32_t* skill_index, uintptr_t target_mii, uint32_t r3)
+    uint32_t ally_targetting_skills(uintptr_t mii_info, uint32_t* skill_index, uint32_t r2, uintptr_t target_mii)
     {
         switch (*skill_index) {
-            /*
-             * WIP: Custom skill for Warrior that targets allies
-             */
+            /* WIP: Custom skill for Warrior that targets an ally */
             case 9:
                 if (!has_enough_mp_for_skill(mii_info, skill_index, 0))
+                    return 0;
+                if (!target_mii)
                     return 0;
                 spend_skill_mp(mii_info, skill_index);
                 return 1;
         }
-        return HookContext::GetCurrent().OriginalFunction<uint32_t>(mii_info, skill_index, target_mii, r3);
+        return HookContext::GetCurrent().OriginalFunction<uint32_t>(mii_info, skill_index, r2, target_mii);
     }
 
     uint32_t does_skill_target_enemy(uintptr_t r0, uint32_t* skill_index)
