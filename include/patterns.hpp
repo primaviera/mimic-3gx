@@ -54,10 +54,11 @@ PATTERN(vacancy_pattern, 0xE92D43F0, 0xE24DD024, 0xE1A04000, 0xE28D0044); // 0x0
 PATTERN(crc32_pattern, 0xE92D00F0, 0xE59F60C8, 0xE5D62000, 0xE3520000);           // 0x00104FE0 - US
 PATTERN(rand_percentage_pattern, 0xE5900008, 0xE1A00000, 0xE92D4070, 0xE2800B01); // 0x0043C2EC - US
 
+PATTERN(get_number_of_party_members_pattern, 0xE2800C05, 0xE1D00CB8, 0xE3500004, 0x83A00004, 0xE12FFF1E); // 0x0070B0CC - US
+PATTERN(get_party_member_at_index_pattern, 0xE59F202C, 0xE19220B0, 0xE3520004, 0x83A02004); // 0x0043C868 - US
+
 PATTERN(play_battle_state_pattern, 0xE52DE004, 0xE1D230B0, 0xE24DD014, 0xE1D220B2); // 0x00679CCC - US
 PATTERN(set_mii_feeling_pattern, 0xE92D43F0, 0xE1A04000, 0xE24DD02C, 0xE1A07001);   // 0x00368F88 - US
-PATTERN(enemy_flee_pattern, 0xE92D40F0, 0xE24DD014, 0xE1A04000, 0xEB0BEA71);        // 0x00409A90 - US
-PATTERN(show_ptcl_pattern, 0xE92D43F0, 0xE24DD014, 0xE3520000, 0xE1A06003);         // 0x0067A008 - US
 
 PATTERN(has_enough_mp_for_skill_pattern, 0xE92D40F8, 0xE1A04000, 0xE1A06002, 0xE1D006FC); // 0x006F9B74 - US
 PATTERN(spend_skill_mp_pattern, 0xE92D4010, 0xE1D027B8, 0xE5913000, 0xE24DD020);          // 0x0036BB44 - US
@@ -67,5 +68,7 @@ PATTERN(calc_healing_pattern, 0xE92D47F0, 0xE1A08000, 0xE1A09003, 0xE1A0A001);  
 PATTERN(setup_healing_params_pattern, 0xE92D40F0, 0xE24DD014, 0xE1A07000, 0xE5910000, 0xE1A05001, 0xE3A03001, 0xE590C040); // 0x0067AF30 - US
 PATTERN(heal_mii_hp_pattern, 0xE92D41F0, 0xE24DD010, 0xE1A05003, 0xE1A04002, 0xE1A08001);                                  // 0x006798B8 - US
 PATTERN(heal_mii_mp_pattern, 0xE92D41F0, 0xE24DD010, 0xE1A05003, 0xE1A04002, 0xE1A07001);                                  // 0x0067995C - US
+
+PATTERN(enemy_flee_pattern, 0xE92D40F0, 0xE24DD014, 0xE1A04000, 0xEB0BEA71);        // 0x00409A90 - US
 
 } // namespace CTRPluginFramework

@@ -32,18 +32,21 @@ namespace CTRPluginFramework
 FUNC_PTR(crc32, uint32_t (*)(const void*, uint32_t));
 FUNC_PTR(rand_percentage, uint32_t (*)(uintptr_t, uint32_t));
 
+FUNC_PTR(get_number_of_party_members, uint32_t (*)(uintptr_t));
+FUNC_PTR(get_party_member_at_index, uintptr_t (*)(uintptr_t, uint32_t));
+
 FUNC_PTR(play_battle_state, void (*)(uintptr_t, const char*, uint16_t*));
-FUNC_PTR(set_mii_feeling, void (*)(uintptr_t, uint32_t*, uint16_t, uint32_t));
-FUNC_PTR(enemy_flee, void (*)(uintptr_t));
-FUNC_PTR(show_ptcl, void (*)(uintptr_t, const char*, uint32_t, uint32_t, uint32_t));
+FUNC_PTR(set_mii_feeling, void (*)(uintptr_t, uint32_t*, uint16_t*, uint32_t));
 
 FUNC_PTR(has_enough_mp_for_skill, uint32_t (*)(uintptr_t, uint32_t*, uint32_t));
 FUNC_PTR(spend_skill_mp, void (*)(uintptr_t, uint32_t*));
 FUNC_PTR(show_cut_in, void (*)(uintptr_t, uint32_t*));
 
-FUNC_PTR(calc_healing, void (*)(uint32_t*, uintptr_t, uint32_t*, uintptr_t));
-FUNC_PTR(setup_healing_params, void (*)(uint32_t*, uintptr_t, uint32_t*));
+FUNC_PTR(calc_healing, void (*)(float, uint32_t*, uintptr_t, uint32_t*, uintptr_t));
+FUNC_PTR(setup_healing_params, void (*)(float, uint32_t*, uintptr_t, uint32_t*));
 FUNC_PTR(heal_mii_hp, void (*)(uintptr_t, uint32_t*, uint16_t*, uint32_t));
 FUNC_PTR(heal_mii_mp, void (*)(uintptr_t, uint32_t*, uint16_t*, uint32_t));
+
+FUNC_PTR(enemy_flee, void (*)(uintptr_t));
 
 } // namespace CTRPluginFramework
