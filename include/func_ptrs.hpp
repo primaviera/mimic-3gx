@@ -44,7 +44,7 @@ FUNC_PTR(has_enough_mp_for_skill, uint32_t (*)(uintptr_t, uint32_t*, uint32_t));
 FUNC_PTR(spend_skill_mp, void (*)(uintptr_t, uint32_t*));
 FUNC_PTR(show_cut_in, void (*)(uintptr_t, uint32_t*));
 
-FUNC_PTR(calc_healing, void (*)(float, uint32_t*, uintptr_t, uint32_t*, uintptr_t));
+FUNC_PTR(calc_healing, void (*)(float, uint32_t*, uintptr_t, uint32_t*, uintptr_t, uintptr_t));
 FUNC_PTR(setup_healing_params, void (*)(float, uint32_t*, uintptr_t, uint32_t*));
 FUNC_PTR(heal_mii_hp, void (*)(uintptr_t, uint32_t*, uint16_t*, uint32_t));
 FUNC_PTR(heal_mii_mp, void (*)(uintptr_t, uint32_t*, uint16_t*, uint32_t));
