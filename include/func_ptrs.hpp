@@ -34,6 +34,8 @@ FUNC_PTR(rand_percentage, uint32_t (*)(uintptr_t, uint32_t));
 
 FUNC_PTR(get_number_of_party_members, uint32_t (*)(uintptr_t));
 FUNC_PTR(get_party_member_at_index, uintptr_t (*)(uintptr_t, uint32_t));
+FUNC_PTR(get_number_of_enemies, uint32_t (*)(uintptr_t));
+FUNC_PTR(get_enemy_at_index, uintptr_t (*)(uintptr_t, uint32_t));
 
 FUNC_PTR(play_battle_state, void (*)(uintptr_t, const char*, uint16_t*));
 FUNC_PTR(set_mii_feeling, void (*)(uintptr_t, uint32_t*, uint16_t*, uint32_t));

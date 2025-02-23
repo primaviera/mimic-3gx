@@ -12,6 +12,23 @@ namespace hacks {
 
     extern "C" uint32_t gleeful;
 
+    /*
+     * calc_healing wrapper
+     * sp+0x0 must contain an address of helping party members(?) (helping_mii) or 0
+     * otherwise it will crash, this is very specific so I have to use assembly here 
+     */
+    void NAKED calc_healing_wrap(float s0, uint32_t* heal_calc, uintptr_t mii_info, uint32_t* skill_index, uintptr_t target_mii, uintptr_t helping_mii) {
+        asm volatile("push {r0-r4, lr} \n" // -24
+                     "sub sp, sp, #4 \n" // -8
+                     "ldr r4, [sp, #28] \n" // helping_mii
+                     "str r4, [sp] \n"
+                     "ldr r4, =calc_healing \n"
+                     "ldr r4, [r4] \n"
+                     "blx r4 \n"
+                     "add sp, sp, #4 \n"
+                     "pop {r0-r4, pc}");
+    }
+
     uint32_t warrior_flee(uintptr_t mii_info, uint32_t* skill_index, uintptr_t enemy_info) {
         play_battle_state(mii_info, "SkillDanceStart", (uint16_t*)(*(uintptr_t*)(enemy_info + 0x4) + 0x60));
         show_cut_in(mii_info, skill_index);
@@ -32,7 +49,7 @@ namespace hacks {
         spend_skill_mp(mii_info, skill_index);
 
         *skill_index = 26; // For testing purposes
-        calc_healing(1.0f, heal_calc, mii_info, skill_index, target_mii);
+        calc_healing_wrap(1.0f, heal_calc, mii_info, skill_index, target_mii, 0);
         setup_healing_params(1.0f, healing_params, target_mii, heal_calc);
         heal_mii_hp(target_mii, healing_params, (uint16_t*)(*(uintptr_t*)(mii_info + 0x4) + 0x60), 1);
 
