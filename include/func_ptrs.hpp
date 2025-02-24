@@ -37,17 +37,24 @@ FUNC_PTR(get_party_member_at_index, uintptr_t (*)(uintptr_t, uint32_t));
 FUNC_PTR(get_number_of_enemies, uint32_t (*)(uintptr_t));
 FUNC_PTR(get_enemy_at_index, uintptr_t (*)(uintptr_t, uint32_t));
 
-FUNC_PTR(play_battle_state, void (*)(uintptr_t, const char*, uint16_t*));
-FUNC_PTR(set_mii_feeling, void (*)(uintptr_t, uint32_t*, uint16_t*, uint32_t));
+FUNC_PTR(is_party_member_available, uint32_t (*)(uintptr_t));
+FUNC_PTR(get_random_enemy, uintptr_t (*)(uintptr_t, uint32_t*, int32_t, uint32_t));
+
+FUNC_PTR(play_battle_state, void (*)(uintptr_t, const char*, int16_t*));
+FUNC_PTR(set_mii_feeling, void (*)(uintptr_t, uint32_t*, int16_t*, uint32_t));
 
 FUNC_PTR(has_enough_mp_for_skill, uint32_t (*)(uintptr_t, uint32_t*, uint32_t));
 FUNC_PTR(spend_skill_mp, void (*)(uintptr_t, uint32_t*));
 FUNC_PTR(show_cut_in, void (*)(uintptr_t, uint32_t*));
 
+FUNC_PTR(calc_damage, void (*)(float, uint32_t*, uintptr_t, uint32_t*, uintptr_t, uintptr_t));
+FUNC_PTR(setup_damage_params, void (*)(float, uint32_t*, uintptr_t, uint32_t*));
+FUNC_PTR(damage_enemy, uint32_t (*)(uintptr_t, uintptr_t, uint32_t*, uint32_t));
+
 FUNC_PTR(calc_healing, void (*)(float, uint32_t*, uintptr_t, uint32_t*, uintptr_t, uintptr_t));
 FUNC_PTR(setup_healing_params, void (*)(float, uint32_t*, uintptr_t, uint32_t*));
-FUNC_PTR(heal_mii_hp, void (*)(uintptr_t, uint32_t*, uint16_t*, uint32_t));
-FUNC_PTR(heal_mii_mp, void (*)(uintptr_t, uint32_t*, uint16_t*, uint32_t));
+FUNC_PTR(heal_mii_hp, void (*)(uintptr_t, uint32_t*, int16_t*, uint32_t));
+FUNC_PTR(heal_mii_mp, void (*)(uintptr_t, uint32_t*, int16_t*, uint32_t));
 
 FUNC_PTR(enemy_flee, void (*)(uintptr_t));
 
