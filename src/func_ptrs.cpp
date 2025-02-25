@@ -11,6 +11,7 @@ SETUP_FUNC_PTR(get_party_member_at_index, 0x0);
 SETUP_FUNC_PTR(get_number_of_enemies, 0x0);
 SETUP_FUNC_PTR(get_enemy_at_index, 0x0);
 
+SETUP_FUNC_PTR(can_enemy_be_hit, 0x0);
 SETUP_FUNC_PTR(is_party_member_available, 0x0);
 SETUP_FUNC_PTR(get_random_enemy, 0x0);
 

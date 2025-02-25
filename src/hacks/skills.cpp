@@ -12,7 +12,7 @@ namespace hacks {
 
     extern "C" uint32_t gleeful;
 
-    int16_t* state_no_target = (int16_t*)malloc(2);
+    int16_t* state_no_target = (int16_t*)malloc(0x2);
 
     uint32_t warrior_flee(uintptr_t mii_info, uint32_t* skill_index, uintptr_t enemy_info) {
         play_battle_state(mii_info, "SkillDanceStart", (int16_t*)(*(uintptr_t*)(enemy_info + 0x4) + 0x60));
@@ -40,11 +40,14 @@ namespace hacks {
         play_battle_state(mii_info, "SkillArrowRainHit", state_no_target);
         for (uint32_t i = 0; i < get_number_of_enemies(*(uintptr_t*)(mii_info + 0x8)); i++) {
             uintptr_t select_enemy = get_enemy_at_index(*(uintptr_t*)(mii_info + 0x8), i);
-            if (select_enemy) {
+            if (select_enemy && can_enemy_be_hit(select_enemy)) {
                 setup_damage_params(1.0f, damage_params, select_enemy, damage_calc);
                 damage_enemy(select_enemy, mii_info, damage_params, 1);
             }
         }
+
+        free(damage_calc);
+        free(damage_params);
         return 1;
     }
 

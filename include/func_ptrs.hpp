@@ -37,6 +37,7 @@ FUNC_PTR(get_party_member_at_index, uintptr_t (*)(uintptr_t, uint32_t));
 FUNC_PTR(get_number_of_enemies, uint32_t (*)(uintptr_t));
 FUNC_PTR(get_enemy_at_index, uintptr_t (*)(uintptr_t, uint32_t));
 
+FUNC_PTR(can_enemy_be_hit, uint32_t (*)(uintptr_t));
 FUNC_PTR(is_party_member_available, uint32_t (*)(uintptr_t));
 FUNC_PTR(get_random_enemy, uintptr_t (*)(uintptr_t, uint32_t*, int32_t, uint32_t));
 

@@ -59,7 +59,10 @@ PATTERN(get_party_member_at_index_pattern, 0xE59F202C, 0xE19220B0, 0xE3520004, 0
 PATTERN(get_number_of_enemies_pattern, 0xE2800C05, 0xE1D00CBA, 0xE3500008, 0x83A00008, 0xE12FFF1E);       // 0x0070B184 - US
 PATTERN(get_enemy_at_index_pattern, 0xE59F202C, 0xE19220B0, 0xE3520008, 0x83A02008);                      // 0x0043A0C0 - US
 
+PATTERN(can_enemy_be_hit_pattern, 0xE92D4010, 0xE1A04000, 0xE5900000, 0xE5901030, 0xE1A00004, 0xE12FFF31, 0xE3500000); // 0x007044FC - US
 PATTERN(is_party_member_available_pattern, 0xE92D4010, 0xE1A04000, 0xE5900000, 0xE5901034, 0xE1A00004, 0xE12FFF31, 0xE3500000); // 0x006F93C4 - US
+
+
 PATTERN(get_random_enemy_pattern, 0xE92D40F0, 0xE24DD014, 0xE1A04000, 0xE5D00068);                                              // 0x0040C7A8 - US
 
 PATTERN(play_battle_state_pattern, 0xE52DE004, 0xE1D230B0, 0xE24DD014, 0xE1D220B2); // 0x00679CCC - US
