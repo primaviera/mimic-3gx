@@ -12,7 +12,7 @@ namespace hacks
 /*
  * Here InitializeForSubWrap is used here
  * but you can still use other modes like
- * MITM by setting the their respective flags
+ * MITM by setting their respective flags
  */
 inline void install_hook(const std::vector<uint32_t>& pattern, uint32_t offset,
                          uint32_t flags, uint32_t callback,

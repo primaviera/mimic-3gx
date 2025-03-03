@@ -59,11 +59,10 @@ PATTERN(get_party_member_at_index_pattern, 0xE59F202C, 0xE19220B0, 0xE3520004, 0
 PATTERN(get_number_of_enemies_pattern, 0xE2800C05, 0xE1D00CBA, 0xE3500008, 0x83A00008, 0xE12FFF1E);       // 0x0070B184 - US
 PATTERN(get_enemy_at_index_pattern, 0xE59F202C, 0xE19220B0, 0xE3520008, 0x83A02008);                      // 0x0043A0C0 - US
 
-PATTERN(can_enemy_be_hit_pattern, 0xE92D4010, 0xE1A04000, 0xE5900000, 0xE5901030, 0xE1A00004, 0xE12FFF31, 0xE3500000); // 0x007044FC - US
+PATTERN(can_enemy_be_hit_pattern, 0xE92D4010, 0xE1A04000, 0xE5900000, 0xE5901030, 0xE1A00004, 0xE12FFF31, 0xE3500000);          // 0x007044FC - US
 PATTERN(is_party_member_available_pattern, 0xE92D4010, 0xE1A04000, 0xE5900000, 0xE5901034, 0xE1A00004, 0xE12FFF31, 0xE3500000); // 0x006F93C4 - US
 
-
-PATTERN(get_random_enemy_pattern, 0xE92D40F0, 0xE24DD014, 0xE1A04000, 0xE5D00068);                                              // 0x0040C7A8 - US
+PATTERN(get_random_enemy_pattern, 0xE92D40F0, 0xE24DD014, 0xE1A04000, 0xE5D00068); // 0x0040C7A8 - US
 
 PATTERN(play_battle_state_pattern, 0xE52DE004, 0xE1D230B0, 0xE24DD014, 0xE1D220B2); // 0x00679CCC - US
 PATTERN(set_mii_feeling_pattern, 0xE92D43F0, 0xE1A04000, 0xE24DD02C, 0xE1A07001);   // 0x00368F88 - US
@@ -71,6 +70,7 @@ PATTERN(set_mii_feeling_pattern, 0xE92D43F0, 0xE1A04000, 0xE24DD02C, 0xE1A07001)
 PATTERN(has_enough_mp_for_skill_pattern, 0xE92D40F8, 0xE1A04000, 0xE1A06002, 0xE1D006FC); // 0x006F9B74 - US
 PATTERN(spend_skill_mp_pattern, 0xE92D4010, 0xE1D027B8, 0xE5913000, 0xE24DD020);          // 0x0036BB44 - US
 PATTERN(show_cut_in_pattern, 0xE92D4030, 0xE1A04000, 0xE5910000, 0xE24DD01C);             // 0x00369D80 - US
+PATTERN(setup_skill_help_pattern, 0xE92D40F0, 0xE1A06000, 0xE24DD024, 0xE1D007B8);        // 0x00362BAC - US
 
 PATTERN(calc_damage_pattern, 0xE92D47F0, 0xE1A05000, 0xE1A09003, 0xE1A0A001);         // 0x006FB6B0 - US
 PATTERN(setup_damage_params_pattern, 0xE92D40F0, 0xE24DD014, 0xE1A07000, 0xE5910000); // 0x00679800 - US

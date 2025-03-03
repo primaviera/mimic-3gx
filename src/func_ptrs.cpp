@@ -31,6 +31,8 @@ SETUP_FUNC_PTR(setup_healing_params, 0x0);
 SETUP_FUNC_PTR(heal_mii_hp, 0x0);
 SETUP_FUNC_PTR(heal_mii_mp, 0x0);
 
+SETUP_FUNC_PTR(setup_skill_help, 0x0);
+
 SETUP_FUNC_PTR(enemy_flee, 0x0);
 
 } // namespace CTRPluginFramework

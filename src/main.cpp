@@ -2,7 +2,7 @@
 #include <CTRPluginFramework.hpp>
 
 #include "config.hpp"
-#include "hacks.hpp"
+#include "hacks/hacks.hpp"
 #include "logger.hpp"
 
 namespace CTRPluginFramework

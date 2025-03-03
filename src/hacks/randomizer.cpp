@@ -3,7 +3,7 @@
 
 #include "config.hpp"
 #include "func_ptrs.hpp"
-#include "hacks.hpp"
+#include "hacks/hacks.hpp"
 #include "logger.hpp"
 #include "patterns.hpp"
 

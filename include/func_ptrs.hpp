@@ -24,6 +24,7 @@ namespace CTRPluginFramework
     }                                     \
     extern "C" _FUNC_TYPE(name) name
 
+// Hardcoded pattern name for now
 #define SETUP_FUNC_PTR(name, offset) \
     _FUNC_TYPE(name)                 \
     name = (_FUNC_TYPE(name))(       \
@@ -56,6 +57,8 @@ FUNC_PTR(calc_healing, void (*)(float, uint32_t*, uintptr_t, uint32_t*, uintptr_
 FUNC_PTR(setup_healing_params, void (*)(float, uint32_t*, uintptr_t, uint32_t*));
 FUNC_PTR(heal_mii_hp, void (*)(uintptr_t, uint32_t*, int16_t*, uint32_t));
 FUNC_PTR(heal_mii_mp, void (*)(uintptr_t, uint32_t*, int16_t*, uint32_t));
+
+FUNC_PTR(setup_skill_help, void (*)(uintptr_t, uint32_t*, uint32_t));
 
 FUNC_PTR(enemy_flee, void (*)(uintptr_t));
 
