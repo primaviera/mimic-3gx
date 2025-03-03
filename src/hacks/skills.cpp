@@ -21,7 +21,7 @@ namespace hacks {
     {
         switch (*skill_index) {
             /* PoC: Custom skill for Warrior that targets an enemy */
-            case SKILL_FIGHTER09_:
+            case SKILL_FIGHTER_09:
                 if (!has_enough_mp_for_skill(mii_info, skill_index, 0))
                     return 0;
                 if (!enemy_info)
@@ -29,7 +29,7 @@ namespace hacks {
                 return warrior_flee(mii_info, skill_index, enemy_info);
 
             /* WIP: Custom skill for Warrior that targets all enemies */
-            case SKILL_FIGHTER10_:
+            case SKILL_FIGHTER_10:
                 if (!has_enough_mp_for_skill(mii_info, skill_index, 0))
                     return 0;
                 return warrior_hit_all(mii_info, skill_index);
@@ -41,7 +41,7 @@ namespace hacks {
     {
         switch (*skill_index) {
             /* PoC: Custom skill for Warrior that targets an ally */
-            case SKILL_FIGHTER11_:
+            case SKILL_FIGHTER_11:
                 if (!has_enough_mp_for_skill(mii_info, skill_index, 0))
                     return 0;
                 if (!target_mii)
@@ -49,7 +49,7 @@ namespace hacks {
                 return warrior_single_heal(mii_info, skill_index, target_mii);
 
             /* PoC: Custom skill for Warrior that targets all allies */
-            case SKILL_FIGHTER12_:
+            case SKILL_FIGHTER_12:
                 if (!has_enough_mp_for_skill(mii_info, skill_index, 0))
                     return 0;
                 return warrior_status_all(mii_info, skill_index);
@@ -60,7 +60,7 @@ namespace hacks {
     uint32_t does_skill_target_enemy(uintptr_t r0, uint32_t* skill_index)
     {
         switch (*skill_index) {
-            case SKILL_FIGHTER09_:
+            case SKILL_FIGHTER_09:
                 return 1;
         }
         return HookContext::GetCurrent().OriginalFunction<uint32_t>(r0, skill_index);
@@ -69,7 +69,7 @@ namespace hacks {
     uint32_t does_skill_target_ally(uintptr_t r0, uint32_t* skill_index)
     {
         switch (*skill_index) {
-            case SKILL_FIGHTER11_:
+            case SKILL_FIGHTER_11:
                 return 1;
         }
         return HookContext::GetCurrent().OriginalFunction<uint32_t>(r0, skill_index);
@@ -78,7 +78,7 @@ namespace hacks {
     uint32_t can_skill_select_enemy(uintptr_t r0, uint32_t* skill_index, uintptr_t r2)
     {
         switch (*skill_index) {
-            case SKILL_FIGHTER09_:
+            case SKILL_FIGHTER_09:
                 *skill_index = 0;
         }
         return HookContext::GetCurrent().OriginalFunction<uint32_t>(r0, skill_index, r2);
@@ -92,7 +92,7 @@ namespace hacks {
     uint32_t can_skill_select_ally(uintptr_t r0, uint32_t* skill_index, uintptr_t r2)
     {
         switch (*skill_index) {
-            case SKILL_FIGHTER11_:
+            case SKILL_FIGHTER_11:
                 *skill_index = 26;
         }
         return HookContext::GetCurrent().OriginalFunction<uint32_t>(r0, skill_index, r2);
@@ -100,17 +100,17 @@ namespace hacks {
 
     void get_skill_status(uint32_t* out_status, uintptr_t mii_info, uint32_t* skill_index) {
         switch (*skill_index) {
-            case SKILL_FIGHTER09_:
-            case SKILL_FIGHTER10_:
-            case SKILL_FIGHTER11_:
-            case SKILL_FIGHTER12_:
-                *out_status = 0;
+            case SKILL_FIGHTER_09:
+            case SKILL_FIGHTER_10:
+            case SKILL_FIGHTER_11:
+            case SKILL_FIGHTER_12:
+                *out_status = SKILL_STATUS_ENABLE;
                 if (-1 < *(int16_t*)(mii_info + 0x6C)) {
-                    *out_status = 3;
+                    *out_status = SKILL_STATUS_NO_WEAPON;
                     return;
                 }
                 if (!has_enough_mp_for_skill(mii_info, skill_index, 0)) {
-                    *out_status = 2;
+                    *out_status = SKILL_STATUS_NO_MP;
                     return;
                 }
                 return;
