@@ -98,16 +98,24 @@ namespace hacks {
         return HookContext::GetCurrent().OriginalFunction<uint32_t>(r0, skill_index, r2);
     }
 
-    void get_skill_status(uint32_t* out_status, uint32_t r1, uint32_t* skill_index) {
+    void get_skill_status(uint32_t* out_status, uintptr_t mii_info, uint32_t* skill_index) {
         switch (*skill_index) {
             case SKILL_FIGHTER09_:
             case SKILL_FIGHTER10_:
             case SKILL_FIGHTER11_:
             case SKILL_FIGHTER12_:
                 *out_status = 0;
+                if (-1 < *(int16_t*)(mii_info + 0x6C)) {
+                    *out_status = 3;
+                    return;
+                }
+                if (!has_enough_mp_for_skill(mii_info, skill_index, 0)) {
+                    *out_status = 2;
+                    return;
+                }
                 return;
         }
-        HookContext::GetCurrent().OriginalFunction<uint32_t>(out_status, r1, skill_index);
+        HookContext::GetCurrent().OriginalFunction<uint32_t>(out_status, mii_info, skill_index);
     }
 
     void install_skills()

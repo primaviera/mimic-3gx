@@ -286,19 +286,6 @@ namespace hacks {
             "pop {r1-r2, pc}");
     }
 
-    /*
-     * Randomize enemy models (visual)
-     * Causes crashes very often
-     * (This code is outdated now)
-     */
-    void randomize_enemy_model(uintptr_t r0, uintptr_t r1)
-    {
-        auto enemy_model = (char*)enemy_array[Utils::Random(0, 267)];
-        *(char**)(r0 + 4) = enemy_model; // Changes enemy model
-        *(int*)(r0 + 8) = Utils::Random(0, 306); // Changes enemy name(?)
-        CTRPluginFramework::HookContext::GetCurrent().OriginalFunction<void>(r0, r1);
-    }
-
     void install_randomizer()
     {
         if (!config::randomizer.active) return;
@@ -325,11 +312,12 @@ namespace hacks {
         install_hook(enemy_pattern, 0x10, (WRAP_SUB), 0, (uint32_t)randomize_enemy);
         install_hook(enemy_stats_pattern, 0x38, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)handle_enemy_stats, 0);
 
-        // Low priority
+        // Haven't started yet
         // install_hook(map_bg_pattern, 0x1C, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)randomize_map_bg, 0);
-        // install_hook(enemy_model_pattern, 0x0, (MITM_MODE), (uint32_t)randomize_enemy_model, 0);
         // install_hook(grub_stats_pattern, 0xC, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)randomize_grub_stats, 0);
     }
+
+// clang-format off
 
     const char* bgm_array[] = {
         "BGM_BATTLE_BOSS_BIGBOSS",
@@ -773,6 +761,8 @@ namespace hacks {
         "SuperSatanCenter0",
         "SuperSatanCenter1"
     };
+
+// clang-format on
 
 } // namespace hacks
 
