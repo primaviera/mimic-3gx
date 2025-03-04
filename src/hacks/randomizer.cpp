@@ -7,6 +7,8 @@
 #include "logger.hpp"
 #include "patterns.hpp"
 
+#include "mimic_types.hpp"
+
 namespace CTRPluginFramework {
 
 namespace hacks {
@@ -179,46 +181,13 @@ namespace hacks {
         return r0;
     }
 
-    struct enemy_status {
-        uint16_t hp;
-        uint16_t mp;
-        uint16_t atk;
-        uint16_t def;
-        uint16_t mag;
-        uint16_t spd;
-        uint16_t lvl;
-        uint16_t gold;
-        uint16_t exp;
-        uint16_t common_grub;
-        uint16_t common_grub_chance;
-        uint16_t rare_grub;
-        uint16_t rare_grub_chance;
-        uint16_t super_rare_grub;
-        uint16_t super_rare_grub_chance;
-    };
-
-    struct enemy_info {
-        uint32_t hash; // CRC32 hash of internal name
-        const char* model;
-        uint32_t id; // Some kind of decimal ID(?)
-        uint16_t unk_0xC; // Possibly size?
-        uint16_t unk_0xE;
-        uint8_t unk_0x10[0x34];
-        float distance[3]; // Distance between models (X, Y, Z)
-        float scale; // Model scale
-        float skill_cam[3]; // (X, Y, Z)
-        const char* bone; // What bone camera targets
-        uint8_t unk_0x64[0x14];
-        enemy_status* status;
-    };
-
     /*
      * Handle enemy stats
      * I eventually want to try balancing
      * enemy stats based on the party's
      * average level
      */
-    enemy_info* handle_enemy_stats(enemy_info* enemy)
+    enemy_param* handle_enemy_stats(enemy_param* enemy)
     {
         if (!(uintptr_t)enemy)
             return enemy;
@@ -236,7 +205,7 @@ namespace hacks {
      * Randomize enemy slot 1 moves
      * Used for physical attacks
      */
-    void NAKED randomize_enemy_slot1()
+    void NAKED randomize_enemy_skills_1()
     {
         asm("push {r0, lr} \n"
             "mov r0, #0 \n"
@@ -250,7 +219,7 @@ namespace hacks {
      * Randomize enemy slot 2 moves
      * Used for status-inflicting moves
      */
-    void NAKED randomize_enemy_slot2()
+    void NAKED randomize_enemy_skills_2()
     {
         asm("push {r1, lr} \n"
             "mov r0, #0 \n"
@@ -263,7 +232,7 @@ namespace hacks {
      * Randomize enemy slot 3 moves
      * Used for magic attacks
      */
-    void NAKED randomize_enemy_slot3()
+    void NAKED randomize_enemy_skills_3()
     {
         asm("push {r0, lr} \n"
             "mov r0, #0 \n"
@@ -277,7 +246,7 @@ namespace hacks {
      * Randomize enemy slot 4 moves
      * Not sure what this is for
      */
-    void NAKED randomize_enemy_slot4()
+    void NAKED randomize_enemy_skills_4()
     {
         asm("push {r1-r2, lr} \n"
             "mov r0, #0 \n"
@@ -303,10 +272,10 @@ namespace hacks {
         install_hook(map_bgm_pattern, -0xC, (WRAP_SUB), (uint32_t)randomize_map_bgm, 0);
         install_hook(town_bgm_pattern, 0x10, (WRAP_SUB), (uint32_t)randomize_town_bgm, 0);
 
-        install_hook(enemy_slot1_pattern, 0xC, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)randomize_enemy_slot1, 0);
-        install_hook(enemy_slot2_pattern, 0x8, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)randomize_enemy_slot2, 0);
-        install_hook(enemy_slot3_pattern, 0x10, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)randomize_enemy_slot3, 0);
-        install_hook(enemy_slot4_pattern, 0xC, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)randomize_enemy_slot4, 0);
+        install_hook(enemy_skills_1_pattern, 0xC, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)randomize_enemy_skills_1, 0);
+        install_hook(enemy_skills_2_pattern, 0x8, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)randomize_enemy_skills_2, 0);
+        install_hook(enemy_skills_3_pattern, 0x10, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)randomize_enemy_skills_3, 0);
+        install_hook(enemy_skills_4_pattern, 0xC, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)randomize_enemy_skills_4, 0);
 
         // WIP
         install_hook(enemy_pattern, 0x10, (WRAP_SUB), 0, (uint32_t)randomize_enemy);

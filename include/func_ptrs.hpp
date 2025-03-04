@@ -5,6 +5,8 @@
 
 #include "patterns.hpp"
 
+#include "mimic_types.hpp"
+
 namespace CTRPluginFramework
 {
 
@@ -48,18 +50,18 @@ FUNC_PTR(set_mii_feeling, void (*)(uintptr_t, uint32_t*, int16_t*, uint32_t));
 FUNC_PTR(has_enough_mp_for_skill, uint32_t (*)(uintptr_t, uint32_t*, uint32_t));
 FUNC_PTR(spend_skill_mp, void (*)(uintptr_t, uint32_t*));
 FUNC_PTR(show_cut_in, void (*)(uintptr_t, uint32_t*));
+FUNC_PTR(setup_skill_help, void (*)(uintptr_t, helping_mii_handle*, uint32_t));
 
-FUNC_PTR(calc_damage, void (*)(float, uint32_t*, uintptr_t, uint32_t*, uintptr_t, uintptr_t));
+FUNC_PTR(calc_damage, void (*)(float, uint32_t*, uintptr_t, uint32_t*, uintptr_t, helping_mii_handle*));
 FUNC_PTR(setup_damage_params, void (*)(float, uint32_t*, uintptr_t, uint32_t*));
 FUNC_PTR(damage_enemy, uint32_t (*)(uintptr_t, uintptr_t, uint32_t*, uint32_t));
 
-FUNC_PTR(calc_healing, void (*)(float, uint32_t*, uintptr_t, uint32_t*, uintptr_t, uintptr_t));
+FUNC_PTR(calc_healing, void (*)(float, uint32_t*, uintptr_t, uint32_t*, uintptr_t, helping_mii_handle*));
 FUNC_PTR(setup_healing_params, void (*)(float, uint32_t*, uintptr_t, uint32_t*));
 FUNC_PTR(heal_mii_hp, void (*)(uintptr_t, uint32_t*, int16_t*, uint32_t));
 FUNC_PTR(heal_mii_mp, void (*)(uintptr_t, uint32_t*, int16_t*, uint32_t));
 
-FUNC_PTR(setup_skill_help, void (*)(uintptr_t, uint32_t*, uint32_t));
-
+FUNC_PTR(summon_enemy, uint32_t (*)(uintptr_t, uint32_t*, uintptr_t, uint32_t));
 FUNC_PTR(enemy_flee, void (*)(uintptr_t));
 
 } // namespace CTRPluginFramework

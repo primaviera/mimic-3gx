@@ -14,6 +14,7 @@ void PatchProcess(FwkSettings& settings)
     settings.AllowSearchEngine = false;
     settings.UseGameHidMemory = true;
     settings.TryLoadSDSounds = false;
+    settings.WaitTimeToBoot = Seconds(0);
 }
 
 int main(void)
@@ -25,8 +26,7 @@ int main(void)
 
     logger::write(Utils::Format("Hello World!\nPlugin was built at %s %s\n\n", __DATE__, __TIME__));
 
-    hacks::install_randomizer();
-    hacks::install_skills();
+    hacks::install();
 
     Process::WaitForExit();
 

@@ -3,7 +3,7 @@
 
 #include "func_ptrs.hpp"
 #include "hacks/skills.hpp"
-#include "hacks/custom_skills/warrior.hpp"
+#include "hacks/custom_skills/fighter.hpp"
 
 #include "mimic_types.hpp"
 

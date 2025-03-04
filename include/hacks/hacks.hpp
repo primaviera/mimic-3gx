@@ -3,6 +3,9 @@
 #include <3ds.h>
 #include <CTRPluginFramework.hpp>
 
+#include "hacks/randomizer.hpp"
+#include "hacks/skills.hpp"
+
 namespace CTRPluginFramework
 {
 
@@ -27,8 +30,10 @@ inline void install_hook(const std::vector<uint32_t>& pattern, uint32_t offset,
     }
 }
 
-void install_randomizer();
-void install_skills();
+inline void install() {
+    install_randomizer();
+    install_skills();
+}
 
 } // namespace hacks
 

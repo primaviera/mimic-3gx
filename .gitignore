@@ -1,5 +1,10 @@
 /build
 /deps
+/.venv
+
+/romfs/cmn/param/job
+/romfs/cmn/param/enemy
+/romfs/cmn/param/skill
 
 *.3gx
 *.elf

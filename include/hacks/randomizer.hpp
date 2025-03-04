@@ -4,9 +4,7 @@ namespace CTRPluginFramework {
 
 namespace hacks {
 
-extern int16_t* state_no_target;
-
-void install_skills();
+void install_randomizer();
 
 }
 
