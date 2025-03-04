@@ -4,6 +4,8 @@ IndentWidth: 4
 ---
 Language: Cpp
 PointerAlignment: Left
+AlignTrailingComments:
+  Kind: Never
 AllowShortIfStatementsOnASingleLine: WithoutElse
 AllowShortFunctionsOnASingleLine: None
 NamespaceIndentation: None

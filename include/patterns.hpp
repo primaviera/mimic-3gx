@@ -5,8 +5,6 @@
 namespace CTRPluginFramework
 {
 
-// clang-format off
-
 /*
  * Used as hooks @ hacks/randomizer.cpp
  */
@@ -81,7 +79,5 @@ PATTERN(heal_mii_mp_pattern, 0xE92D41F0, 0xE24DD010, 0xE1A05003, 0xE1A04002, 0xE
 
 PATTERN(summon_enemy_pattern, 0xE92D43F0, 0xE1B04002, 0xE24DD034, 0xE1A09003); // 0x00409ED0 - US
 PATTERN(enemy_flee_pattern, 0xE92D40F0, 0xE24DD014, 0xE1A04000, 0xEB0BEA71); // 0x00409A90 - US
-
-// clang-format on
 
 } // namespace CTRPluginFramework
