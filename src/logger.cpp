@@ -27,7 +27,7 @@ std::string get_log_name()
     // https://stackoverflow.com/a/2409054
     nowtime = t.tv_sec;
     nowtm = localtime(&nowtime);
-    strftime(buf, sizeof(buf), "log_%Y-%m-%d_%H-%M-%S.txt", nowtm);
+    strftime(buf, sizeof(buf), "%Y-%m-%d_%H-%M-%S.log", nowtm);
 
     return std::string(buf);
 }

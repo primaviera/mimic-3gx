@@ -277,7 +277,7 @@ namespace hacks {
         install_hook(enemy_skills_3_pattern, 0x10, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)randomize_enemy_skills_3, 0);
         install_hook(enemy_skills_4_pattern, 0xC, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)randomize_enemy_skills_4, 0);
 
-        // WIP
+        // WiP
         install_hook(enemy_pattern, 0x10, (WRAP_SUB), 0, (uint32_t)randomize_enemy);
         install_hook(enemy_stats_pattern, 0x38, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)handle_enemy_stats, 0);
 

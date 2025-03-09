@@ -26,15 +26,16 @@ namespace hacks {
         uint32_t* damage_calc = (uint32_t*)malloc(0x24);
         uint32_t* damage_params = (uint32_t*)malloc(0x10);
 
-        play_battle_state(mii_info, "SkillDanceStart", state_no_target);
+        *skill_index = SKILL_FIGHTER_DOUBLE; // I'm too lazy to make stats for these moves in skill.sarc
+        calc_damage(1.0f, damage_calc, mii_info, skill_index, 0, 0);
+        *skill_index = SKILL_FIGHTER_10;
+
+        play_battle_state(mii_info, "SkillDanceStart", &battle_state_no_target);
         show_cut_in(mii_info, skill_index);
         spend_skill_mp(mii_info, skill_index);
 
-        *skill_index = 0;
-        calc_damage(1.0f, damage_calc, mii_info, skill_index, 0, 0);
-
-        play_battle_state(mii_info, "SkillDance", state_no_target);
-        play_battle_state(mii_info, "SkillArrowRainHit", state_no_target);
+        play_battle_state(mii_info, "SkillDance", &battle_state_no_target);
+        play_battle_state(mii_info, "SkillArrowRainHit", &battle_state_no_target);
         for (uint32_t i = 0; i < get_number_of_enemies(*(uintptr_t*)(mii_info + 0x8)); i++) {
             uintptr_t select_enemy = get_enemy_at_index(*(uintptr_t*)(mii_info + 0x8), i);
             if (select_enemy && can_enemy_be_hit(select_enemy)) {
@@ -52,12 +53,14 @@ namespace hacks {
         uint32_t* heal_calc = (uint32_t*)malloc(0x24);
         uint32_t* healing_params = (uint32_t*)malloc(0x10);
 
+        *skill_index = SKILL_PRIEST_CURE; // I'm too lazy to make stats for these moves in skill.sarc
+        calc_healing(1.0f, heal_calc, mii_info, skill_index, target_mii, 0);
+        *skill_index = SKILL_FIGHTER_11;
+
         play_battle_state(mii_info, "DefeatEnemyHelp", (int16_t*)(*(uintptr_t*)(mii_info + 0x4) + 0x60));
         show_cut_in(mii_info, skill_index);
         spend_skill_mp(mii_info, skill_index);
 
-        *skill_index = 26; // For testing purposes
-        calc_healing(1.0f, heal_calc, mii_info, skill_index, target_mii, 0);
         setup_healing_params(1.0f, healing_params, target_mii, heal_calc);
         heal_mii_hp(target_mii, healing_params, (int16_t*)(*(uintptr_t*)(mii_info + 0x4) + 0x60), 1);
 
@@ -75,20 +78,20 @@ namespace hacks {
     uint32_t warrior_status_all(uintptr_t mii_info, uint32_t* skill_index) {
         uint32_t* heal_calc = (uint32_t*)malloc(0x24);
         uint32_t* healing_params = (uint32_t*)malloc(0x10);
-        uint32_t* status = (uint32_t*)malloc(0x4);
+        uint32_t status = FEELING_NORMAL;
+
+        *skill_index = SKILL_PRIEST_CURE3; // I'm too lazy to make stats for these moves in skill.sarc
+        calc_healing(1.0f, heal_calc, mii_info, skill_index, 0, 0);
+        *skill_index = SKILL_FIGHTER_12;
 
         play_battle_state(mii_info, "DefeatEnemyHelp", (int16_t*)(*(uintptr_t*)(mii_info + 0x4) + 0x60));
         show_cut_in(mii_info, skill_index);
         spend_skill_mp(mii_info, skill_index);
 
-        *skill_index = 26; // For testing purposes
-        calc_healing(1.0f, heal_calc, mii_info, skill_index, 0, 0);
-
-        play_battle_state(mii_info, "SkillWhistleCureStart", state_no_target);
+        play_battle_state(mii_info, "SkillWhistleCureStart", &battle_state_no_target);
         for (uint32_t i = 0; i < get_number_of_party_members(*(uintptr_t*)(mii_info + 0x8)); i++) {
-            *status = Utils::Random(0, 23);
-            if (*status == 18) *status =+ 1;
-            if (*status == 23) *status -= 1;
+            status = Utils::Random(0, 23);
+            if (status == FEELING_FACELESS) status =+ 1;
             uintptr_t select_mii = get_party_member_at_index(*(uintptr_t*)(mii_info + 0x8), i);
             if (select_mii && is_party_member_available(select_mii)) {
                 setup_healing_params(1.0f, healing_params, select_mii, heal_calc);
@@ -97,16 +100,15 @@ namespace hacks {
                 } else {
                     heal_mii_mp(select_mii, healing_params, (int16_t*)(*(uintptr_t*)(mii_info + 0x4) + 0x60), 1);
                 }
-                set_mii_feeling(select_mii, status, (int16_t*)(*(uintptr_t*)(select_mii + 0x4) + 0x60), 0);
+                set_mii_feeling(select_mii, &status, (int16_t*)(*(uintptr_t*)(select_mii + 0x4) + 0x60), 0);
                 play_battle_state(select_mii, "ErasedBananaEnd", (int16_t*)(*(uintptr_t*)(select_mii + 0x4) + 0x60));
                 play_battle_state(select_mii, "DogfightEndAttackHitL", (int16_t*)(*(uintptr_t*)(select_mii + 0x4) + 0x60));
             }
         }
-        play_battle_state(mii_info, "SkillWhistleCureEnd", state_no_target);
+        play_battle_state(mii_info, "SkillWhistleCureEnd", &battle_state_no_target);
 
         free(heal_calc);
         free(healing_params);
-        free(status);
         return 1;
     }
 

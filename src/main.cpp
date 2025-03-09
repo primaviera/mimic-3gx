@@ -14,12 +14,12 @@ void PatchProcess(FwkSettings& settings)
     settings.AllowSearchEngine = false;
     settings.UseGameHidMemory = true;
     settings.TryLoadSDSounds = false;
-    settings.WaitTimeToBoot = Seconds(0);
+    settings.WaitTimeToBoot = Seconds(1);
 }
 
 int main(void)
 {
-    if (logger::init(Utils::Format("/luma/plugins/%016llX/", Process::GetTitleID())))
+    if (logger::init(Utils::Format("/luma/plugins/%016llX/logs/", Process::GetTitleID())))
         return 1;
     if (config::init("/config/mimic-3gx/config.toml"))
         return 1;

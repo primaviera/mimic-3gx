@@ -226,6 +226,36 @@ enum enemy_skills_1 {
     ENEMY_SKILL_1_LAST_MIMIT = 30
 };
 
+enum battle_feeling {
+    FEELING_RESET = -2,
+    FEELING_NULL = -1,
+    FEELING_NORMAL = 0,
+    FEELING_ANGRY = 1,
+    FEELING_LAUGH = 2,
+    FEELING_TERROR = 3,
+    FEELING_CRY = 4,
+    FEELING_EXCITE = 5,
+    FEELING_SPITE = 6,
+    FEELING_ANXIOUS = 7,
+    FEELING_VACANCY = 8,
+    FEELING_GLEEFUL = 9,
+    FEELING_CRANKY = 10,
+    FEELING_SLEEP = 11,
+    FEELING_NIGHTMARE = 12,
+    FEELING_DANCE = 13,
+    FEELING_PUPPET = 14,
+    FEELING_AGING = 15,
+    FEELING_BURN = 16,
+    FEELING_EAT = 17,
+    FEELING_FACELESS = 18,
+    FEELING_PHARAOH = 19,
+    FEELING_SPIDER = 20,
+    FEELING_STONE = 21,
+    FEELING_ICE = 22,
+    FEELING_BLOW = 23,
+    FEELING_OVERSLEEP = 24
+};
+
 struct helping_mii_handle {
     uint32_t num;
     uint32_t unk_0x4; // Always set to 4
