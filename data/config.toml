@@ -5,3 +5,6 @@ active = true
 
 [skills]
 active = true
+
+[controllable]
+active = true

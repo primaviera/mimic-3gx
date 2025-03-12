@@ -16,12 +16,15 @@ namespace config
 
 st_randomizer randomizer;
 st_skills skills;
+st_controllable controllable;
 
 void load(const toml::table& table)
 {
     randomizer.active = table["randomizer"]["active"].value_or(false);
 
     skills.active = table["skills"]["active"].value_or(false);
+
+    controllable.active = table["controllable"]["active"].value_or(false);
 }
 
 int init(const std::string& path)

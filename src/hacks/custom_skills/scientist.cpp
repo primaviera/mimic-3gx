@@ -51,6 +51,8 @@ namespace hacks {
     uint32_t scientist_optimize(uintptr_t mii_info, uint32_t* skill_index) {
         uint32_t cost = get_skill_mp_cost(mii_info, skill_index, 0);
         if (is_optimize_active && mii_info == target_mii) {
+            is_optimize_active = false;
+            target_mii = 0;
             return (uint32_t)std::round(cost / 2);
         }
         return cost;

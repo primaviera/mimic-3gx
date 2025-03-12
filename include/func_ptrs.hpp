@@ -32,8 +32,8 @@ namespace CTRPluginFramework
     name = (_FUNC_TYPE(name))(       \
         Utils::Search(0x00100000, 0x00709000, name##_pattern) + offset);
 
-FUNC_PTR(crc32, uint32_t (*)(const void*, uint32_t));
-FUNC_PTR(rand_percentage, uint32_t (*)(uintptr_t, uint32_t));
+FUNC_PTR(sead_HashCRC32_calcHash, uint32_t (*)(const void*, uint32_t));
+FUNC_PTR(calc_rand_percentage, uint32_t (*)(uintptr_t, uint32_t));
 
 FUNC_PTR(get_number_of_party_members, uint32_t (*)(uintptr_t));
 FUNC_PTR(get_party_member_at_index, uintptr_t (*)(uintptr_t, uint32_t));

@@ -3,6 +3,7 @@
 #include <3ds.h>
 #include <CTRPluginFramework.hpp>
 
+#include "hacks/controllable.hpp"
 #include "hacks/randomizer.hpp"
 #include "hacks/skills.hpp"
 
@@ -33,9 +34,17 @@ inline void install_hook(const std::vector<uint32_t>& pattern, uint32_t offset,
     }
 }
 
+inline void patch_u32(const std::vector<uint32_t>& pattern, uint32_t offset,
+                      uint32_t instruction)
+{
+    if (auto res = Utils::Search<uint32_t>(0x00100000, 0x00709000, pattern))
+        Process::Patch(res + offset, instruction);
+}
+
 inline void install() {
-    install_randomizer();
     install_skills();
+    install_randomizer();
+    install_controllable();
 }
 
 } // namespace hacks

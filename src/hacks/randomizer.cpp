@@ -176,7 +176,7 @@ namespace hacks {
             logger::write(Utils::Format("%d", rand));
             const char* enemy_name = enemy_array[rand];
             logger::write(Utils::Format(" (%s)\n", enemy_name));
-            *(uint32_t*)(enemy_data + 0x74) = crc32(enemy_name, strlen(enemy_name));
+            *(uint32_t*)(enemy_data + 0x74) = sead_HashCRC32_calcHash(enemy_name, strlen(enemy_name));
         }
         return r0;
     }

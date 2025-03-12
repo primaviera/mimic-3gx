@@ -3,8 +3,8 @@
 namespace CTRPluginFramework
 {
 
-SETUP_FUNC_PTR(crc32, 0x0);
-SETUP_FUNC_PTR(rand_percentage, 0x0);
+SETUP_FUNC_PTR(sead_HashCRC32_calcHash, 0x0);
+SETUP_FUNC_PTR(calc_rand_percentage, 0x0);
 
 SETUP_FUNC_PTR(get_number_of_party_members, 0x0);
 SETUP_FUNC_PTR(get_party_member_at_index, 0x0);

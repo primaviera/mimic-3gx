@@ -5,9 +5,7 @@
 namespace CTRPluginFramework
 {
 
-/*
- * Used as hooks @ hacks/randomizer.cpp
- */
+/* hacks/randomizer.cpp */
 PATTERN(battle_bgm_pattern, 0xE596317C, 0xE1A01000, 0xE3A02001, 0xE1A00003); // 0x006B85A8 (-0x4) - US
 PATTERN(trans_bgm_pattern, 0xE8BD87F0, 0xE5940064, 0xE3A02001, 0xE28F1060); // 0x004B95A0 (+0x10) - US
 PATTERN(battle_bg_pattern, 0xE3A08000, 0xE320F000, 0xEF000028, 0xE28D9FD6); // 0x0042AA9C (+0xC) - US
@@ -33,9 +31,7 @@ PATTERN(enemy_skills_4_pattern, 0xED9F8ABF, 0xE5902000, 0xE5D2000F, 0xE350000D);
 
 PATTERN(grub_stats_pattern, 0xE3540006, 0xE2800014, 0x30800104, 0xE5900000); // 0x002DC1E8 (+0xC) - US
 
-/*
- * Used as hooks @ hacks/skills.cpp
- */
+/* hacks/skills.cpp */
 PATTERN(enemy_targetting_skills_pattern, 0xE92D41F0, 0xE24DD0F8, 0xE1A08000, 0xE5910000); // 0x003A6F7C (0x0) - US
 PATTERN(ally_targetting_skills_pattern, 0xE92D41F0, 0xE24DD098, 0xE1A07000, 0xE5910000); // 0x003A0598 (0x0) - US
 PATTERN(does_skill_target_enemy_pattern, 0xE5910000, 0xE350004F, 0x0A00003C, 0xCA00001F); // 0x006FDC98 (0x0) - US
@@ -45,13 +41,14 @@ PATTERN(can_skill_select_ally_pattern, 0xE92D4070, 0xE1A05000, 0xE5910000, 0xE24
 PATTERN(get_skill_status_pattern, 0xE92D43F0, 0xE1A05000, 0xE24DD00C, 0xE1A06002); // 0x006FBAD4 (0x0) - US
 PATTERN(is_not_autoskill_pattern, 0xE5910000, 0xE3500072, 0x0A000019, 0xCA00000D); // 0x006FCC7C (0x0) - US
 
-/*
- * Used to determine address for function pointers
- */
+/* hacks/controllable.cpp */
+PATTERN(is_main_hero_pattern, 0xE9540004, 0xE1D819DC, 0xE1D006F0, 0xE1500001); // 0x006B66A4 (+0xC & +0x10) - US
+PATTERN(load_skills_page_pattern, 0xE92D43F0, 0xE1A04000, 0xE3E00000, 0xE1A08001); // 0x005DC64C (0x0) - US
+PATTERN(autobattle_availability_pattern, 0xE5D60060, 0xE58D6044, 0xE5C5019C, 0xE2877001); // 0x006B8BE0 (-0x4) - US
 
-// sead::HashCRC32::calcHash()
-PATTERN(crc32_pattern, 0xE92D00F0, 0xE59F60C8, 0xE5D62000, 0xE3520000); // 0x00104FE0 - US
-PATTERN(rand_percentage_pattern, 0xE5900008, 0xE1A00000, 0xE92D4070, 0xE2800B01); // 0x0043C2EC - US
+/* Function pointers */
+PATTERN(sead_HashCRC32_calcHash_pattern, 0xE92D00F0, 0xE59F60C8, 0xE5D62000, 0xE3520000); // 0x00104FE0 - US
+PATTERN(calc_rand_percentage_pattern, 0xE5900008, 0xE1A00000, 0xE92D4070, 0xE2800B01); // 0x0043C2EC - US
 
 PATTERN(get_number_of_party_members_pattern, 0xE2800C05, 0xE1D00CB8, 0xE3500004, 0x83A00004, 0xE12FFF1E); // 0x0070B0CC - US
 PATTERN(get_party_member_at_index_pattern, 0xE59F202C, 0xE19220B0, 0xE3520004, 0x83A02004); // 0x0043C868 - US
