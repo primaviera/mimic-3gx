@@ -23,7 +23,7 @@ namespace hacks {
         switch (*skill_index) {
             /* PoC: Custom skill for Warrior that targets an enemy */
             case SKILL_FIGHTER_09:
-                if (!has_enough_mp_for_skill(mii_info, skill_index, 0))
+                if (!HasEnoughMPForSkill(mii_info, skill_index, 0))
                     return 0;
                 if (!enemy_info)
                     return 0;
@@ -31,7 +31,7 @@ namespace hacks {
 
             /* PoC: Custom skill for Warrior that targets all enemies */
             case SKILL_FIGHTER_10:
-                if (!has_enough_mp_for_skill(mii_info, skill_index, 0))
+                if (!HasEnoughMPForSkill(mii_info, skill_index, 0))
                     return 0;
                 return warrior_hit_all(mii_info, skill_index);
         }
@@ -43,7 +43,7 @@ namespace hacks {
         switch (*skill_index) {
             /* PoC: Custom skill for Warrior that targets an ally */
             case SKILL_FIGHTER_11:
-                if (!has_enough_mp_for_skill(mii_info, skill_index, 0))
+                if (!HasEnoughMPForSkill(mii_info, skill_index, 0))
                     return 0;
                 if (!target_mii)
                     return 0;
@@ -51,7 +51,7 @@ namespace hacks {
 
             /* PoC: Custom skill for Warrior that targets all allies */
             case SKILL_FIGHTER_12:
-                if (!has_enough_mp_for_skill(mii_info, skill_index, 0))
+                if (!HasEnoughMPForSkill(mii_info, skill_index, 0))
                     return 0;
                 return warrior_status_all(mii_info, skill_index);
         }
@@ -105,7 +105,7 @@ namespace hacks {
                     *out_status = SKILL_STATUS_NO_WEAPON;
                     return;
                 }
-                if (!has_enough_mp_for_skill(mii_info, skill_index, 0)) {
+                if (!HasEnoughMPForSkill(mii_info, skill_index, 0)) {
                     *out_status = SKILL_STATUS_NO_MP;
                     return;
                 }
@@ -144,24 +144,24 @@ namespace hacks {
                 if (!*(uint8_t*)(enemy_info + 0x60) && (float)(get_enemy_hp(enemy_info) <= (float)(get_enemy_max_hp(enemy_info) * phase_3_hp_threshold))) {
                     *(uint8_t*)(enemy_info + 0x60) = 5; // Block enemy from using this move for 5 more attacks
 
-                    play_battle_state(enemy_info, "MagicLock", &battle_state_no_target);
-                    for (uint32_t i = 0; i < get_number_of_party_members(*(uintptr_t*)(enemy_info + 0x8)); i++) {
+                    PlayBattleState(enemy_info, "MagicLock", &battle_state_no_target);
+                    for (uint32_t i = 0; i < GetNumberOfPartyMembers(*(uintptr_t*)(enemy_info + 0x8)); i++) {
                         status = Utils::Random(0, 23);
                         if (status == FEELING_FACELESS) status =+ 1;
 
-                        uintptr_t select_mii = get_party_member_at_index(*(uintptr_t*)(enemy_info + 0x8), i);
-                        if (select_mii && is_party_member_available(select_mii)) {
-                            set_mii_feeling(select_mii, &status, (int16_t*)(*(uintptr_t*)(select_mii + 0x4) + 0x60), 0);
-                            play_battle_state(select_mii, "ErasedBananaEnd", (int16_t*)(*(uintptr_t*)(select_mii + 0x4) + 0x60));
-                            play_battle_state(select_mii, "SkillResurrectHeal", (int16_t*)(*(uintptr_t*)(select_mii + 0x4) + 0x60));
+                        uintptr_t select_mii = GetPartyMemberAtIndex(*(uintptr_t*)(enemy_info + 0x8), i);
+                        if (select_mii && IsPartyMemberAvailable(select_mii)) {
+                            SetMiiFeeling(select_mii, &status, (int16_t*)(*(uintptr_t*)(select_mii + 0x4) + 0x60), 0);
+                            PlayBattleState(select_mii, "ErasedBananaEnd", (int16_t*)(*(uintptr_t*)(select_mii + 0x4) + 0x60));
+                            PlayBattleState(select_mii, "SkillResurrectHeal", (int16_t*)(*(uintptr_t*)(select_mii + 0x4) + 0x60));
                         }
                     }
                     return 1;
                 }
 
                 if ((float)(get_enemy_hp(enemy_info) <= (float)(get_enemy_max_hp(enemy_info) * phase_2_hp_threshold))) {
-                    for (int32_t i = get_number_of_enemies(*(uintptr_t*)(enemy_info + 0x8)); i > -1; i--) {
-                        uintptr_t select_enemy = get_enemy_at_index(*(uintptr_t*)(enemy_info + 0x8), i);
+                    for (int32_t i = GetNumberOfEnemies(*(uintptr_t*)(enemy_info + 0x8)); i > -1; i--) {
+                        uintptr_t select_enemy = GetEnemyAtIndex(*(uintptr_t*)(enemy_info + 0x8), i);
                         uint32_t (*is_enemy_dead)(uintptr_t) = (uint32_t (*)(uintptr_t))(*(uintptr_t*)(*(uintptr_t*)(enemy_info)+0x30));
                         if (select_enemy == enemy_info)
                             continue;
@@ -171,8 +171,8 @@ namespace hacks {
                         if (!is_enemy_dead(select_enemy)) {
                             goto start_wide_attack;
                         }
-                        uint32_t state = 1; // Unsure what this is for, but it's used as an argument for play_state
-                        summon_enemy(enemy_info, &state, select_enemy, 0);
+                        uint32_t state = 1; // Unsure what this is for, but it's used as an argument for PlayState
+                        SummonEnemy(enemy_info, &state, select_enemy, 0);
                     }
                     return 1;
                 }
@@ -198,9 +198,9 @@ start_wide_attack:
         install_hook(get_skill_status_pattern, 0x0, (MITM_MODE), (uint32_t)get_skill_status, 0);
         install_hook(is_not_autoskill_pattern, 0x0, (MITM_MODE), (uint32_t)is_not_autoskill, 0);
 
-        install_hook(calc_damage_pattern, 0x0, (MITM_MODE), (uint32_t)scientist_pre_optimize, 0);
-        install_hook(calc_healing_pattern, 0x0, (MITM_MODE), (uint32_t)scientist_pre_optimize, 0);
-        install_hook(spend_skill_mp_pattern, 0x24, (USE_LR_TO_RETURN), (uint32_t)scientist_optimize, 0);
+        install_hook(CalcDamage_pattern, 0x0, (MITM_MODE), (uint32_t)scientist_pre_optimize, 0);
+        install_hook(CalcHealing_pattern, 0x0, (MITM_MODE), (uint32_t)scientist_pre_optimize, 0);
+        install_hook(SpendSkillMP_pattern, 0x24, (USE_LR_TO_RETURN), (uint32_t)scientist_optimize, 0);
 
         install_hook(enemy_skills_1_pattern, 0x0, (MITM_MODE), (uint32_t)enemy_slot_1_skills, 0);
     }

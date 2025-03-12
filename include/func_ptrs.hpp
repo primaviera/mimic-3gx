@@ -35,40 +35,40 @@ namespace CTRPluginFramework
 FUNC_PTR(sead_HashCRC32_calcHash, uint32_t (*)(const void*, uint32_t));
 FUNC_PTR(calc_rand_percentage, uint32_t (*)(uintptr_t, uint32_t));
 
-FUNC_PTR(get_number_of_party_members, uint32_t (*)(uintptr_t));
-FUNC_PTR(get_party_member_at_index, uintptr_t (*)(uintptr_t, uint32_t));
-FUNC_PTR(get_number_of_enemies, uint32_t (*)(uintptr_t));
-FUNC_PTR(get_enemy_at_index, uintptr_t (*)(uintptr_t, uint32_t));
+FUNC_PTR(GetNumberOfPartyMembers, uint32_t (*)(uintptr_t));
+FUNC_PTR(GetPartyMemberAtIndex, uintptr_t (*)(uintptr_t, uint32_t));
+FUNC_PTR(GetNumberOfEnemies, uint32_t (*)(uintptr_t));
+FUNC_PTR(GetEnemyAtIndex, uintptr_t (*)(uintptr_t, uint32_t));
 
-FUNC_PTR(can_enemy_be_hit, uint32_t (*)(uintptr_t));
-FUNC_PTR(is_party_member_available, uint32_t (*)(uintptr_t));
-FUNC_PTR(get_random_enemy, uintptr_t (*)(uintptr_t, uint32_t*, int32_t, uint32_t));
+FUNC_PTR(CanEnemyBeHit, uint32_t (*)(uintptr_t));
+FUNC_PTR(IsPartyMemberAvailable, uint32_t (*)(uintptr_t));
+FUNC_PTR(GetRandomEnemy, uintptr_t (*)(uintptr_t, uint32_t*, int32_t, uint32_t));
 
-FUNC_PTR(play_state, void (*)(uintptr_t, uintptr_t, uint32_t*, uint32_t*, uint32_t));
-FUNC_PTR(play_battle_state, void (*)(uintptr_t, const char*, int16_t*));
-FUNC_PTR(load_skill_effect, void (*)(uintptr_t, uint32_t*, uint32_t));
-FUNC_PTR(play_skill_effect, void (*)(uintptr_t));
-FUNC_PTR(set_mii_feeling, void (*)(uintptr_t, uint32_t*, int16_t*, uint32_t));
+FUNC_PTR(PlayState, void (*)(uintptr_t, uintptr_t, uint32_t*, uint32_t*, uint32_t));
+FUNC_PTR(PlayBattleState, void (*)(uintptr_t, const char*, int16_t*));
+FUNC_PTR(LoadSkillEffect, void (*)(uintptr_t, uint32_t*, uint32_t));
+FUNC_PTR(PlaySkillEffect, void (*)(uintptr_t));
+FUNC_PTR(SetMiiFeeling, void (*)(uintptr_t, uint32_t*, int16_t*, uint32_t));
 
-FUNC_PTR(has_enough_mp_for_skill, uint32_t (*)(uintptr_t, uint32_t*, uint32_t));
-FUNC_PTR(get_skill_mp_cost, uint32_t (*)(uintptr_t, uint32_t*, uint32_t));
-FUNC_PTR(spend_skill_mp, void (*)(uintptr_t, uint32_t*));
-FUNC_PTR(show_cut_in, void (*)(uintptr_t, uint32_t*));
-FUNC_PTR(setup_skill_help, void (*)(uintptr_t, helping_mii_handle*, uint32_t));
+FUNC_PTR(HasEnoughMPForSkill, uint32_t (*)(uintptr_t, uint32_t*, uint32_t));
+FUNC_PTR(GetSkillMPCost, uint32_t (*)(uintptr_t, uint32_t*, uint32_t));
+FUNC_PTR(SpendSkillMP, void (*)(uintptr_t, uint32_t*));
+FUNC_PTR(ShowCutIn, void (*)(uintptr_t, uint32_t*));
+FUNC_PTR(SetupSkillHelp, void (*)(uintptr_t, helping_mii_handle*, uint32_t));
 
-FUNC_PTR(calc_damage, void (*)(float, uint32_t*, uintptr_t, uint32_t*, uintptr_t, helping_mii_handle*));
-FUNC_PTR(setup_damage_params, void (*)(float, uint32_t*, uintptr_t, uint32_t*));
-FUNC_PTR(damage_enemy, uint32_t (*)(uintptr_t, uintptr_t, uint32_t*, uint32_t));
+FUNC_PTR(CalcDamage, void (*)(float, uint32_t*, uintptr_t, uint32_t*, uintptr_t, helping_mii_handle*));
+FUNC_PTR(SetupDamageParams, void (*)(float, uint32_t*, uintptr_t, uint32_t*));
+FUNC_PTR(DamageEnemy, uint32_t (*)(uintptr_t, uintptr_t, uint32_t*, uint32_t));
 
-FUNC_PTR(calc_healing, void (*)(float, uint32_t*, uintptr_t, uint32_t*, uintptr_t, helping_mii_handle*));
-FUNC_PTR(setup_healing_params, void (*)(float, uint32_t*, uintptr_t, uint32_t*));
-FUNC_PTR(heal_mii_hp, void (*)(uintptr_t, uint32_t*, int16_t*, uint32_t));
-FUNC_PTR(heal_mii_mp, void (*)(uintptr_t, uint32_t*, int16_t*, uint32_t));
+FUNC_PTR(CalcHealing, void (*)(float, uint32_t*, uintptr_t, uint32_t*, uintptr_t, helping_mii_handle*));
+FUNC_PTR(SetupHealingParams, void (*)(float, uint32_t*, uintptr_t, uint32_t*));
+FUNC_PTR(HealMiiHP, void (*)(uintptr_t, uint32_t*, int16_t*, uint32_t));
+FUNC_PTR(HealMiiMP, void (*)(uintptr_t, uint32_t*, int16_t*, uint32_t));
 
-FUNC_PTR(play_heart_like_effect, void (*)(uintptr_t, uint32_t));
-FUNC_PTR(update_love_exp, void (*)(uintptr_t, uintptr_t, int32_t, uint32_t));
+FUNC_PTR(PlayHeartLikeEffect, void (*)(uintptr_t, uint32_t));
+FUNC_PTR(UpdateLoveExp, void (*)(uintptr_t, uintptr_t, int32_t, uint32_t));
 
-FUNC_PTR(summon_enemy, uint32_t (*)(uintptr_t, uint32_t*, uintptr_t, uint32_t));
-FUNC_PTR(enemy_flee, void (*)(uintptr_t));
+FUNC_PTR(SummonEnemy, uint32_t (*)(uintptr_t, uint32_t*, uintptr_t, uint32_t));
+FUNC_PTR(MakeEnemyFlee, void (*)(uintptr_t));
 
 } // namespace CTRPluginFramework
