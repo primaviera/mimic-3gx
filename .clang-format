@@ -1,16 +1,3 @@
----
-BasedOnStyle: LLVM
-IndentWidth: 4
----
-Language: Cpp
-PointerAlignment: Left
-AlignTrailingComments:
-  Kind: Never
-AllowShortIfStatementsOnASingleLine: WithoutElse
-AllowShortFunctionsOnASingleLine: None
-NamespaceIndentation: None
-FixNamespaceComments: true
-BreakBeforeBraces: Linux
-UseTab: Never
-BreakArrays: true
-ColumnLimit: 0
+BasedOnStyle: WebKit
+QualifierAlignment: Left
+Standard: c++03

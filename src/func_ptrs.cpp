@@ -1,10 +1,9 @@
 #include "func_ptrs.hpp"
 
-namespace CTRPluginFramework
-{
+namespace CTRPluginFramework {
 
 SETUP_FUNC_PTR(sead_HashCRC32_calcHash, 0x0);
-SETUP_FUNC_PTR(calc_rand_percentage, 0x0);
+SETUP_FUNC_PTR(CalcRandPercentage, 0x0);
 
 SETUP_FUNC_PTR(GetNumberOfPartyMembers, 0x0);
 SETUP_FUNC_PTR(GetPartyMemberAtIndex, 0x0);

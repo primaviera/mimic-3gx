@@ -8,54 +8,52 @@
 
 #include "config_toml.h"
 
-namespace CTRPluginFramework
-{
+namespace CTRPluginFramework {
 
-namespace config
-{
+namespace config {
 
-st_randomizer randomizer;
-st_skills skills;
-st_controllable controllable;
+    st_randomizer randomizer;
+    st_skills skills;
+    st_controllable controllable;
 
-void load(const toml::table& table)
-{
-    randomizer.active = table["randomizer"]["active"].value_or(false);
+    void load(const toml::table& table)
+    {
+        randomizer.active = table["randomizer"]["active"].value_or(false);
 
-    skills.active = table["skills"]["active"].value_or(false);
+        skills.active = table["skills"]["active"].value_or(false);
 
-    controllable.active = table["controllable"]["active"].value_or(false);
-}
-
-int init(const std::string& path)
-{
-    File config_file;
-    void* config_buffer;
-    uint32_t config_size;
-
-    if (!File::Open(config_file, path, File::READ)) {
-        config_size = config_file.GetSize();
-        config_buffer = malloc(config_size);
-        config_file.Read(config_buffer, config_size);
-    } else {
-        config_size = config_toml_size;
-        config_buffer = malloc(config_size);
-        memcpy(config_buffer, config_toml, config_size);
-    }
-    ((char*)config_buffer)[config_size - 1] = '\0'; // This is terrible
-
-    toml::parse_result res = toml::parse((const char*)config_buffer);
-    free(config_buffer);
-    if (!res) {
-        logger::write(res.error().description().data());
-        logger::write("\n");
-        return 1;
+        controllable.active = table["controllable"]["active"].value_or(false);
     }
 
-    load(res.table());
+    int init(const std::string& path)
+    {
+        File config_file;
+        void* config_buffer;
+        uint32_t config_size;
 
-    return 0;
-}
+        if (!File::Open(config_file, path, File::READ)) {
+            config_size = config_file.GetSize();
+            config_buffer = malloc(config_size);
+            config_file.Read(config_buffer, config_size);
+        } else {
+            config_size = config_toml_size;
+            config_buffer = malloc(config_size);
+            memcpy(config_buffer, config_toml, config_size);
+        }
+        ((char*)config_buffer)[config_size - 1] = '\0'; // This is terrible
+
+        toml::parse_result res = toml::parse((const char*)config_buffer);
+        free(config_buffer);
+        if (!res) {
+            logger::write(res.error().description().data());
+            logger::write("\n");
+            return 1;
+        }
+
+        load(res.table());
+
+        return 0;
+    }
 
 } // namespace config
 

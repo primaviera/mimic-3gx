@@ -7,8 +7,7 @@
 
 #include "mimic_types.hpp"
 
-namespace CTRPluginFramework
-{
+namespace CTRPluginFramework {
 
 // https://github.com/shadowninja108/s2-freecam
 
@@ -19,21 +18,19 @@ namespace CTRPluginFramework
 
 #define _FUNC_TYPE(name) APPEND(_FUNC_PREFIX(name), _t)
 
-#define FUNC_PTR(name, ...)               \
-    namespace mimic                       \
-    {                                     \
-    using APPEND(name, _t) = __VA_ARGS__; \
-    }                                     \
+#define FUNC_PTR(name, ...)                   \
+    namespace mimic {                         \
+        using APPEND(name, _t) = __VA_ARGS__; \
+    }                                         \
     extern "C" _FUNC_TYPE(name) name
 
 // Hardcoded pattern name for now
 #define SETUP_FUNC_PTR(name, offset) \
     _FUNC_TYPE(name)                 \
-    name = (_FUNC_TYPE(name))(       \
-        Utils::Search(0x00100000, 0x00709000, name##_pattern) + offset);
+    name = (_FUNC_TYPE(name))(Utils::Search(0x00100000, 0x00709000, name##_pattern) + offset);
 
 FUNC_PTR(sead_HashCRC32_calcHash, uint32_t (*)(const void*, uint32_t));
-FUNC_PTR(calc_rand_percentage, uint32_t (*)(uintptr_t, uint32_t));
+FUNC_PTR(CalcRandPercentage, uint32_t (*)(uintptr_t, uint32_t));
 
 FUNC_PTR(GetNumberOfPartyMembers, uint32_t (*)(uintptr_t));
 FUNC_PTR(GetPartyMemberAtIndex, uintptr_t (*)(uintptr_t, uint32_t));

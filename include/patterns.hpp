@@ -1,9 +1,8 @@
 #pragma once
 
-#define PATTERN(name, ...) inline const std::vector<uint32_t> name = {__VA_ARGS__};
+#define PATTERN(name, ...) inline const std::vector<uint32_t> name = { __VA_ARGS__ };
 
-namespace CTRPluginFramework
-{
+namespace CTRPluginFramework {
 
 /* hacks/randomizer.cpp */
 PATTERN(battle_bgm_pattern, 0xE596317C, 0xE1A01000, 0xE3A02001, 0xE1A00003); // 0x006B85A8 (-0x4) - US
@@ -13,7 +12,7 @@ PATTERN(battle_intro_pattern, 0xE92D4070, 0xE3510000, 0xE1A05002, 0xED2D8B02); /
 
 PATTERN(stage_bgm_pattern, 0xE1B05000, 0x0A000063, 0xE59F8198, 0xE5D80000); // 0x00342864 (-0x4) - US
 PATTERN(stage_bg_pattern, 0xDA000004, 0xE5900050, 0xE5900000, 0xE3500000,
-        0x12800018, 0x1A000000, 0xE3A00000, 0xE12FFF1E); // 0x0072AEB4 (+0x1C) - US
+    0x12800018, 0x1A000000, 0xE3A00000, 0xE12FFF1E); // 0x0072AEB4 (+0x1C) - US
 
 PATTERN(title_bgm_pattern, 0xE59DA04C, 0xE1A0B000, 0xE1A0800A, 0xE59D1048); // 0x00699A9C (-0x4 & +0x18) - US
 PATTERN(title_bg_pattern, 0xE5D0001D, 0xE1A0A000, 0xE5980000, 0xE2800020); // 0x00699A04 (0x0) - US
@@ -48,7 +47,7 @@ PATTERN(autobattle_availability_pattern, 0xE5D60060, 0xE58D6044, 0xE5C5019C, 0xE
 
 /* Function pointers */
 PATTERN(sead_HashCRC32_calcHash_pattern, 0xE92D00F0, 0xE59F60C8, 0xE5D62000, 0xE3520000); // 0x00104FE0 - US
-PATTERN(calc_rand_percentage_pattern, 0xE5900008, 0xE1A00000, 0xE92D4070, 0xE2800B01); // 0x0043C2EC - US
+PATTERN(CalcRandPercentage_pattern, 0xE5900008, 0xE1A00000, 0xE92D4070, 0xE2800B01); // 0x0043C2EC - US
 
 PATTERN(GetNumberOfPartyMembers_pattern, 0xE2800C05, 0xE1D00CB8, 0xE3500004, 0x83A00004, 0xE12FFF1E); // 0x0070B0CC - US
 PATTERN(GetPartyMemberAtIndex_pattern, 0xE59F202C, 0xE19220B0, 0xE3520004, 0x83A02004); // 0x0043C868 - US

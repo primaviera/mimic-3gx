@@ -1,18 +1,16 @@
 #pragma once
 
-namespace CTRPluginFramework
-{
+namespace CTRPluginFramework {
 
-namespace logger
-{
+namespace logger {
 
-void clear();
+    void clear();
 
-void write(std::string fmt);
+    void write(std::string fmt);
 
-int init(const std::string& dir);
+    int init(const std::string& dir);
 
-void deinit();
+    void deinit();
 
 } // namespace logger
 

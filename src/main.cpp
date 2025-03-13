@@ -5,8 +5,7 @@
 #include "hacks/hacks.hpp"
 #include "logger.hpp"
 
-namespace CTRPluginFramework
-{
+namespace CTRPluginFramework {
 
 void PatchProcess(FwkSettings& settings)
 {
