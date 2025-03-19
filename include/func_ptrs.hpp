@@ -22,7 +22,7 @@ namespace CTRPluginFramework {
     namespace mimic {                         \
         using APPEND(name, _t) = __VA_ARGS__; \
     }                                         \
-    extern "C" _FUNC_TYPE(name) name
+    extern _FUNC_TYPE(name) name
 
 // Hardcoded pattern name for now
 #define SETUP_FUNC_PTR(name, offset) \
@@ -41,8 +41,8 @@ FUNC_PTR(CanEnemyBeHit, uint32_t (*)(uintptr_t));
 FUNC_PTR(IsPartyMemberAvailable, uint32_t (*)(uintptr_t));
 FUNC_PTR(GetRandomEnemy, uintptr_t (*)(uintptr_t, uint32_t*, int32_t, uint32_t));
 
-FUNC_PTR(PlayState, void (*)(uintptr_t, uintptr_t, uint32_t*, uint32_t*, uint32_t));
-FUNC_PTR(PlayBattleState, void (*)(uintptr_t, const char*, int16_t*));
+FUNC_PTR(PlayBattleState, void (*)(uintptr_t, uintptr_t, uint32_t*, uint32_t*, uint32_t));
+FUNC_PTR(_PlayBattleState, void (*)(uintptr_t, const char*, int16_t*));
 FUNC_PTR(LoadSkillEffect, void (*)(uintptr_t, uint32_t*, uint32_t));
 FUNC_PTR(PlaySkillEffect, void (*)(uintptr_t));
 FUNC_PTR(SetMiiFeeling, void (*)(uintptr_t, uint32_t*, int16_t*, uint32_t));

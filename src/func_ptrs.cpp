@@ -14,8 +14,8 @@ SETUP_FUNC_PTR(CanEnemyBeHit, 0x0);
 SETUP_FUNC_PTR(IsPartyMemberAvailable, 0x0);
 SETUP_FUNC_PTR(GetRandomEnemy, 0x0);
 
-SETUP_FUNC_PTR(PlayState, -0x10);
-SETUP_FUNC_PTR(PlayBattleState, 0x0);
+SETUP_FUNC_PTR(PlayBattleState, -0x10);
+SETUP_FUNC_PTR(_PlayBattleState, 0x0);
 SETUP_FUNC_PTR(LoadSkillEffect, 0x0);
 SETUP_FUNC_PTR(PlaySkillEffect, 0x0);
 SETUP_FUNC_PTR(SetMiiFeeling, 0x0);

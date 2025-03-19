@@ -144,7 +144,7 @@ namespace hacks {
                 if (!*(uint8_t*)(enemy_info + 0x60) && (float)(get_enemy_hp(enemy_info) <= (float)(get_enemy_max_hp(enemy_info) * phase_3_hp_threshold))) {
                     *(uint8_t*)(enemy_info + 0x60) = 5; // Block enemy from using this move for 5 more attacks
 
-                    PlayBattleState(enemy_info, "MagicLock", &battle_state_no_target);
+                    _PlayBattleState(enemy_info, "MagicLock", &battle_state_no_target);
                     for (uint32_t i = 0; i < GetNumberOfPartyMembers(*(uintptr_t*)(enemy_info + 0x8)); i++) {
                         status = Utils::Random(0, 23);
                         if (status == FEELING_FACELESS) status =+ 1;
@@ -152,8 +152,8 @@ namespace hacks {
                         uintptr_t select_mii = GetPartyMemberAtIndex(*(uintptr_t*)(enemy_info + 0x8), i);
                         if (select_mii && IsPartyMemberAvailable(select_mii)) {
                             SetMiiFeeling(select_mii, &status, (int16_t*)(*(uintptr_t*)(select_mii + 0x4) + 0x60), 0);
-                            PlayBattleState(select_mii, "ErasedBananaEnd", (int16_t*)(*(uintptr_t*)(select_mii + 0x4) + 0x60));
-                            PlayBattleState(select_mii, "SkillResurrectHeal", (int16_t*)(*(uintptr_t*)(select_mii + 0x4) + 0x60));
+                            _PlayBattleState(select_mii, "ErasedBananaEnd", (int16_t*)(*(uintptr_t*)(select_mii + 0x4) + 0x60));
+                            _PlayBattleState(select_mii, "SkillResurrectHeal", (int16_t*)(*(uintptr_t*)(select_mii + 0x4) + 0x60));
                         }
                     }
                     return 1;
@@ -171,7 +171,7 @@ namespace hacks {
                         if (!is_enemy_dead(select_enemy)) {
                             goto start_wide_attack;
                         }
-                        uint32_t state = 1; // Unsure what this is for, but it's used as an argument for PlayState
+                        uint32_t state = 1; // Unsure what this is for, but it's used as an argument for PlayBattleState
                         SummonEnemy(enemy_info, &state, select_enemy, 0);
                     }
                     return 1;

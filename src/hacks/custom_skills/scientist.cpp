@@ -23,6 +23,15 @@ namespace hacks {
         if (Utils::Random(0, 5) || GetSkillMPCost(mii_info, skill_index, 0) == 0)
             return;
 
+        // Check if mii_info is a party member (excluding travelers)
+        for (uint32_t i = 0; i < GetNumberOfPartyMembers(*(uintptr_t*)(mii_info + 0x8)); i++) {
+            uintptr_t select_mii = GetPartyMemberAtIndex(*(uintptr_t*)(mii_info + 0x8), i);
+            if (mii_info == select_mii)
+                goto check_scientist;
+        }
+        return;
+
+check_scientist:
         uint32_t optimize_skill = SKILL_SCIENTIST_09;
         for (uint32_t i = 0; i < GetNumberOfPartyMembers(*(uintptr_t*)(mii_info + 0x8)); i++) {
             uintptr_t select_mii = GetPartyMemberAtIndex(*(uintptr_t*)(mii_info + 0x8), i);
@@ -31,14 +40,14 @@ namespace hacks {
                 LoadSkillEffect(select_mii, &cure_code_skill, 1); // Use Cure.exe effect
                 PlaySkillEffect(select_mii);
 
-                PlayBattleState(select_mii, "SkillCureCodeStart", &battle_state_no_target);
+                _PlayBattleState(select_mii, "SkillCureCodeStart", &battle_state_no_target);
                 ShowCutIn(select_mii, &optimize_skill);
                 SpendSkillMP(select_mii, &optimize_skill);
 
                 // Here the scientist says "Cure.exe" instead of the actual skill name
                 // Don't know how to fix that
-                PlayBattleState(select_mii, "SkillCureCode", (int16_t*)(*(uintptr_t*)(mii_info + 0x4) + 0x60));
-                PlayBattleState(mii_info, "AvoidFeelCutInReady", &battle_state_no_target);
+                _PlayBattleState(select_mii, "SkillCureCode", (int16_t*)(*(uintptr_t*)(mii_info + 0x4) + 0x60));
+                _PlayBattleState(mii_info, "AvoidFeelCutInReady", &battle_state_no_target);
                 PlayHeartLikeEffect(mii_info, 0x14);
                 UpdateLoveExp(mii_info, select_mii, 5, 0);
 

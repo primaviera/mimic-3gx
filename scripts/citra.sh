@@ -2,9 +2,10 @@
 set -x
 
 TITLE_ID="$1"
+CITRA_PATH="$2"
 [ "$1" ] || TITLE_ID="00040000001B4E00"
+[ "$2" ] || CITRA_PATH="$HOME/.local/share/citra-emu"
 
-CITRA_PATH="$HOME/.local/share/citra-emu"
 ROMFS_PATH="$CITRA_PATH/load/mods/$TITLE_ID/"
 PLUGIN_PATH="$CITRA_PATH/sdmc/luma/plugins/$TITLE_ID/"
 CONFIG_PATH="$CITRA_PATH/sdmc/config/mimic-3gx/"
