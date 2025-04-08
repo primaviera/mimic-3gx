@@ -20,26 +20,22 @@ namespace hacks {
     extern "C" uint32_t stage_bgm;
     extern "C" int get_rand_int(int min, int max)
     {
+        // TODO: Use sead::Random::getU32
         return Utils::Random(min, max);
     }
 
     /* Randomize battle BGM */
     const char* randomize_battle_bgm()
     {
-        return bgm_array[Utils::Random(0, 79)];
+        return bgm_array[get_rand_int(0, 78)];
     }
 
-    /*
-     * Randomize Darker Lord second phase BGM
-     * (A lot of functions here had to be
-     * written in assembly because GCC kept
-     * overwriting registers that the game needs)
-     */
+    /* Randomize Darker Lord BGM (Second Phase) */
     void NAKED randomize_trans_bgm()
     {
         asm("push {r0, r2, lr} \n"
             "mov r0, #0 \n"
-            "mov r1, #79 \n"
+            "mov r1, #78 \n"
             "bl get_rand_int \n"
             "ldr r2, =bgm_array \n"
             "ldr r1, [r2, r0, lsl #2] \n"
@@ -59,24 +55,19 @@ namespace hacks {
             "pop {r0-r2, pc}");
     }
 
-    /*
-     * Randomize battle intro jingle
-     * 0 - Regular
-     * 1 - Snurp
-     * 2 - Boss
-     */
+    /* Randomize battle intro jingle */
     void randomize_battle_intro(uintptr_t r0, uintptr_t r1, int* index)
     {
         *index = Utils::Random(0, 2);
         HookContext::GetCurrent().OriginalFunction<void>(r0, r1, index);
     }
 
-    uint32_t stage_bgm = 0;
     /*
      * Randomize stage BGM
      * The BGM is only randomized at the start
      * of a level (when r7 is 0)
      */
+    uint32_t stage_bgm = 0;
     void NAKED randomize_stage_bgm()
     {
         asm("push {r4, lr} \n"
@@ -84,7 +75,7 @@ namespace hacks {
             "ldr r0, [r4] \n"
             "cmp r7, #0 \n"
             "moveq r0, #0 \n"
-            "moveq r1, #79 \n"
+            "moveq r1, #78 \n"
             "bleq get_rand_int \n"
             "str r0, [r4] \n"
             "ldr r1, =bgm_array \n"
@@ -92,25 +83,21 @@ namespace hacks {
             "pop {r4, pc}");
     }
 
-    /*
-     * Randomize stage BG
-     * Crashes right now
-     */
+    /* Randomize stage BG */
     uintptr_t randomize_stage_bg(uintptr_t r0)
     {
+        // This currently crashes
         if (!r0)
             return r0;
-        *(char**)(r0 + 0xC) = (char*)"BG/MapS/MapSCave00";
+        *(char**)(r0 + 0xC) = (char*)"BG/MapS/MapSCave00"; // For testing purposes
         return r0;
     }
 
-    /*
-     * Randomize title BGM
-     * I'm not exactly sure what these IDs are
-     * but New Lumos seems to be the max (27)
-     */
+    /* Randomize title BGM */
     void NAKED randomize_title_bgm()
     {
+        // Not sure what all of the IDs mean
+        // New Lumos is 27, probably the max
         asm("push {r0, r2, lr} \n"
             "mov r0, #0 \n"
             "mov r1, #27 \n"
@@ -137,7 +124,7 @@ namespace hacks {
     {
         asm("push {r1-r2, lr} \n"
             "mov r0, #0 \n"
-            "mov r1, #79 \n"
+            "mov r1, #78 \n"
             "bl get_rand_int \n"
             "ldr r1, =bgm_array \n"
             "ldr r0, [r1, r0, lsl #2] \n"
@@ -149,7 +136,7 @@ namespace hacks {
     {
         asm("push {r1-r2, lr} \n"
             "mov r0, #0 \n"
-            "mov r1, #79 \n"
+            "mov r1, #78 \n"
             "bl get_rand_int \n"
             "ldr r1, =bgm_array \n"
             "ldr r0, [r1, r0, lsl #2] \n"
@@ -165,6 +152,7 @@ namespace hacks {
     {
         logger::clear();
         logger::write("[ RANDOMIZED ENEMIES ]\n");
+
         int max_num = Utils::Random(1, 4);
         for (int i = 0; i < 8; i++) {
             uintptr_t enemy_data = (uintptr_t)(r0 + i * 4);
@@ -173,20 +161,15 @@ namespace hacks {
                 continue;
             }
             uint32_t rand = Utils::Random(0, 298);
-            logger::write(Utils::Format("%d", rand));
             const char* enemy_name = enemy_array[rand];
-            logger::write(Utils::Format(" (%s)\n", enemy_name));
             *(uint32_t*)(enemy_data + 0x74) = sead_HashCRC32_calcHash(enemy_name, strlen(enemy_name));
+
+            logger::write(Utils::Format("%s (%d)\n", enemy_name, rand));
         }
         return r0;
     }
 
-    /*
-     * Handle enemy stats
-     * I eventually want to try balancing
-     * enemy stats based on the party's
-     * average level
-     */
+    /* Handle enemy stats */
     enemy_param* handle_enemy_stats(enemy_param* enemy)
     {
         if (!(uintptr_t)enemy)
@@ -201,10 +184,7 @@ namespace hacks {
         return enemy;
     }
 
-    /*
-     * Randomize enemy slot 1 moves
-     * Used for physical attacks
-     */
+    /* Randomize enemy slot 1 moves */
     void NAKED randomize_enemy_skills_1()
     {
         asm("push {r0, lr} \n"
@@ -215,10 +195,7 @@ namespace hacks {
             "pop {r0, pc}");
     }
 
-    /*
-     * Randomize enemy slot 2 moves
-     * Used for status-inflicting moves
-     */
+    /* Randomize enemy slot 2 moves */
     void NAKED randomize_enemy_skills_2()
     {
         asm("push {r1, lr} \n"
@@ -228,10 +205,7 @@ namespace hacks {
             "pop {r1, pc}");
     }
 
-    /*
-     * Randomize enemy slot 3 moves
-     * Used for magic attacks
-     */
+    /* Randomize enemy slot 3 moves */
     void NAKED randomize_enemy_skills_3()
     {
         asm("push {r0, lr} \n"
@@ -242,10 +216,7 @@ namespace hacks {
             "pop {r0, pc}");
     }
 
-    /*
-     * Randomize enemy slot 4 moves
-     * Not sure what this is for
-     */
+    /* Randomize enemy slot 4 moves */
     void NAKED randomize_enemy_skills_4()
     {
         asm("push {r1-r2, lr} \n"
@@ -259,7 +230,7 @@ namespace hacks {
     {
         if (!config::randomizer.active) return;
 
-        // Works
+        /* Finished */
         install_hook(battle_bgm_pattern, -0x4, (WRAP_SUB), 0, (uint32_t)randomize_battle_bgm);
         install_hook(trans_bgm_pattern, 0x10, (WRAP_SUB), (uint32_t)randomize_trans_bgm, 0);
         install_hook(battle_bg_pattern, 0xC, (USE_LR_TO_RETURN | EXECUTE_OI_BEFORE_CB), (uint32_t)randomize_battle_bg, 0);
@@ -277,11 +248,11 @@ namespace hacks {
         install_hook(enemy_skills_3_pattern, 0x10, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)randomize_enemy_skills_3, 0);
         install_hook(enemy_skills_4_pattern, 0xC, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)randomize_enemy_skills_4, 0);
 
-        // WiP
+        /* WiP */
         install_hook(enemy_pattern, 0x10, (WRAP_SUB), 0, (uint32_t)randomize_enemy);
         install_hook(enemy_stats_pattern, 0x38, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)handle_enemy_stats, 0);
 
-        // Haven't started yet
+        /* For later */
         // install_hook(map_bg_pattern, 0x1C, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)randomize_map_bg, 0);
         // install_hook(grub_stats_pattern, 0xC, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)randomize_grub_stats, 0);
     }

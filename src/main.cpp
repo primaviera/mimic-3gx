@@ -19,9 +19,9 @@ void PatchProcess(FwkSettings& settings)
 int main(void)
 {
     if (logger::init(Utils::Format("/luma/plugins/%016llX/logs/", Process::GetTitleID())))
-        return 1;
+        goto deinit;
     if (config::init("/config/mimic-3gx/config.toml"))
-        return 1;
+        goto deinit;
 
     logger::write(Utils::Format("Hello World!\nPlugin was built at %s %s\n\n", __DATE__, __TIME__));
 
@@ -29,6 +29,7 @@ int main(void)
 
     Process::WaitForExit();
 
+deinit:
     logger::deinit();
 
     return 0;
