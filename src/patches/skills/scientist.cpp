@@ -22,7 +22,7 @@ namespace patches {
         if (Utils::Random(0, 5) || GetSkillMPCost(mii_info, skill_index, 0) == 0)
             return;
 
-        // Check if mii_info is a party member (excluding travelers)
+        /* Check if MiiInfo is not a traveler. */
         for (uint32_t i = 0; i < GetNumberOfPartyMembers(*(uintptr_t*)(mii_info + 0x8)); i++) {
             uintptr_t select_mii = GetPartyMemberAtIndex(*(uintptr_t*)(mii_info + 0x8), i);
             if (mii_info == select_mii)
@@ -36,15 +36,15 @@ check_scientist:
             uintptr_t select_mii = GetPartyMemberAtIndex(*(uintptr_t*)(mii_info + 0x8), i);
             if (!is_optimize_active && select_mii && select_mii != mii_info && HasEnoughMPForSkill(select_mii, &optimize_skill, 0)) {
                 uint32_t cure_code_skill = SKILL_SCIENTIST_CURE_CODE;
-                LoadSkillEffect(select_mii, &cure_code_skill, 1); // Use Cure.exe effect
+                /* Use Cure.exe effects. */
+                LoadSkillEffect(select_mii, &cure_code_skill, 1);
                 PlaySkillEffect(select_mii);
 
                 _PlayBattleState(select_mii, "SkillCureCodeStart", &gInvalidTarget);
                 ShowCutIn(select_mii, &optimize_skill);
                 SpendSkillMP(select_mii, &optimize_skill);
 
-                // Here the scientist says "Cure.exe" instead of the actual skill name
-                // Don't know how to fix that
+                /* BUG: The scientist says "Cure.exe!" instead of the actual skill name, this probably happens due to LoadSkillEffect but I don't really know how to fix this. */
                 _PlayBattleState(select_mii, "SkillCureCode", (int16_t*)(*(uintptr_t*)(mii_info + 0x4) + 0x60));
                 _PlayBattleState(mii_info, "AvoidFeelCutInReady", &gInvalidTarget);
                 PlayHeartLikeEffect(mii_info, 0x14);
@@ -66,6 +66,6 @@ check_scientist:
         return cost;
     }
 
-} // namespace hacks
+} // namespace patches
 
 } // namespace CTRPluginFramework

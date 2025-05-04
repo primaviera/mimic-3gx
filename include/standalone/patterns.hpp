@@ -4,7 +4,7 @@
 
 namespace CTRPluginFramework {
 
-/* hacks/randomizer.cpp */
+/* Patterns for patches/randomizer.cpp. */
 PATTERN(battleBgm_pattern, 0xE596317C, 0xE1A01000, 0xE3A02001, 0xE1A00003); // 0x006B85A8 (-0x4) - US
 PATTERN(transBgm_pattern, 0xE8BD87F0, 0xE5940064, 0xE3A02001, 0xE28F1060); // 0x004B95A0 (+0x10) - US
 PATTERN(battleBg_pattern, 0xE3A08000, 0xE320F000, 0xEF000028, 0xE28D9FD6); // 0x0042AA9C (+0xC) - US
@@ -28,7 +28,7 @@ PATTERN(enemySkills2_pattern, 0xE5D10015, 0xE5D17017, 0xE3500019, 0x379FF100); /
 PATTERN(enemySkills3_pattern, 0xE3A0201C, 0xE0822108, 0xE0800002, 0xED908A00); // 0x0040AA0C (+0x10) - US
 PATTERN(enemySkills4_pattern, 0xED9F8ABF, 0xE5902000, 0xE5D2000F, 0xE350000D); // 0x0040C8D8 (+0xC) - US
 
-/* hacks/skills.cpp */
+/* Patterns for patches/skills.cpp. */
 PATTERN(enemyTargettingSkills_pattern, 0xE92D41F0, 0xE24DD0F8, 0xE1A08000, 0xE5910000); // 0x003A6F7C (0x0) - US
 PATTERN(allyTargettingSkills_pattern, 0xE92D41F0, 0xE24DD098, 0xE1A07000, 0xE5910000); // 0x003A0598 (0x0) - US
 PATTERN(doesSkillTargetEnemy_pattern, 0xE5910000, 0xE350004F, 0x0A00003C, 0xCA00001F); // 0x006FDC98 (0x0) - US
@@ -38,7 +38,7 @@ PATTERN(canSkillSelectAlly_pattern, 0xE92D4070, 0xE1A05000, 0xE5910000, 0xE24DD0
 PATTERN(getSkillStatus_pattern, 0xE92D43F0, 0xE1A05000, 0xE24DD00C, 0xE1A06002); // 0x006FBAD4 (0x0) - US
 PATTERN(isNotAutoSkill_pattern, 0xE5910000, 0xE3500072, 0x0A000019, 0xCA00000D); // 0x006FCC7C (0x0) - US
 
-/* Function pointers */
+/* Patterns for function pointers. */
 PATTERN(sead_HashCRC32_calcHash_pattern, 0xE92D00F0, 0xE59F60C8, 0xE5D62000, 0xE3520000); // 0x00104FE0 - US
 PATTERN(sead_Random_getU32_pattern, 0xE52D4004, 0xE8901002, 0xE590200C, 0xE5903008); // 0x002478E4 - US
 PATTERN(CalcRandPercentage_pattern, 0xE5900008, 0xE1A00000, 0xE92D4070, 0xE2800B01); // 0x0043C2EC - US

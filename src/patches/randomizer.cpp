@@ -23,7 +23,7 @@ namespace patches {
 
         int GetRandU32(int min, int max)
         {
-            // TODO: Use sead::Random::getU32
+            /* TODO: Use sead::Random::getU32. */
             return Utils::Random(min, max);
         }
     }
@@ -31,7 +31,7 @@ namespace patches {
     /* Randomize battle BGM. */
     const char* RandomizeBattleBgm()
     {
-        return bgmArray[GetRandU32(0, 78)];
+        return bgmArray[GetRandU32(0, 74)];
     }
 
     /* Randomize Darker Lord Second Phase BGM. */
@@ -39,7 +39,7 @@ namespace patches {
     {
         asm("push {r0, r2, lr} \n"
             "mov r0, #0 \n"
-            "mov r1, #78 \n"
+            "mov r1, #74 \n"
             "bl GetRandU32 \n"
             "ldr r2, =bgmArray \n"
             "ldr r1, [r2, r0, lsl #2] \n"
@@ -62,7 +62,7 @@ namespace patches {
     /* Randomize battle intro jingle. */
     void RandomizeBattleIntro(uintptr_t r0, uintptr_t r1, int* index)
     {
-        *index = Utils::Random(0, 2);
+        *index = GetRandU32(0, 2);
         HookContext::GetCurrent().OriginalFunction<void>(r0, r1, index);
     }
 
@@ -76,7 +76,7 @@ namespace patches {
             "ldr r0, [r4] \n"
             "cmp r7, #0 \n"
             "moveq r0, #0 \n"
-            "moveq r1, #78 \n"
+            "moveq r1, #74 \n"
             "bleq GetRandU32 \n"
             "str r0, [r4] \n"
             "ldr r1, =bgmArray \n"
@@ -87,9 +87,10 @@ namespace patches {
     /* Randomize stage background. */
     uintptr_t randomize_stage_bg(uintptr_t r0)
     {
-        /* This currently crashes. */
+        /* BUG: This currently crashes. */
         if (!r0)
             return r0;
+
         /* For testing purposes. */
         *(char**)(r0 + 0xC) = (char*)"BG/MapS/MapSCave00";
         return r0;
@@ -124,7 +125,7 @@ namespace patches {
     {
         asm("push {r1-r2, lr} \n"
             "mov r0, #0 \n"
-            "mov r1, #78 \n"
+            "mov r1, #74 \n"
             "bl GetRandU32 \n"
             "ldr r1, =bgmArray \n"
             "ldr r0, [r1, r0, lsl #2] \n"
@@ -136,7 +137,7 @@ namespace patches {
     {
         asm("push {r1-r2, lr} \n"
             "mov r0, #0 \n"
-            "mov r1, #78 \n"
+            "mov r1, #74 \n"
             "bl GetRandU32 \n"
             "ldr r1, =bgmArray \n"
             "ldr r0, [r1, r0, lsl #2] \n"
@@ -150,14 +151,14 @@ namespace patches {
         logger::Clear();
         logger::Write("[ RANDOMIZED ENEMIES ]\n");
 
-        int MaxNum = Utils::Random(1, 4);
+        int maxNum = GetRandU32(1, 4);
         for (int i = 0; i < 8; i++) {
             uintptr_t enemyData = (uintptr_t)(r0 + i * 4);
-            if (i >= MaxNum) {
+            if (i >= maxNum) {
                 *(uint32_t*)(enemyData + 0x74) = 0;
                 continue;
             }
-            uint32_t randomId = Utils::Random(0, 298);
+            uint32_t randomId = GetRandU32(0, 298);
             const char* enemyName = enemyArray[randomId];
             *(uint32_t*)(enemyData + 0x74) = sead_HashCRC32_calcHash(enemyName, strlen(enemyName));
 
@@ -167,21 +168,21 @@ namespace patches {
     }
 
     /* Edit enemy stats in battle. */
-    EnemyParam* HandleEnemyStats(EnemyParam* enemy)
+    EnemyParam* HandleEnemyStats(EnemyParam* enemyParam)
     {
-        if (!(uintptr_t)enemy)
-            return enemy;
+        if (!(uintptr_t)enemyParam)
+            return enemyParam;
 
         /* For testing purposes. */
-        enemy->mEnemyStatus->mHp = 1;
-        enemy->mEnemyStatus->mMp = 0;
-        enemy->mEnemyStatus->mAtk = 0;
-        enemy->mEnemyStatus->mDef = 0;
-        enemy->mEnemyStatus->mMag = 0;
-        enemy->mEnemyStatus->mSpd = 0;
-        enemy->mEnemyStatus->mGold = 0x7FFF;
-        enemy->mEnemyStatus->mExp = 0x7FFF;
-        return enemy;
+        enemyParam->mEnemyStatus->mHp = 1;
+        enemyParam->mEnemyStatus->mMp = 0;
+        enemyParam->mEnemyStatus->mAtk = 0;
+        enemyParam->mEnemyStatus->mDef = 0;
+        enemyParam->mEnemyStatus->mMag = 0;
+        enemyParam->mEnemyStatus->mSpd = 0;
+        enemyParam->mEnemyStatus->mGold = 0x7FFF;
+        enemyParam->mEnemyStatus->mExp = 0x7FFF;
+        return enemyParam;
     }
 
     /* Randomize enemy slot 1 moves. */
@@ -247,7 +248,7 @@ namespace patches {
         InstallHookAtPattern(enemySkills3_pattern, 0x10, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)RandomizeEnemySkills3, 0);
         InstallHookAtPattern(enemySkills4_pattern, 0xC, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)RandomizeEnemySkills4, 0);
 
-        InstallHookAtPattern(enemyData_pattern, 0x10, (WRAP_SUB), 0, (uint32_t)RandomizeEnemy);
+        //InstallHookAtPattern(enemyData_pattern, 0x10, (WRAP_SUB), 0, (uint32_t)RandomizeEnemy);
         InstallHookAtPattern(enemyParam_pattern, 0x38, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)HandleEnemyStats, 0);
     }
 
@@ -307,18 +308,13 @@ namespace patches {
         "BGM_MAP_STAGE_GENERAL_PSYCHE_00",
         "BGM_MAP_STAGE_GENERAL_SEA_00",
         "BGM_MAP_STAGE_GENERAL_SUBSPACE_00",
-        "BGM_MAP_STAGE_GENERAL_SUBSPACE_02"
+        "BGM_MAP_STAGE_GENERAL_SUBSPACE_02",
         "BGM_MAP_STAGE_AMIIBO_GIRL",
         "BGM_MAP_STAGE_EVENTMAN",
         "BGM_MAP_STAGE_EXPLORER",
         "BGM_MAP_STAGE_GOURMET",
         "BGM_MAP_STAGE_POSTMAN",
         "BGM_FIRST_TOWN_RESIDENT",
-        "BGM_TOWN_1_NORMAL",
-        "BGM_TOWN_2_DESERT",
-        "BGM_TOWN_3_ELF",
-        "BGM_TOWN_4_MOUNTAIN",
-        "BGM_TOWN_5_FOREIGNER",
         "BGM_TOWN_PINCH",
         "BGM_MAP_WORLD_1",
         "BGM_MAP_WORLD_2",
@@ -697,6 +693,6 @@ namespace patches {
 
 // clang-format on
 
-} // namespace hacks
+} // namespace patches
 
 } // namespace CTRPluginFramework

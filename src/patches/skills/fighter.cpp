@@ -112,6 +112,6 @@ namespace patches {
         return 1;
     }
 
-} // namespace hacks
+} // namespace patches
 
 } // namespace CTRPluginFramework

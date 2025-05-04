@@ -199,6 +199,6 @@ start_wide_attack:
         InstallHookAtPattern(enemySkills1_pattern, 0x0, (MITM_MODE), (uint32_t)EnemySlot1Skills, 0);
     }
 
-} // namespace hacks
+} // namespace patches
 
 } // namespace CTRPluginFramework
