@@ -2,8 +2,8 @@
 #include <CTRPluginFramework.hpp>
 
 #include "config.hpp"
-#include "hacks/hacks.hpp"
 #include "logger.hpp"
+#include "patches.hpp"
 
 namespace CTRPluginFramework {
 
@@ -18,19 +18,19 @@ void PatchProcess(FwkSettings& settings)
 
 int main(void)
 {
-    if (logger::init(Utils::Format("/luma/plugins/%016llX/logs/", Process::GetTitleID())))
-        goto deinit;
-    if (config::init("/config/mimic-3gx/config.toml"))
-        goto deinit;
+    if (logger::Initialize(Utils::Format("/luma/plugins/%016llX/logs/", Process::GetTitleID())))
+        goto finalize;
+    if (config::Initialize("/config/mimic-3gx/config.ini"))
+        goto finalize;
 
-    logger::write(Utils::Format("Hello World!\nPlugin was built at %s %s\n\n", __DATE__, __TIME__));
+    logger::Write(Utils::Format("Hello World!\nBuild Date: %s %s\n\n", __DATE__, __TIME__));
 
-    hacks::install();
+    patches::Install();
 
     Process::WaitForExit();
 
-deinit:
-    logger::deinit();
+finalize:
+    logger::Finalize();
 
     return 0;
 }

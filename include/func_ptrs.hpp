@@ -5,7 +5,7 @@
 
 #include "patterns.hpp"
 
-#include "mimic_types.hpp"
+#include "standalone/mimic_types.hpp"
 
 namespace CTRPluginFramework {
 
@@ -24,7 +24,6 @@ namespace CTRPluginFramework {
     }                                         \
     extern _FUNC_TYPE(name) name
 
-// Hardcoded pattern name for now
 #define SETUP_FUNC_PTR(name, offset) \
     _FUNC_TYPE(name)                 \
     name = (_FUNC_TYPE(name))(Utils::Search(0x00100000, 0x00709000, name##_pattern) + offset);
@@ -52,13 +51,13 @@ FUNC_PTR(HasEnoughMPForSkill, uint32_t (*)(uintptr_t, uint32_t*, uint32_t));
 FUNC_PTR(GetSkillMPCost, uint32_t (*)(uintptr_t, uint32_t*, uint32_t));
 FUNC_PTR(SpendSkillMP, void (*)(uintptr_t, uint32_t*));
 FUNC_PTR(ShowCutIn, void (*)(uintptr_t, uint32_t*));
-FUNC_PTR(SetupSkillHelp, void (*)(uintptr_t, helping_mii_handle*, uint32_t));
+FUNC_PTR(SetupSkillHelp, void (*)(uintptr_t, HelperInfo*, uint32_t));
 
-FUNC_PTR(CalcDamage, void (*)(float, uint32_t*, uintptr_t, uint32_t*, uintptr_t, helping_mii_handle*));
+FUNC_PTR(CalcDamage, void (*)(float, uint32_t*, uintptr_t, uint32_t*, uintptr_t, HelperInfo*));
 FUNC_PTR(SetupDamageParams, void (*)(float, uint32_t*, uintptr_t, uint32_t*));
 FUNC_PTR(DamageEnemy, uint32_t (*)(uintptr_t, uintptr_t, uint32_t*, uint32_t));
 
-FUNC_PTR(CalcHealing, void (*)(float, uint32_t*, uintptr_t, uint32_t*, uintptr_t, helping_mii_handle*));
+FUNC_PTR(CalcHealing, void (*)(float, uint32_t*, uintptr_t, uint32_t*, uintptr_t, HelperInfo*));
 FUNC_PTR(SetupHealingParams, void (*)(float, uint32_t*, uintptr_t, uint32_t*));
 FUNC_PTR(HealMiiHP, void (*)(uintptr_t, uint32_t*, int16_t*, uint32_t));
 FUNC_PTR(HealMiiMP, void (*)(uintptr_t, uint32_t*, int16_t*, uint32_t));

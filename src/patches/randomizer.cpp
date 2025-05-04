@@ -3,263 +3,257 @@
 
 #include "config.hpp"
 #include "func_ptrs.hpp"
-#include "hacks/hacks.hpp"
 #include "logger.hpp"
-#include "patterns.hpp"
+#include "standalone/mimic_types.hpp"
+#include "standalone/patterns.hpp"
 
-#include "mimic_types.hpp"
+#include "patches.hpp"
+#include "patches/randomizer.hpp"
 
 namespace CTRPluginFramework {
 
-namespace hacks {
+namespace patches {
 
-    extern "C" const char* bgm_array[];
-    extern "C" const char* bg_array[];
-    extern "C" const char* enemy_array[];
-    extern "C" const char* enemy_summon_array[];
-    extern "C" uint32_t stage_bgm;
-    extern "C" int get_rand_int(int min, int max)
-    {
-        // TODO: Use sead::Random::getU32
-        return Utils::Random(min, max);
+    extern "C" {
+        extern const char* bgmArray[];
+        extern const char* bgArray[];
+        extern const char* enemyArray[];
+        extern const char* enemySummonArray[];
+        extern uint32_t stageBgm;
+
+        int GetRandU32(int min, int max)
+        {
+            // TODO: Use sead::Random::getU32
+            return Utils::Random(min, max);
+        }
     }
 
-    /* Randomize battle BGM */
-    const char* randomize_battle_bgm()
+    /* Randomize battle BGM. */
+    const char* RandomizeBattleBgm()
     {
-        return bgm_array[get_rand_int(0, 78)];
+        return bgmArray[GetRandU32(0, 78)];
     }
 
-    /* Randomize Darker Lord BGM (Second Phase) */
-    void NAKED randomize_trans_bgm()
+    /* Randomize Darker Lord Second Phase BGM. */
+    void NAKED RandomizeTransBgm()
     {
         asm("push {r0, r2, lr} \n"
             "mov r0, #0 \n"
             "mov r1, #78 \n"
-            "bl get_rand_int \n"
-            "ldr r2, =bgm_array \n"
+            "bl GetRandU32 \n"
+            "ldr r2, =bgmArray \n"
             "ldr r1, [r2, r0, lsl #2] \n"
             "pop {r0, r2, pc}");
     }
 
-    /* Randomize battle background */
-    void NAKED randomize_battle_bg()
+    /* Randomize battle background. */
+    void NAKED RandomizeBattleBg()
     {
         asm("push {r0-r2, lr} \n"
             "mov r0, #0 \n"
             "mov r1, #41 \n"
-            "bl get_rand_int \n"
-            "ldr r1, =bg_array \n"
+            "bl GetRandU32 \n"
+            "ldr r1, =bgArray \n"
             "ldr r0, [r1, r0, lsl #2] \n"
             "str r0, [r9, #4] \n"
             "pop {r0-r2, pc}");
     }
 
-    /* Randomize battle intro jingle */
-    void randomize_battle_intro(uintptr_t r0, uintptr_t r1, int* index)
+    /* Randomize battle intro jingle. */
+    void RandomizeBattleIntro(uintptr_t r0, uintptr_t r1, int* index)
     {
         *index = Utils::Random(0, 2);
         HookContext::GetCurrent().OriginalFunction<void>(r0, r1, index);
     }
 
-    /*
-     * Randomize stage BGM
-     * The BGM is only randomized at the start
-     * of a level (when r7 is 0)
-     */
-    uint32_t stage_bgm = 0;
-    void NAKED randomize_stage_bgm()
+    /* Randomize stage BGM. */
+    uint32_t stageBgm = 0;
+    void NAKED RandomizeStageBgm()
     {
+        /* Only randomize the BGM when r7 is 0 (at the start of a level). */
         asm("push {r4, lr} \n"
-            "ldr r4, =stage_bgm \n"
+            "ldr r4, =stageBgm \n"
             "ldr r0, [r4] \n"
             "cmp r7, #0 \n"
             "moveq r0, #0 \n"
             "moveq r1, #78 \n"
-            "bleq get_rand_int \n"
+            "bleq GetRandU32 \n"
             "str r0, [r4] \n"
-            "ldr r1, =bgm_array \n"
+            "ldr r1, =bgmArray \n"
             "ldr r0, [r1, r0, lsl #2] \n"
             "pop {r4, pc}");
     }
 
-    /* Randomize stage BG */
+    /* Randomize stage background. */
     uintptr_t randomize_stage_bg(uintptr_t r0)
     {
-        // This currently crashes
+        /* This currently crashes. */
         if (!r0)
             return r0;
-        *(char**)(r0 + 0xC) = (char*)"BG/MapS/MapSCave00"; // For testing purposes
+        /* For testing purposes. */
+        *(char**)(r0 + 0xC) = (char*)"BG/MapS/MapSCave00";
         return r0;
     }
 
-    /* Randomize title BGM */
-    void NAKED randomize_title_bgm()
+    /* Randomize title BGM. */
+    void NAKED RandomizeTitleBgm()
     {
-        // Not sure what all of the IDs mean
-        // New Lumos is 27, probably the max
         asm("push {r0, r2, lr} \n"
             "mov r0, #0 \n"
             "mov r1, #27 \n"
-            "bl get_rand_int \n"
+            "bl GetRandU32 \n"
             "mov r1, r0 \n"
             "pop {r0, r2, pc}");
     }
 
-    /* Randomize title BG */
-    void NAKED randomize_title_bg()
+    /* Randomize title background. */
+    void NAKED RandomizeTitleBg()
     {
         asm("push {r0, lr} \n"
             "mov r0, #0 \n"
             "mov r1, #27 \n"
-            "bl get_rand_int \n"
+            "bl GetRandU32 \n"
             "mov r1, r0 \n"
             "pop {r0} \n"
             "strb r1, [r0, #0x1d] \n"
             "pop {pc}");
     }
 
-    /* Randomize map BGM */
-    void NAKED randomize_map_bgm()
+    /* Randomize map BGM. */
+    void NAKED RandomizeMapBgm()
     {
         asm("push {r1-r2, lr} \n"
             "mov r0, #0 \n"
             "mov r1, #78 \n"
-            "bl get_rand_int \n"
-            "ldr r1, =bgm_array \n"
+            "bl GetRandU32 \n"
+            "ldr r1, =bgmArray \n"
             "ldr r0, [r1, r0, lsl #2] \n"
             "pop {r1-r2, pc}");
     }
 
-    /* Randomize town BGM */
-    void NAKED randomize_town_bgm()
+    /* Randomize town BGM. */
+    void NAKED RandomizeTownBgm()
     {
         asm("push {r1-r2, lr} \n"
             "mov r0, #0 \n"
             "mov r1, #78 \n"
-            "bl get_rand_int \n"
-            "ldr r1, =bgm_array \n"
+            "bl GetRandU32 \n"
+            "ldr r1, =bgmArray \n"
             "ldr r0, [r1, r0, lsl #2] \n"
             "str r0, [r5, #4] \n"
             "pop {r1-r2, pc}");
     }
 
-    /*
-     * Randomize enemies
-     * Sometimes crashes, not sure why
-     */
-    uintptr_t randomize_enemy(uintptr_t r0)
+    /* Randomize enemies in battles. */
+    uintptr_t RandomizeEnemy(uintptr_t r0)
     {
-        logger::clear();
-        logger::write("[ RANDOMIZED ENEMIES ]\n");
+        logger::Clear();
+        logger::Write("[ RANDOMIZED ENEMIES ]\n");
 
-        int max_num = Utils::Random(1, 4);
+        int MaxNum = Utils::Random(1, 4);
         for (int i = 0; i < 8; i++) {
-            uintptr_t enemy_data = (uintptr_t)(r0 + i * 4);
-            if (i >= max_num) {
-                *(uint32_t*)(enemy_data + 0x74) = 0;
+            uintptr_t enemyData = (uintptr_t)(r0 + i * 4);
+            if (i >= MaxNum) {
+                *(uint32_t*)(enemyData + 0x74) = 0;
                 continue;
             }
-            uint32_t rand = Utils::Random(0, 298);
-            const char* enemy_name = enemy_array[rand];
-            *(uint32_t*)(enemy_data + 0x74) = sead_HashCRC32_calcHash(enemy_name, strlen(enemy_name));
+            uint32_t randomId = Utils::Random(0, 298);
+            const char* enemyName = enemyArray[randomId];
+            *(uint32_t*)(enemyData + 0x74) = sead_HashCRC32_calcHash(enemyName, strlen(enemyName));
 
-            logger::write(Utils::Format("%s (%d)\n", enemy_name, rand));
+            logger::Write(Utils::Format("%s (%d)\n", enemyName, randomId));
         }
         return r0;
     }
 
-    /* Handle enemy stats */
-    enemy_param* handle_enemy_stats(enemy_param* enemy)
+    /* Edit enemy stats in battle. */
+    EnemyParam* HandleEnemyStats(EnemyParam* enemy)
     {
         if (!(uintptr_t)enemy)
             return enemy;
 
-        // For testing purposes
-        enemy->status->hp = 1;
-        enemy->status->atk = 0;
-        enemy->status->def = 0;
-        enemy->status->mag = 0;
-        enemy->status->spd = 0;
+        /* For testing purposes. */
+        enemy->mEnemyStatus->mHp = 1;
+        enemy->mEnemyStatus->mMp = 0;
+        enemy->mEnemyStatus->mAtk = 0;
+        enemy->mEnemyStatus->mDef = 0;
+        enemy->mEnemyStatus->mMag = 0;
+        enemy->mEnemyStatus->mSpd = 0;
+        enemy->mEnemyStatus->mGold = 0x7FFF;
+        enemy->mEnemyStatus->mExp = 0x7FFF;
         return enemy;
     }
 
-    /* Randomize enemy slot 1 moves */
-    void NAKED randomize_enemy_skills_1()
+    /* Randomize enemy slot 1 moves. */
+    void NAKED RandomizeEnemySkills1()
     {
         asm("push {r0, lr} \n"
             "mov r0, #0 \n"
             "mov r1, #29 \n"
-            "bl get_rand_int \n"
+            "bl GetRandU32 \n"
             "mov r1, r0 \n"
             "pop {r0, pc}");
     }
 
-    /* Randomize enemy slot 2 moves */
-    void NAKED randomize_enemy_skills_2()
+    /* Randomize enemy slot 2 moves. */
+    void NAKED RandomizeEnemySkills2()
     {
         asm("push {r1, lr} \n"
             "mov r0, #0 \n"
             "mov r1, #25 \n"
-            "bl get_rand_int \n"
+            "bl GetRandU32 \n"
             "pop {r1, pc}");
     }
 
-    /* Randomize enemy slot 3 moves */
-    void NAKED randomize_enemy_skills_3()
+    /* Randomize enemy slot 3 moves. */
+    void NAKED RandomizeEnemySkills3()
     {
         asm("push {r0, lr} \n"
             "mov r0, #0 \n"
             "mov r1, #17 \n"
-            "bl get_rand_int \n"
+            "bl GetRandU32 \n"
             "mov r1, r0 \n"
             "pop {r0, pc}");
     }
 
-    /* Randomize enemy slot 4 moves */
-    void NAKED randomize_enemy_skills_4()
+    /* Randomize enemy slot 4 moves. */
+    void NAKED RandomizeEnemySkills4()
     {
         asm("push {r1-r2, lr} \n"
             "mov r0, #0 \n"
             "mov r1, #13 \n"
-            "bl get_rand_int \n"
+            "bl GetRandU32 \n"
             "pop {r1-r2, pc}");
     }
 
-    void install_randomizer()
+    void InstallRandomizer()
     {
-        if (!config::randomizer.active) return;
+        if (!config::gConf.mRandomizer.active) return;
 
-        /* Finished */
-        install_hook(battle_bgm_pattern, -0x4, (WRAP_SUB), 0, (uint32_t)randomize_battle_bgm);
-        install_hook(trans_bgm_pattern, 0x10, (WRAP_SUB), (uint32_t)randomize_trans_bgm, 0);
-        install_hook(battle_bg_pattern, 0xC, (USE_LR_TO_RETURN | EXECUTE_OI_BEFORE_CB), (uint32_t)randomize_battle_bg, 0);
-        install_hook(battle_intro_pattern, 0x0, (MITM_MODE), (uint32_t)randomize_battle_intro, 0);
+        InstallHookAtPattern(battleBgm_pattern, -0x4, (WRAP_SUB), 0, (uint32_t)RandomizeBattleBgm);
+        InstallHookAtPattern(transBgm_pattern, 0x10, (WRAP_SUB), (uint32_t)RandomizeTransBgm, 0);
+        InstallHookAtPattern(battleBg_pattern, 0xC, (USE_LR_TO_RETURN | EXECUTE_OI_BEFORE_CB), (uint32_t)RandomizeBattleBg, 0);
+        InstallHookAtPattern(battleIntro_pattern, 0x0, (MITM_MODE), (uint32_t)RandomizeBattleIntro, 0);
 
-        install_hook(stage_bgm_pattern, -0x4, (WRAP_SUB), 0, (uint32_t)randomize_stage_bgm);
-        install_hook(title_bg_pattern, 0, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)randomize_title_bg, 0);
-        install_hook(title_bgm_pattern, -0x4, (WRAP_SUB), (uint32_t)randomize_title_bgm, 0);
-        install_hook(title_bgm_pattern, 0x18, (WRAP_SUB), (uint32_t)randomize_title_bgm, 0);
-        install_hook(map_bgm_pattern, -0xC, (WRAP_SUB), (uint32_t)randomize_map_bgm, 0);
-        install_hook(town_bgm_pattern, 0x10, (WRAP_SUB), (uint32_t)randomize_town_bgm, 0);
+        InstallHookAtPattern(stageBgm_pattern, -0x4, (WRAP_SUB), 0, (uint32_t)RandomizeStageBgm);
+        InstallHookAtPattern(titleBg_pattern, 0, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)RandomizeTitleBg, 0);
+        InstallHookAtPattern(titleBgm_pattern, -0x4, (WRAP_SUB), (uint32_t)RandomizeTitleBgm, 0);
+        InstallHookAtPattern(titleBgm_pattern, 0x18, (WRAP_SUB), (uint32_t)RandomizeTitleBgm, 0);
+        InstallHookAtPattern(mapBgm_pattern, -0xC, (WRAP_SUB), (uint32_t)RandomizeMapBgm, 0);
+        InstallHookAtPattern(townBgm_pattern, 0x10, (WRAP_SUB), (uint32_t)RandomizeTownBgm, 0);
 
-        install_hook(enemy_skills_1_pattern, 0xC, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)randomize_enemy_skills_1, 0);
-        install_hook(enemy_skills_2_pattern, 0x8, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)randomize_enemy_skills_2, 0);
-        install_hook(enemy_skills_3_pattern, 0x10, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)randomize_enemy_skills_3, 0);
-        install_hook(enemy_skills_4_pattern, 0xC, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)randomize_enemy_skills_4, 0);
+        InstallHookAtPattern(enemySkills1_pattern, 0xC, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)RandomizeEnemySkills1, 0);
+        InstallHookAtPattern(enemySkills2_pattern, 0x8, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)RandomizeEnemySkills2, 0);
+        InstallHookAtPattern(enemySkills3_pattern, 0x10, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)RandomizeEnemySkills3, 0);
+        InstallHookAtPattern(enemySkills4_pattern, 0xC, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)RandomizeEnemySkills4, 0);
 
-        /* WiP */
-        install_hook(enemy_pattern, 0x10, (WRAP_SUB), 0, (uint32_t)randomize_enemy);
-        install_hook(enemy_stats_pattern, 0x38, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)handle_enemy_stats, 0);
-
-        /* For later */
-        // install_hook(map_bg_pattern, 0x1C, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)randomize_map_bg, 0);
-        // install_hook(grub_stats_pattern, 0xC, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)randomize_grub_stats, 0);
+        InstallHookAtPattern(enemyData_pattern, 0x10, (WRAP_SUB), 0, (uint32_t)RandomizeEnemy);
+        InstallHookAtPattern(enemyParam_pattern, 0x38, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)HandleEnemyStats, 0);
     }
 
 // clang-format off
 
-    const char* bgm_array[] = {
+    const char* bgmArray[] = {
         "BGM_BATTLE_BOSS_BIGBOSS",
         "BGM_BATTLE_BOSS_BLACK_SAGE",
         "BGM_BATTLE_BOSS_SATAN",
@@ -342,7 +336,7 @@ namespace hacks {
         "BGM_MAP_WORLD_DANGEON_RANDOM"
     };
 
-    const char* bg_array[] = {
+    const char* bgArray[] = {
         "BG/Battle/BtBigTree00",
         "BG/Battle/BtBlizzard00",
         "BG/Battle/BtCave00",
@@ -387,7 +381,7 @@ namespace hacks {
         "BG/Battle/BtVolcano00"
     };
 
-    const char* enemy_array[] = { 
+    const char* enemyArray[] = { 
         "Alien0",
         "Alien1",
         "Alien2",
@@ -690,9 +684,8 @@ namespace hacks {
         "Yeti1"
     };
 
-    // These enemies can summon minions
-    // As for the Dark(er) lords, it seems like two enemies have to be preloaded otherwise it will most likely crash
-    const char* enemy_summon_array[] = { 
+    /* These enemies can summon other enemies. */
+    const char* enemySummonArray[] = { 
         "Cobra0",
         "Cobra4",
         "Cobra5",

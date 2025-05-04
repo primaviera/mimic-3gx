@@ -4,13 +4,13 @@ namespace CTRPluginFramework {
 
 namespace logger {
 
-    void clear();
+    void Clear();
 
-    void write(std::string fmt);
+    void Write(std::string fmt);
 
-    int init(const std::string& dir);
+    int Initialize(const std::string& path);
 
-    void deinit();
+    void Finalize();
 
 } // namespace logger
 

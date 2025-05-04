@@ -4,23 +4,21 @@ namespace CTRPluginFramework {
 
 namespace config {
 
-    struct st_randomizer {
-        bool active;
+    struct Data {
+        struct Randomizer {
+            bool active = false;
+        };
+        struct Skills {
+            bool active = false;
+        };
+
+        Randomizer mRandomizer;
+        Skills mSkills;
     };
 
-    struct st_skills {
-        bool active;
-    };
+    extern Data gConf;
 
-    struct st_controllable {
-        bool active;
-    };
-
-    extern st_randomizer randomizer;
-    extern st_skills skills;
-    extern st_controllable controllable;
-
-    int init(const std::string& path);
+    int Initialize(const std::string& path);
 
 } // namespace config
 

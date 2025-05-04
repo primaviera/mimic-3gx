@@ -2,16 +2,16 @@
 #include <CTRPluginFramework.hpp>
 
 #include "func_ptrs.hpp"
-#include "hacks/skills.hpp"
-#include "hacks/custom_skills/fighter.hpp"
+#include "standalone/mimic_types.hpp"
 
-#include "mimic_types.hpp"
+#include "patches/skills.hpp"
+#include "patches/skills/fighter.hpp"
 
 namespace CTRPluginFramework {
 
-namespace hacks {
+namespace patches {
 
-    uint32_t warrior_flee(uintptr_t mii_info, uint32_t* skill_index, uintptr_t enemy_info) {
+    uint32_t FighterFlee(uintptr_t mii_info, uint32_t* skill_index, uintptr_t enemy_info) {
         _PlayBattleState(mii_info, "SkillDanceStart", (int16_t*)(*(uintptr_t*)(enemy_info + 0x4) + 0x60));
         ShowCutIn(mii_info, skill_index);
         SpendSkillMP(mii_info, skill_index);
@@ -22,7 +22,7 @@ namespace hacks {
         return 1;
     }
 
-    uint32_t warrior_hit_all(uintptr_t mii_info, uint32_t* skill_index) {
+    uint32_t FighterHitAll(uintptr_t mii_info, uint32_t* skill_index) {
         uint32_t* damage_calc = (uint32_t*)malloc(0x24);
         uint32_t* damage_params = (uint32_t*)malloc(0x10);
 
@@ -30,12 +30,12 @@ namespace hacks {
         CalcDamage(1.0f, damage_calc, mii_info, skill_index, 0, 0);
         *skill_index = SKILL_FIGHTER_10;
 
-        _PlayBattleState(mii_info, "SkillDanceStart", &battle_state_no_target);
+        _PlayBattleState(mii_info, "SkillDanceStart", &gInvalidTarget);
         ShowCutIn(mii_info, skill_index);
         SpendSkillMP(mii_info, skill_index);
 
-        _PlayBattleState(mii_info, "SkillDance", &battle_state_no_target);
-        _PlayBattleState(mii_info, "SkillArrowRainHit", &battle_state_no_target);
+        _PlayBattleState(mii_info, "SkillDance", &gInvalidTarget);
+        _PlayBattleState(mii_info, "SkillArrowRainHit", &gInvalidTarget);
         for (uint32_t i = 0; i < GetNumberOfEnemies(*(uintptr_t*)(mii_info + 0x8)); i++) {
             uintptr_t select_enemy = GetEnemyAtIndex(*(uintptr_t*)(mii_info + 0x8), i);
             if (select_enemy && CanEnemyBeHit(select_enemy)) {
@@ -49,7 +49,7 @@ namespace hacks {
         return 1;
     }
 
-    uint32_t warrior_single_heal(uintptr_t mii_info, uint32_t* skill_index, uintptr_t target_mii) {
+    uint32_t FighterSingleHeal(uintptr_t mii_info, uint32_t* skill_index, uintptr_t target_mii) {
         uint32_t* heal_calc = (uint32_t*)malloc(0x24);
         uint32_t* healing_params = (uint32_t*)malloc(0x10);
 
@@ -75,7 +75,7 @@ namespace hacks {
         return 1;
     }
 
-    uint32_t warrior_status_all(uintptr_t mii_info, uint32_t* skill_index) {
+    uint32_t FighterStatusAll(uintptr_t mii_info, uint32_t* skill_index) {
         uint32_t* heal_calc = (uint32_t*)malloc(0x24);
         uint32_t* healing_params = (uint32_t*)malloc(0x10);
         uint32_t status = FEELING_NORMAL;
@@ -88,7 +88,7 @@ namespace hacks {
         ShowCutIn(mii_info, skill_index);
         SpendSkillMP(mii_info, skill_index);
 
-        _PlayBattleState(mii_info, "SkillWhistleCureStart", &battle_state_no_target);
+        _PlayBattleState(mii_info, "SkillWhistleCureStart", &gInvalidTarget);
         for (uint32_t i = 0; i < GetNumberOfPartyMembers(*(uintptr_t*)(mii_info + 0x8)); i++) {
             status = Utils::Random(0, 23);
             if (status == FEELING_FACELESS) status =+ 1;
@@ -105,7 +105,7 @@ namespace hacks {
                 _PlayBattleState(select_mii, "DogfightEndAttackHitL", (int16_t*)(*(uintptr_t*)(select_mii + 0x4) + 0x60));
             }
         }
-        _PlayBattleState(mii_info, "SkillWhistleCureEnd", &battle_state_no_target);
+        _PlayBattleState(mii_info, "SkillWhistleCureEnd", &gInvalidTarget);
 
         free(heal_calc);
         free(healing_params);

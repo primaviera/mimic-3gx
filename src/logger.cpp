@@ -7,10 +7,10 @@ namespace CTRPluginFramework {
 
 namespace logger {
 
-    File log_file;
+    File logFile;
 
     // https://github.com/Anto726/CTRPluginFramework-RevolutionBase/blob/-/src/base/logger.cpp#L7
-    std::string get_log_name()
+    std::string GetLogName()
     {
         timeval t;
         time_t nowtime;
@@ -30,32 +30,32 @@ namespace logger {
         return std::string(buf);
     }
 
-    void clear()
+    void Clear()
     {
-        log_file.Clear();
+        logFile.Clear();
     }
 
-    void write(std::string fmt)
+    void Write(std::string fmt)
     {
-        log_file.Write(fmt.c_str(), fmt.size());
+        logFile.Write(fmt.c_str(), fmt.size());
     }
 
-    int init(const std::string& dir)
+    int Initialize(const std::string& path)
     {
-        Directory log_dir;
-        std::string log_name = std::string(dir + get_log_name());
+        Directory logDir;
+        std::string logName = std::string(path + GetLogName());
 
-        if (Directory::Open(log_dir, dir, true))
+        if (Directory::Open(logDir, path, true))
             return 1;
-        if (File::Open(log_file, log_name, (File::WRITE | File::CREATE | File::APPEND | File::SYNC)))
+        if (File::Open(logFile, logName, (File::WRITE | File::CREATE | File::APPEND | File::SYNC)))
             return 1;
 
         return 0;
     }
 
-    void deinit()
+    void Finalize()
     {
-        log_file.Close();
+        logFile.Close();
     }
 
 } // namespace logger

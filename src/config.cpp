@@ -1,56 +1,57 @@
 #include <3ds.h>
 #include <CTRPluginFramework.hpp>
 
-#include <tomlplusplus/toml.hpp>
+#include <inih/ini.h>
 
 #include "config.hpp"
 #include "logger.hpp"
-
-#include "config_toml.h"
 
 namespace CTRPluginFramework {
 
 namespace config {
 
-    st_randomizer randomizer;
-    st_skills skills;
-    st_controllable controllable;
+    config::Data gConf;
 
-    void load(const toml::table& table)
+    int IniHandler(void* user, const char* section, const char* name, const char* value)
     {
-        randomizer.active = table["randomizer"]["active"].value_or(false);
+        config::Data* userConfig = (config::Data*)user;
 
-        skills.active = table["skills"]["active"].value_or(false);
-
-        controllable.active = table["controllable"]["active"].value_or(false);
+#define MATCH(s, n) strcmp(section, s) == 0 && strcmp(name, n) == 0
+        if (MATCH("randomizer", "active")) {
+            userConfig->mRandomizer.active = true;
+        } else if (MATCH("skills", "active")) {
+            userConfig->mSkills.active = true;
+        } else {
+            return 0;
+        }
+#undef MATCH
+        return 1;
     }
 
-    int init(const std::string& path)
+    int Initialize(const std::string& path)
     {
-        File config_file;
-        void* config_buffer;
-        uint32_t config_size;
+        File configFile;
+        void* configBuffer;
+        uint32_t configSize;
 
-        if (!File::Open(config_file, path, File::READ)) {
-            config_size = config_file.GetSize();
-            config_buffer = malloc(config_size);
-            config_file.Read(config_buffer, config_size);
-        } else {
-            config_size = config_toml_size;
-            config_buffer = malloc(config_size);
-            memcpy(config_buffer, config_toml, config_size);
-        }
-        ((char*)config_buffer)[config_size - 1] = '\0'; // This is terrible
+        /* Fallback to default config. */
+        if (File::Open(configFile, path, File::READ))
+            return 0;
 
-        toml::parse_result res = toml::parse((const char*)config_buffer);
-        free(config_buffer);
-        if (!res) {
-            logger::write(res.error().description().data());
-            logger::write("\n");
+        configSize = configFile.GetSize();
+        configBuffer = malloc(configSize);
+        if (!configBuffer)
+            return 1;
+
+        configFile.Read(configBuffer, configSize);
+        ((char*)configBuffer)[configSize - 1] = '\0'; // This is terrible
+
+        auto res = ini_parse_string((const char*)configBuffer, IniHandler, &gConf);
+        free(configBuffer);
+        if (res) {
+            logger::Write("Failed to parse INI\n");
             return 1;
         }
-
-        load(res.table());
 
         return 0;
     }

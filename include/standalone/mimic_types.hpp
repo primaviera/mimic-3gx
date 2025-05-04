@@ -1,6 +1,6 @@
 #pragma once
 
-enum job_skill {
+enum JobSkill {
     SKILL_FIGHTER_DOUBLE = 0,
     SKILL_FIGHTER_TWICE = 1,
     SKILL_FIGHTER_SPIN = 2,
@@ -171,7 +171,7 @@ enum job_skill {
     SKILL_ELF_12 = 167
 };
 
-enum skill_status {
+enum SkillStatus {
     SKILL_STATUS_ENABLE = 0,
     SKILL_STATUS_NO_NEED = 1,
     SKILL_STATUS_NO_MP = 2,
@@ -191,7 +191,7 @@ enum skill_status {
     SKILL_STATUS_NO_TEA = 16
 };
 
-enum enemy_skills_1 {
+enum EnemySkills1 {
     ENEMY_SKILL_1_NONE = 0,
     ENEMY_SKILL_1_SHOT = 1,
     ENEMY_SKILL_1_HARD_ATTACK = 2,
@@ -222,11 +222,11 @@ enum enemy_skills_1 {
     ENEMY_SKILL_1_ESCAPE = 27,
     ENEMY_SKILL_1_SATAN = 28,
     ENEMY_SKILL_1_SUPER_SATAN = 29,
-    // Custom Skills
-    ENEMY_SKILL_1_LAST_MIMIT = 30
+    /* Custom skills. */
+    ENEMY_SKILL_1_LAST_MIMIT = 30,
 };
 
-enum battle_feeling {
+enum BattleFeeling {
     FEELING_RESET = -2,
     FEELING_NULL = -1,
     FEELING_NORMAL = 0,
@@ -256,41 +256,41 @@ enum battle_feeling {
     FEELING_OVERSLEEP = 24
 };
 
-struct helping_mii_handle {
-    uint32_t num;
-    uint32_t unk_0x4; // Always set to 4
-    uintptr_t* mii_infos[4];
+struct HelperInfo {
+    uint32_t mNum;
+    uint32_t unk_0x4; /* Always 4. */
+    uintptr_t* mMiiInfos[4];
 };
 
-struct enemy_status {
-    uint16_t hp;
-    uint16_t mp;
-    uint16_t atk;
-    uint16_t def;
-    uint16_t mag;
-    uint16_t spd;
-    uint16_t lvl;
-    uint16_t gold;
-    uint16_t exp;
-    uint16_t common_grub;
-    uint16_t common_grub_chance;
-    uint16_t rare_grub;
-    uint16_t rare_grub_chance;
-    uint16_t super_rare_grub;
-    uint16_t super_rare_grub_chance;
+struct EnemyStatus {
+    uint16_t mHp;
+    uint16_t mMp;
+    uint16_t mAtk;
+    uint16_t mDef;
+    uint16_t mMag;
+    uint16_t mSpd;
+    uint16_t mLvl;
+    uint16_t mGold;
+    uint16_t mExp;
+    uint16_t mCommonGrubId;
+    uint16_t mCommonGrubChance;
+    uint16_t mRareGrubId;
+    uint16_t mRareGrubChance;
+    uint16_t mSuperRareGrubId;
+    uint16_t mSuperRareGrubChance;
 };
 
-struct enemy_param {
-    uint32_t hash; // CRC32 hash of internal name
-    const char* model;
-    uint32_t id; // Some kind of decimal ID(?)
-    uint16_t unk_0xC; // Possibly size?
+struct EnemyParam {
+    uint32_t mHash; /* CRC32 hash of internal name. */
+    const char* mModel;
+    uint32_t mId; /* Some kind of decimal ID. */
+    uint16_t unk_0xC;
     uint16_t unk_0xE;
     uint8_t unk_0x10[0x34];
-    float distance[3]; // Distance between models (X, Y, Z)
-    float scale; // Model scale
-    float skill_cam[3]; // (X, Y, Z)
-    const char* bone; // What bone camera targets
+    float mDistance[3]; /* Distance between models (X, Y, Z). */
+    float mScale; /* Model scale. */
+    float mSkillCam[3]; /* Camera offset from bone when using a skill (X, Y, Z). */
+    const char* mBone; /* What bone the camera targets. */
     uint8_t unk_0x64[0x14];
-    enemy_status* status;
+    EnemyStatus* mEnemyStatus;
 };

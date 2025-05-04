@@ -4,21 +4,20 @@
 #include <cmath>
 
 #include "func_ptrs.hpp"
-#include "hacks/skills.hpp"
-#include "hacks/custom_skills/scientist.hpp"
+#include "standalone/mimic_types.hpp"
 
-#include "mimic_types.hpp"
+#include "patches/skills.hpp"
+#include "patches/skills/scientist.hpp"
 
 namespace CTRPluginFramework {
 
-namespace hacks {
+namespace patches {
 
     bool is_optimize_active = false;
     uintptr_t target_mii = 0;
 
-    // This is a "backport" of a custom skill that Kobazco created for the switch version of Miitopia, this idea is theirs!
-    // Scientist - Optimize (Cut the MP cost of an ally's skill by half)
-    void scientist_pre_optimize(float s0, uint32_t* out_calc, uintptr_t mii_info, uint32_t* skill_index, uintptr_t target, helping_mii_handle* helping_miis) {
+    /* This skill was created by Kobazco, originally modded in the switch version, credits to them! */
+    void ScientistPreOptimize(float s0, uint32_t* out_calc, uintptr_t mii_info, uint32_t* skill_index, uintptr_t target, HelperInfo* helping_miis) {
         HookContext::GetCurrent().OriginalFunction<void>(s0, out_calc, mii_info, skill_index, target, helping_miis);
         if (Utils::Random(0, 5) || GetSkillMPCost(mii_info, skill_index, 0) == 0)
             return;
@@ -40,14 +39,14 @@ check_scientist:
                 LoadSkillEffect(select_mii, &cure_code_skill, 1); // Use Cure.exe effect
                 PlaySkillEffect(select_mii);
 
-                _PlayBattleState(select_mii, "SkillCureCodeStart", &battle_state_no_target);
+                _PlayBattleState(select_mii, "SkillCureCodeStart", &gInvalidTarget);
                 ShowCutIn(select_mii, &optimize_skill);
                 SpendSkillMP(select_mii, &optimize_skill);
 
                 // Here the scientist says "Cure.exe" instead of the actual skill name
                 // Don't know how to fix that
                 _PlayBattleState(select_mii, "SkillCureCode", (int16_t*)(*(uintptr_t*)(mii_info + 0x4) + 0x60));
-                _PlayBattleState(mii_info, "AvoidFeelCutInReady", &battle_state_no_target);
+                _PlayBattleState(mii_info, "AvoidFeelCutInReady", &gInvalidTarget);
                 PlayHeartLikeEffect(mii_info, 0x14);
                 UpdateLoveExp(mii_info, select_mii, 5, 0);
 
@@ -57,7 +56,7 @@ check_scientist:
         }
     }
 
-    uint32_t scientist_optimize(uintptr_t mii_info, uint32_t* skill_index) {
+    uint32_t ScientistOptimize(uintptr_t mii_info, uint32_t* skill_index) {
         uint32_t cost = GetSkillMPCost(mii_info, skill_index, 0);
         if (is_optimize_active && mii_info == target_mii) {
             is_optimize_active = false;

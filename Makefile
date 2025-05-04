@@ -21,9 +21,9 @@ CTRPFLIB ?= $(DEVKITPRO)/libctrpf
 #---------------------------------------------------------------------------------
 TARGET		:=	$(notdir $(TOPDIR))
 BUILD		:=	build
-SOURCES 	:=	src src/hacks src/hacks/custom_skills
+SOURCES 	:=	src src/patches src/patches/skills external/inih
 DATA		:=	data
-INCLUDES	:=	include include/ctrpf external
+INCLUDES	:=	include include/standalone external
 PSF 		:=	$(notdir $(TOPDIR)).plgInfo
 
 #---------------------------------------------------------------------------------
