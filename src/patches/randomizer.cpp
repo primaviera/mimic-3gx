@@ -231,25 +231,25 @@ namespace patches {
     {
         if (!config::gConf.mRandomizer.active) return;
 
-        InstallHookAtPattern(battleBgm_pattern, -0x4, (WRAP_SUB), 0, (uint32_t)RandomizeBattleBgm);
-        InstallHookAtPattern(transBgm_pattern, 0x10, (WRAP_SUB), (uint32_t)RandomizeTransBgm, 0);
-        InstallHookAtPattern(battleBg_pattern, 0xC, (USE_LR_TO_RETURN | EXECUTE_OI_BEFORE_CB), (uint32_t)RandomizeBattleBg, 0);
-        InstallHookAtPattern(battleIntro_pattern, 0x0, (MITM_MODE), (uint32_t)RandomizeBattleIntro, 0);
+        InstallHookAtPattern(battleBgm_Pattern, -0x4, (WRAP_SUB), 0, (uint32_t)RandomizeBattleBgm);
+        InstallHookAtPattern(transBgm_Pattern, 0x10, (WRAP_SUB), (uint32_t)RandomizeTransBgm, 0);
+        InstallHookAtPattern(battleBg_Pattern, 0xC, (USE_LR_TO_RETURN | EXECUTE_OI_BEFORE_CB), (uint32_t)RandomizeBattleBg, 0);
+        InstallHookAtPattern(battleIntro_Pattern, 0x0, (MITM_MODE), (uint32_t)RandomizeBattleIntro, 0);
 
-        InstallHookAtPattern(stageBgm_pattern, -0x4, (WRAP_SUB), 0, (uint32_t)RandomizeStageBgm);
-        InstallHookAtPattern(titleBg_pattern, 0, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)RandomizeTitleBg, 0);
-        InstallHookAtPattern(titleBgm_pattern, -0x4, (WRAP_SUB), (uint32_t)RandomizeTitleBgm, 0);
-        InstallHookAtPattern(titleBgm_pattern, 0x18, (WRAP_SUB), (uint32_t)RandomizeTitleBgm, 0);
-        InstallHookAtPattern(mapBgm_pattern, -0xC, (WRAP_SUB), (uint32_t)RandomizeMapBgm, 0);
-        InstallHookAtPattern(townBgm_pattern, 0x10, (WRAP_SUB), (uint32_t)RandomizeTownBgm, 0);
+        InstallHookAtPattern(stageBgm_Pattern, -0x4, (WRAP_SUB), 0, (uint32_t)RandomizeStageBgm);
+        InstallHookAtPattern(titleBg_Pattern, 0, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)RandomizeTitleBg, 0);
+        InstallHookAtPattern(titleBgm_Pattern, -0x4, (WRAP_SUB), (uint32_t)RandomizeTitleBgm, 0);
+        InstallHookAtPattern(titleBgm_Pattern, 0x18, (WRAP_SUB), (uint32_t)RandomizeTitleBgm, 0);
+        InstallHookAtPattern(mapBgm_Pattern, -0xC, (WRAP_SUB), (uint32_t)RandomizeMapBgm, 0);
+        InstallHookAtPattern(townBgm_Pattern, 0x10, (WRAP_SUB), (uint32_t)RandomizeTownBgm, 0);
 
-        InstallHookAtPattern(enemySkills1_pattern, 0xC, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)RandomizeEnemySkills1, 0);
-        InstallHookAtPattern(enemySkills2_pattern, 0x8, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)RandomizeEnemySkills2, 0);
-        InstallHookAtPattern(enemySkills3_pattern, 0x10, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)RandomizeEnemySkills3, 0);
-        InstallHookAtPattern(enemySkills4_pattern, 0xC, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)RandomizeEnemySkills4, 0);
+        InstallHookAtPattern(enemySkills1_Pattern, 0xC, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)RandomizeEnemySkills1, 0);
+        InstallHookAtPattern(enemySkills2_Pattern, 0x8, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)RandomizeEnemySkills2, 0);
+        InstallHookAtPattern(enemySkills3_Pattern, 0x10, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)RandomizeEnemySkills3, 0);
+        InstallHookAtPattern(enemySkills4_Pattern, 0xC, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)RandomizeEnemySkills4, 0);
 
-        //InstallHookAtPattern(enemyData_pattern, 0x10, (WRAP_SUB), 0, (uint32_t)RandomizeEnemy);
-        InstallHookAtPattern(enemyParam_pattern, 0x38, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)HandleEnemyStats, 0);
+        //InstallHookAtPattern(enemyData_Pattern, 0x10, (WRAP_SUB), 0, (uint32_t)RandomizeEnemy);
+        InstallHookAtPattern(enemyParam_Pattern, 0x38, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)HandleEnemyStats, 0);
     }
 
 // clang-format off

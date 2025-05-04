@@ -3,9 +3,8 @@
 #include <3ds.h>
 #include <CTRPluginFramework.hpp>
 
-#include "patterns.hpp"
-
 #include "standalone/mimic_types.hpp"
+#include "standalone/patterns.hpp"
 
 namespace CTRPluginFramework {
 
@@ -18,15 +17,15 @@ namespace CTRPluginFramework {
 
 #define _FUNC_TYPE(name) APPEND(_FUNC_PREFIX(name), _t)
 
-#define FUNC_PTR(name, ...)                   \
-    namespace mimic {                         \
-        using APPEND(name, _t) = __VA_ARGS__; \
-    }                                         \
+#define FUNC_PTR(name, ...)                                                                                            \
+    namespace mimic {                                                                                                  \
+        using APPEND(name, _t) = __VA_ARGS__;                                                                          \
+    }                                                                                                                  \
     extern _FUNC_TYPE(name) name
 
-#define SETUP_FUNC_PTR(name, offset) \
-    _FUNC_TYPE(name)                 \
-    name = (_FUNC_TYPE(name))(Utils::Search(0x00100000, 0x00709000, name##_pattern) + offset);
+#define SETUP_FUNC_PTR(name, offset)                                                                                   \
+    _FUNC_TYPE(name)                                                                                                   \
+    name = (_FUNC_TYPE(name))(Utils::Search(0x00100000, 0x00709000, name##_Pattern) + offset);
 
 FUNC_PTR(sead_HashCRC32_calcHash, uint32_t (*)(const void*, uint32_t));
 FUNC_PTR(sead_Random_getU32, uint32_t (*)(uintptr_t));

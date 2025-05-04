@@ -1,5 +1,8 @@
 BasedOnStyle: WebKit
 Standard: c++17
 
+ColumnLimit: 120
 QualifierAlignment: Left
 FixNamespaceComments: true
+ReflowComments: true
+AllowShortFunctionsOnASingleLine: None

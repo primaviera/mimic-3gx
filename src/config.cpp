@@ -12,15 +12,25 @@ namespace config {
 
     config::Data gConf;
 
+    bool IniGetBoolean(const char* value, bool defaultValue)
+    {
+        if (!strcmp(value, "true"))
+            return true;
+        else if (!strcmp(value, "false"))
+            return false;
+        return defaultValue;
+    }
+
     int IniHandler(void* user, const char* section, const char* name, const char* value)
     {
         config::Data* userConfig = (config::Data*)user;
+        OSD::Notify(Utils::Format("%s -> %s = %s", section, name, value));
 
-#define MATCH(s, n) strcmp(section, s) == 0 && strcmp(name, n) == 0
+#define MATCH(s, n) !strcmp(section, s) && !strcmp(name, n)
         if (MATCH("randomizer", "active")) {
-            userConfig->mRandomizer.active = true;
+            userConfig->mRandomizer.active = IniGetBoolean(value, false);
         } else if (MATCH("skills", "active")) {
-            userConfig->mSkills.active = true;
+            userConfig->mSkills.active = IniGetBoolean(value, false);
         } else {
             return 0;
         }
