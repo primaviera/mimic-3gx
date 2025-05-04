@@ -129,10 +129,12 @@ namespace patches {
             /* Recreation of Boss Snurp's moves. */
             case ENEMY_SKILL_1_LAST_MIMIT:
                 uint32_t status = FEELING_NORMAL;
-                float phase2HpThreshold = 0.5f;
-                float phase3HpThreshold = 0.3f;
+                float curHp = (float)enemyInfo->mBattleHelpers->GetCurHp(enemyInfo);
+                float maxHp = (float)enemyInfo->mBattleHelpers->GetMaxHp(enemyInfo);
+                float phase2Hp = maxHp * 0.5f;
+                float phase3Hp = maxHp * 0.3f;
 
-                if (!enemyInfo->unk_0x60 && (float)(enemyInfo->mBattleHelpers->GetCurHp(enemyInfo) <= (float)(enemyInfo->mBattleHelpers->GetMaxHp(enemyInfo) * phase3HpThreshold))) {
+                if (!enemyInfo->unk_0x60 && curHp <= phase3Hp) {
                     enemyInfo->unk_0x60 = 5; // Block enemy from using this move for 5 more attacks
 
                     _PlayBattleState(enemyInfo, "MagicLock", &gInvalidTarget);
@@ -150,7 +152,7 @@ namespace patches {
                     return 1;
                 }
 
-                if ((float)(enemyInfo->mBattleHelpers->GetCurHp(enemyInfo) <= (float)(enemyInfo->mBattleHelpers->GetMaxHp(enemyInfo) * phase2HpThreshold))) {
+                if (curHp <= phase2Hp) {
                     for (int32_t i = GetNumberOfEnemies(enemyInfo->mBattleInfo); i > -1; i--) {
                         ActorInfo* selectEnemy = GetEnemyAtIndex(enemyInfo->mBattleInfo, i);
                         if (selectEnemy == enemyInfo)
@@ -161,7 +163,7 @@ namespace patches {
                         if (!selectEnemy->mBattleHelpers->IsDead(selectEnemy)) {
                             goto start_wide_attack;
                         }
-                        uint32_t state = 1;
+                        uint32_t state = 1; /* Not really sure what this value is for. */
                         SummonEnemy(enemyInfo, &state, selectEnemy, 0);
                     }
                     return 1;
