@@ -248,7 +248,7 @@ namespace patches {
         InstallHookAtPattern(enemySkills3_Pattern, 0x10, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)RandomizeEnemySkills3, 0);
         InstallHookAtPattern(enemySkills4_Pattern, 0xC, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)RandomizeEnemySkills4, 0);
 
-        //InstallHookAtPattern(enemyData_Pattern, 0x10, (WRAP_SUB), 0, (uint32_t)RandomizeEnemy);
+        InstallHookAtPattern(enemyData_Pattern, 0x10, (WRAP_SUB), 0, (uint32_t)RandomizeEnemy);
         InstallHookAtPattern(enemyParam_Pattern, 0x38, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)HandleEnemyStats, 0);
     }
 

@@ -24,7 +24,6 @@ namespace config {
     int IniHandler(void* user, const char* section, const char* name, const char* value)
     {
         config::Data* userConfig = (config::Data*)user;
-        OSD::Notify(Utils::Format("%s -> %s = %s", section, name, value));
 
 #define MATCH(s, n) !strcmp(section, s) && !strcmp(name, n)
         if (MATCH("randomizer", "active")) {

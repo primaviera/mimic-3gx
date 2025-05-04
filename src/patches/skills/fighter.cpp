@@ -23,8 +23,8 @@ namespace patches {
     }
 
     uint32_t FighterHitAll(uintptr_t miiInfo, uint32_t* skillIndex) {
-        uint32_t* damageCalc = (uint32_t*)malloc(0x24);
-        uint32_t* damageParams = (uint32_t*)malloc(0x10);
+        uint32_t damageCalc[0x9]; // 0x24
+        uint32_t damageParams[0x4]; // 0x10
 
         *skillIndex = SKILL_FIGHTER_DOUBLE; // I'm too lazy to make stats for these moves in skill.sarc
         CalcDamage(1.0f, damageCalc, miiInfo, skillIndex, 0, 0);
@@ -43,15 +43,12 @@ namespace patches {
                 DamageEnemy(selectEnemy, miiInfo, damageParams, 1);
             }
         }
-
-        free(damageCalc);
-        free(damageParams);
         return 1;
     }
 
     uint32_t FighterSingleHeal(uintptr_t miiInfo, uint32_t* skillIndex, uintptr_t targetMii) {
-        uint32_t* healCalc = (uint32_t*)malloc(0x24);
-        uint32_t* healParams = (uint32_t*)malloc(0x10);
+        uint32_t healCalc[0x9]; // 0x24
+        uint32_t healParams[0x4]; // 0x10
 
         *skillIndex = SKILL_PRIEST_CURE; // I'm too lazy to make stats for these moves in skill.sarc
         CalcHealing(1.0f, healCalc, miiInfo, skillIndex, targetMii, 0);
@@ -69,15 +66,12 @@ namespace patches {
         } else {
             _PlayBattleState(targetMii, "CureNormal", (int16_t*)(*(uintptr_t*)(miiInfo + 0x4) + 0x60));
         }
-
-        free(healCalc);
-        free(healParams);
         return 1;
     }
 
     uint32_t FighterStatusAll(uintptr_t miiInfo, uint32_t* skillIndex) {
-        uint32_t* healCalc = (uint32_t*)malloc(0x24);
-        uint32_t* healParams = (uint32_t*)malloc(0x10);
+        uint32_t healCalc[0x9]; // 0x24
+        uint32_t healParams[0x4]; // 0x10
         uint32_t status = FEELING_NORMAL;
 
         *skillIndex = SKILL_PRIEST_CURE3; // I'm too lazy to make stats for these moves in skill.sarc
@@ -106,9 +100,6 @@ namespace patches {
             }
         }
         _PlayBattleState(miiInfo, "SkillWhistleCureEnd", &gInvalidTarget);
-
-        free(healCalc);
-        free(healParams);
         return 1;
     }
 
