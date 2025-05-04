@@ -14,17 +14,17 @@ namespace CTRPluginFramework {
 namespace patches {
 
     bool isOptimizeActive = false;
-    uintptr_t targetMii = 0;
+    ActorInfo* targetMii;
 
     /* This skill was created by Kobazco, originally modded in the switch version, credits to them! */
-    void ScientistPreOptimize(float s0, uint32_t* outCalc, uintptr_t miiInfo, uint32_t* skillIndex, uintptr_t target, HelperInfo* helperInfo) {
+    void ScientistPreOptimize(float s0, uint32_t* outCalc, ActorInfo* miiInfo, uint32_t* skillIndex, ActorInfo* target, HelperInfo* helperInfo) {
         HookContext::GetCurrent().OriginalFunction<void>(s0, outCalc, miiInfo, skillIndex, target, helperInfo);
         if (Utils::Random(0, 5) || GetSkillMPCost(miiInfo, skillIndex, 0) == 0)
             return;
 
         /* Check if MiiInfo is not a traveler. */
-        for (uint32_t i = 0; i < GetNumberOfPartyMembers(*(uintptr_t*)(miiInfo + 0x8)); i++) {
-            uintptr_t selectMii = GetPartyMemberAtIndex(*(uintptr_t*)(miiInfo + 0x8), i);
+        for (uint32_t i = 0; i < GetNumberOfPartyMembers(miiInfo->mBattleInfo); i++) {
+            ActorInfo* selectMii = GetPartyMemberAtIndex(miiInfo->mBattleInfo, i);
             if (miiInfo == selectMii)
                 goto check_scientist;
         }
@@ -32,8 +32,8 @@ namespace patches {
 
 check_scientist:
         uint32_t optimizeSkillId = SKILL_SCIENTIST_09;
-        for (uint32_t i = 0; i < GetNumberOfPartyMembers(*(uintptr_t*)(miiInfo + 0x8)); i++) {
-            uintptr_t selectMii = GetPartyMemberAtIndex(*(uintptr_t*)(miiInfo + 0x8), i);
+        for (uint32_t i = 0; i < GetNumberOfPartyMembers(miiInfo->mBattleInfo); i++) {
+            ActorInfo* selectMii = GetPartyMemberAtIndex(miiInfo->mBattleInfo, i);
             if (!isOptimizeActive && selectMii && selectMii != miiInfo && HasEnoughMPForSkill(selectMii, &optimizeSkillId, 0)) {
                 uint32_t cureCodeSkillId = SKILL_SCIENTIST_CURE_CODE;
                 /* Use Cure.exe effects. */
@@ -45,7 +45,7 @@ check_scientist:
                 SpendSkillMP(selectMii, &optimizeSkillId);
 
                 /* BUG: The scientist says "Cure.exe!" instead of the actual skill name, this probably happens due to LoadSkillEffect but I don't really know how to fix this. */
-                _PlayBattleState(selectMii, "SkillCureCode", (int16_t*)(*(uintptr_t*)(miiInfo + 0x4) + 0x60));
+                _PlayBattleState(selectMii, "SkillCureCode", miiInfo->mBattleState->mStateTarget);
                 _PlayBattleState(miiInfo, "AvoidFeelCutInReady", &gInvalidTarget);
                 PlayHeartLikeEffect(miiInfo, 0x14);
                 UpdateLoveExp(miiInfo, selectMii, 5, 0);
@@ -56,7 +56,7 @@ check_scientist:
         }
     }
 
-    uint32_t ScientistOptimize(uintptr_t miiInfo, uint32_t* skillIndex) {
+    uint32_t ScientistOptimize(ActorInfo* miiInfo, uint32_t* skillIndex) {
         uint32_t cost = GetSkillMPCost(miiInfo, skillIndex, 0);
         if (isOptimizeActive && miiInfo == targetMii) {
             isOptimizeActive = false;

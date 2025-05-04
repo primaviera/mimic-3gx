@@ -17,7 +17,7 @@ namespace patches {
 
     int16_t gInvalidTarget = -1;
 
-    uint32_t EnemyTargettingSkills(uintptr_t miiInfo, uint32_t* skillIndex, uintptr_t enemyInfo, uintptr_t targetMii)
+    uint32_t EnemyTargettingSkills(ActorInfo* miiInfo, uint32_t* skillIndex, ActorInfo* enemyInfo, ActorInfo* targetMii)
     {
         switch (*skillIndex) {
             case SKILL_FIGHTER_09:
@@ -35,7 +35,7 @@ namespace patches {
         return HookContext::GetCurrent().OriginalFunction<uint32_t>(miiInfo, skillIndex, enemyInfo, targetMii);
     }
 
-    uint32_t AllyTargettingSkills(uintptr_t miiInfo, uint32_t* skillIndex, uint32_t r2, uintptr_t targetMii)
+    uint32_t AllyTargettingSkills(ActorInfo* miiInfo, uint32_t* skillIndex, uint32_t r2, ActorInfo* targetMii)
     {
         switch (*skillIndex) {
             case SKILL_FIGHTER_11:
@@ -91,14 +91,14 @@ namespace patches {
         return HookContext::GetCurrent().OriginalFunction<uint32_t>(r0, skillIndex, r2);
     }
 
-    void GetSkillStatus(uint32_t* outStatus, uintptr_t miiInfo, uint32_t* skillIndex) {
+    void GetSkillStatus(uint32_t* outStatus, ActorInfo* miiInfo, uint32_t* skillIndex) {
         switch (*skillIndex) {
             case SKILL_FIGHTER_09:
             case SKILL_FIGHTER_10:
             case SKILL_FIGHTER_11:
             case SKILL_FIGHTER_12:
                 *outStatus = SKILL_STATUS_ENABLE;
-                if (-1 < *(int16_t*)(miiInfo + 0x6C)) {
+                if (-1 < miiInfo->mWeaponStatus) {
                     *outStatus = SKILL_STATUS_NO_WEAPON;
                     return;
                 }
@@ -119,49 +119,46 @@ namespace patches {
         return HookContext::GetCurrent().OriginalFunction<uint32_t>(r0, skillIndex);
     }
 
-    uint32_t EnemySlot1Skills(uintptr_t enemyInfo) {
-        uint8_t* skillIndex = (uint8_t*)(*(uintptr_t*)(enemyInfo + 0x38)+0xF);
+    uint32_t EnemySlot1Skills(ActorInfo* enemyInfo) {
+        uint8_t* skillIndex = enemyInfo->mBattleData->mUsedSkillId;
 
-        if (*(uint8_t*)(enemyInfo + 0x60))
-            *(uint8_t*)(enemyInfo + 0x60) -= 1;
+        if (enemyInfo->unk_0x60)
+            enemyInfo->unk_0x60 -= 1;
 
         switch (*skillIndex) {
             /* Recreation of Boss Snurp's moves. */
             case ENEMY_SKILL_1_LAST_MIMIT:
                 uint32_t status = FEELING_NORMAL;
-                uint32_t (*GetEnemyHp)(uintptr_t) = (uint32_t (*)(uintptr_t))(*(uintptr_t*)(*(uintptr_t*)(enemyInfo)+0x48));
-                uint32_t (*GetEnemyMaxHp)(uintptr_t) = (uint32_t (*)(uintptr_t))(*(uintptr_t*)(*(uintptr_t*)(enemyInfo)+0x4C));
                 float phase2HpThreshold = 0.5f;
                 float phase3HpThreshold = 0.3f;
 
-                if (!*(uint8_t*)(enemyInfo + 0x60) && (float)(GetEnemyHp(enemyInfo) <= (float)(GetEnemyMaxHp(enemyInfo) * phase3HpThreshold))) {
-                    *(uint8_t*)(enemyInfo + 0x60) = 5; // Block enemy from using this move for 5 more attacks
+                if (!enemyInfo->unk_0x60 && (float)(enemyInfo->mBattleHelpers->GetCurHp(enemyInfo) <= (float)(enemyInfo->mBattleHelpers->GetMaxHp(enemyInfo) * phase3HpThreshold))) {
+                    enemyInfo->unk_0x60 = 5; // Block enemy from using this move for 5 more attacks
 
                     _PlayBattleState(enemyInfo, "MagicLock", &gInvalidTarget);
-                    for (uint32_t i = 0; i < GetNumberOfPartyMembers(*(uintptr_t*)(enemyInfo + 0x8)); i++) {
+                    for (uint32_t i = 0; i < GetNumberOfPartyMembers(enemyInfo->mBattleInfo); i++) {
                         status = Utils::Random(0, 23);
                         if (status == FEELING_FACELESS) status =+ 1;
 
-                        uintptr_t selectMii = GetPartyMemberAtIndex(*(uintptr_t*)(enemyInfo + 0x8), i);
+                        ActorInfo* selectMii = GetPartyMemberAtIndex(enemyInfo->mBattleInfo, i);
                         if (selectMii && IsPartyMemberAvailable(selectMii)) {
-                            SetMiiFeeling(selectMii, &status, (int16_t*)(*(uintptr_t*)(selectMii + 0x4) + 0x60), 0);
-                            _PlayBattleState(selectMii, "ErasedBananaEnd", (int16_t*)(*(uintptr_t*)(selectMii + 0x4) + 0x60));
-                            _PlayBattleState(selectMii, "SkillResurrectHeal", (int16_t*)(*(uintptr_t*)(selectMii + 0x4) + 0x60));
+                            SetMiiFeeling(selectMii, &status, selectMii->mBattleState->mStateTarget, 0);
+                            _PlayBattleState(selectMii, "ErasedBananaEnd", selectMii->mBattleState->mStateTarget);
+                            _PlayBattleState(selectMii, "SkillResurrectHeal", selectMii->mBattleState->mStateTarget);
                         }
                     }
                     return 1;
                 }
 
-                if ((float)(GetEnemyHp(enemyInfo) <= (float)(GetEnemyMaxHp(enemyInfo) * phase2HpThreshold))) {
-                    for (int32_t i = GetNumberOfEnemies(*(uintptr_t*)(enemyInfo + 0x8)); i > -1; i--) {
-                        uintptr_t selectEnemy = GetEnemyAtIndex(*(uintptr_t*)(enemyInfo + 0x8), i);
-                        uint32_t (*IsEnemyDead)(uintptr_t) = (uint32_t (*)(uintptr_t))(*(uintptr_t*)(*(uintptr_t*)(enemyInfo)+0x30));
+                if ((float)(enemyInfo->mBattleHelpers->GetCurHp(enemyInfo) <= (float)(enemyInfo->mBattleHelpers->GetMaxHp(enemyInfo) * phase2HpThreshold))) {
+                    for (int32_t i = GetNumberOfEnemies(enemyInfo->mBattleInfo); i > -1; i--) {
+                        ActorInfo* selectEnemy = GetEnemyAtIndex(enemyInfo->mBattleInfo, i);
                         if (selectEnemy == enemyInfo)
                             continue;
                         if (!selectEnemy)
                             continue;
                         /* Only summon enemies if all other enemies are dead. */
-                        if (!IsEnemyDead(selectEnemy)) {
+                        if (!selectEnemy->mBattleHelpers->IsDead(selectEnemy)) {
                             goto start_wide_attack;
                         }
                         uint32_t state = 1;

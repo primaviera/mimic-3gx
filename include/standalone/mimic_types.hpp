@@ -256,12 +256,6 @@ enum BattleFeeling {
     FEELING_OVERSLEEP = 24
 };
 
-struct HelperInfo {
-    uint32_t mNum;
-    uint32_t unk_0x4; /* Always 4. */
-    uintptr_t* mMiiInfos[4];
-};
-
 struct EnemyStatus {
     uint16_t mHp;
     uint16_t mMp;
@@ -294,3 +288,45 @@ struct EnemyParam {
     uint8_t unk_0x64[0x14];
     EnemyStatus* mEnemyStatus;
 };
+
+struct BattleInfo {
+    char unk_0x0;
+};
+
+struct ActorInfo {
+    struct BattleHelpers {
+        char unk_0x0[0x30];
+        bool (*IsDead)(ActorInfo*);
+        char unk_0x34[0x14];
+        uint32_t (*GetCurHp)(ActorInfo*);
+        uint32_t (*GetMaxHp)(ActorInfo*);
+    };
+    struct BattleState {
+        char unk_0x0[0x60];
+        int16_t* mStateTarget;
+    };
+    /* I don't really know what to name this. */
+    #pragma pack(push, 1)
+    struct BattleData {
+        char unk_0x0[0xF];
+        uint8_t* mUsedSkillId;
+    };
+    #pragma pack(pop)
+
+    BattleHelpers* mBattleHelpers;
+    BattleState* mBattleState;
+    BattleInfo* mBattleInfo;
+    char unk_0xC[0x2C];
+    BattleData* mBattleData;
+    char unk_0x3C[0x24];
+    uint8_t unk_0x60;
+    char unk_0x61[0xB];
+    int16_t mWeaponStatus;
+};
+
+struct HelperInfo {
+    uint32_t mNum;
+    uint32_t unk_0x4; /* Always 4. */
+    ActorInfo* mMiiInfos[4];
+};
+
