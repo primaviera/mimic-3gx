@@ -120,7 +120,7 @@ namespace patches {
     }
 
     uint32_t EnemySlot1Skills(ActorInfo* enemyInfo) {
-        uint8_t* skillIndex = enemyInfo->mBattleData->mUsedSkillId;
+        uint8_t* skillIndex = &enemyInfo->mBattleData->mUsedSkillId;
 
         if (enemyInfo->unk_0x60)
             enemyInfo->unk_0x60 -= 1;
@@ -144,9 +144,9 @@ namespace patches {
 
                         ActorInfo* selectMii = GetPartyMemberAtIndex(enemyInfo->mBattleInfo, i);
                         if (selectMii && IsPartyMemberAvailable(selectMii)) {
-                            SetMiiFeeling(selectMii, &status, selectMii->mBattleState->mStateTarget, 0);
-                            _PlayBattleState(selectMii, "ErasedBananaEnd", selectMii->mBattleState->mStateTarget);
-                            _PlayBattleState(selectMii, "SkillResurrectHeal", selectMii->mBattleState->mStateTarget);
+                            SetMiiFeeling(selectMii, &status, &selectMii->mBattleState->mStateTarget, 0);
+                            _PlayBattleState(selectMii, "ErasedBananaEnd", &selectMii->mBattleState->mStateTarget);
+                            _PlayBattleState(selectMii, "SkillResurrectHeal", &selectMii->mBattleState->mStateTarget);
                         }
                     }
                     return 1;

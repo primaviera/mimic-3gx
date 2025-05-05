@@ -45,7 +45,7 @@ check_scientist:
                 SpendSkillMP(selectMii, &optimizeSkillId);
 
                 /* BUG: The scientist says "Cure.exe!" instead of the actual skill name, this probably happens due to LoadSkillEffect but I don't really know how to fix this. */
-                _PlayBattleState(selectMii, "SkillCureCode", miiInfo->mBattleState->mStateTarget);
+                _PlayBattleState(selectMii, "SkillCureCode", &miiInfo->mBattleState->mStateTarget);
                 _PlayBattleState(miiInfo, "AvoidFeelCutInReady", &gInvalidTarget);
                 PlayHeartLikeEffect(miiInfo, 0x14);
                 UpdateLoveExp(miiInfo, selectMii, 5, 0);

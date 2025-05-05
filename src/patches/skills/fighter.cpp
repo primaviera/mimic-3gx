@@ -12,12 +12,12 @@ namespace CTRPluginFramework {
 namespace patches {
 
     uint32_t FighterFlee(ActorInfo* miiInfo, uint32_t* skillIndex, ActorInfo* enemyInfo) {
-        _PlayBattleState(miiInfo, "SkillDanceStart", enemyInfo->mBattleState->mStateTarget);
+        _PlayBattleState(miiInfo, "SkillDanceStart", &enemyInfo->mBattleState->mStateTarget);
         ShowCutIn(miiInfo, skillIndex);
         SpendSkillMP(miiInfo, skillIndex);
         
-        _PlayBattleState(miiInfo, "SkillDance", enemyInfo->mBattleState->mStateTarget);
-        _PlayBattleState(enemyInfo, "ToFeelFever", miiInfo->mBattleState->mStateTarget);
+        _PlayBattleState(miiInfo, "SkillDance", &enemyInfo->mBattleState->mStateTarget);
+        _PlayBattleState(enemyInfo, "ToFeelFever", &miiInfo->mBattleState->mStateTarget);
         MakeEnemyFlee(enemyInfo);
         return 1;
     }
@@ -54,17 +54,17 @@ namespace patches {
         CalcHealing(1.0f, healCalc, miiInfo, skillIndex, targetMii, 0);
         *skillIndex = SKILL_FIGHTER_11;
 
-        _PlayBattleState(miiInfo, "DefeatEnemyHelp", targetMii->mBattleState->mStateTarget);
+        _PlayBattleState(miiInfo, "DefeatEnemyHelp", &miiInfo->mBattleState->mStateTarget);
         ShowCutIn(miiInfo, skillIndex);
         SpendSkillMP(miiInfo, skillIndex);
 
         SetupHealingParams(1.0f, healParams, targetMii, healCalc);
-        HealMiiHP(targetMii, healParams, miiInfo->mBattleState->mStateTarget, 1);
+        HealMiiHP(targetMii, healParams, &miiInfo->mBattleState->mStateTarget, 1);
 
         if (miiInfo == targetMii) {
-            _PlayBattleState(targetMii, "CureSelf", miiInfo->mBattleState->mStateTarget);
+            _PlayBattleState(targetMii, "CureSelf", &miiInfo->mBattleState->mStateTarget);
         } else {
-            _PlayBattleState(targetMii, "CureNormal", miiInfo->mBattleState->mStateTarget);
+            _PlayBattleState(targetMii, "CureNormal", &miiInfo->mBattleState->mStateTarget);
         }
         return 1;
     }
@@ -78,7 +78,7 @@ namespace patches {
         CalcHealing(1.0f, healCalc, miiInfo, skillIndex, 0, 0);
         *skillIndex = SKILL_FIGHTER_12;
 
-        _PlayBattleState(miiInfo, "DefeatEnemyHelp", miiInfo->mBattleState->mStateTarget);
+        _PlayBattleState(miiInfo, "DefeatEnemyHelp", &miiInfo->mBattleState->mStateTarget);
         ShowCutIn(miiInfo, skillIndex);
         SpendSkillMP(miiInfo, skillIndex);
 
@@ -90,13 +90,13 @@ namespace patches {
             if (selectMii && IsPartyMemberAvailable(selectMii)) {
                 SetupHealingParams(1.0f, healParams, selectMii, healCalc);
                 if (Utils::Random(0, 1)) {
-                    HealMiiHP(selectMii, healParams, miiInfo->mBattleState->mStateTarget, 1);
+                    HealMiiHP(selectMii, healParams, &miiInfo->mBattleState->mStateTarget, 1);
                 } else {
-                    HealMiiMP(selectMii, healParams, miiInfo->mBattleState->mStateTarget, 1);
+                    HealMiiMP(selectMii, healParams, &miiInfo->mBattleState->mStateTarget, 1);
                 }
-                SetMiiFeeling(selectMii, &status, selectMii->mBattleState->mStateTarget, 0);
-                _PlayBattleState(selectMii, "ErasedBananaEnd", selectMii->mBattleState->mStateTarget);
-                _PlayBattleState(selectMii, "DogfightEndAttackHitL", selectMii->mBattleState->mStateTarget);
+                SetMiiFeeling(selectMii, &status, &selectMii->mBattleState->mStateTarget, 0);
+                _PlayBattleState(selectMii, "ErasedBananaEnd", &selectMii->mBattleState->mStateTarget);
+                _PlayBattleState(selectMii, "DogfightEndAttackHitL", &selectMii->mBattleState->mStateTarget);
             }
         }
         _PlayBattleState(miiInfo, "SkillWhistleCureEnd", &gInvalidTarget);
