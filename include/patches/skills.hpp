@@ -4,10 +4,10 @@ namespace CTRPluginFramework {
 
 namespace patches {
 
-extern int16_t gInvalidTarget;
+    extern int16_t gInvalidTarget;
 
-void InstallSkills();
+    void InstallSkills();
 
-}
+} // namespace patches
 
-}
+} // namespace CTRPluginFramework

@@ -4,8 +4,8 @@ namespace CTRPluginFramework {
 
 namespace patches {
 
-void InstallRandomizer();
+    void InstallRandomizer();
 
 }
 
-}
+} // namespace CTRPluginFramework

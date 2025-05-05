@@ -6,3 +6,8 @@ QualifierAlignment: Left
 FixNamespaceComments: true
 ReflowComments: true
 AllowShortFunctionsOnASingleLine: None
+AllowAllArgumentsOnNextLine: false
+AlignAfterOpenBracket: DontAlign
+IndentExternBlock: Indent
+IndentCaseLabels: true
+NamespaceIndentation: Inner

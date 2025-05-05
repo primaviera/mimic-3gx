@@ -305,13 +305,13 @@ struct ActorInfo {
         char unk_0x0[0x60];
         int16_t mStateTarget;
     };
-    /* I don't really know what to name this. */
-    #pragma pack(push, 1)
+/* I don't really know what to name this. */
+#pragma pack(push, 1)
     struct BattleData {
         char unk_0x0[0xF];
         uint8_t mUsedSkillId;
     };
-    #pragma pack(pop)
+#pragma pack(pop)
 
     BattleHelpers* mBattleHelpers;
     BattleState* mBattleState;
@@ -329,4 +329,3 @@ struct HelperInfo {
     uint32_t unk_0x4; /* Always 4. */
     ActorInfo* mMiiInfos[4];
 };
-

@@ -11,18 +11,20 @@ namespace CTRPluginFramework {
 
 namespace patches {
 
-    uint32_t FighterFlee(ActorInfo* miiInfo, uint32_t* skillIndex, ActorInfo* enemyInfo) {
+    uint32_t FighterFlee(ActorInfo* miiInfo, uint32_t* skillIndex, ActorInfo* enemyInfo)
+    {
         _PlayBattleState(miiInfo, "SkillDanceStart", &enemyInfo->mBattleState->mStateTarget);
         ShowCutIn(miiInfo, skillIndex);
         SpendSkillMP(miiInfo, skillIndex);
-        
+
         _PlayBattleState(miiInfo, "SkillDance", &enemyInfo->mBattleState->mStateTarget);
         _PlayBattleState(enemyInfo, "ToFeelFever", &miiInfo->mBattleState->mStateTarget);
         MakeEnemyFlee(enemyInfo);
         return 1;
     }
 
-    uint32_t FighterHitAll(ActorInfo* miiInfo, uint32_t* skillIndex) {
+    uint32_t FighterHitAll(ActorInfo* miiInfo, uint32_t* skillIndex)
+    {
         uint32_t damageCalc[0x9]; // 0x24
         uint32_t damageParams[0x4]; // 0x10
 
@@ -46,7 +48,8 @@ namespace patches {
         return 1;
     }
 
-    uint32_t FighterSingleHeal(ActorInfo* miiInfo, uint32_t* skillIndex, ActorInfo* targetMii) {
+    uint32_t FighterSingleHeal(ActorInfo* miiInfo, uint32_t* skillIndex, ActorInfo* targetMii)
+    {
         uint32_t healCalc[0x9]; // 0x24
         uint32_t healParams[0x4]; // 0x10
 
@@ -69,7 +72,8 @@ namespace patches {
         return 1;
     }
 
-    uint32_t FighterStatusAll(ActorInfo* miiInfo, uint32_t* skillIndex) {
+    uint32_t FighterStatusAll(ActorInfo* miiInfo, uint32_t* skillIndex)
+    {
         uint32_t healCalc[0x9]; // 0x24
         uint32_t healParams[0x4]; // 0x10
         uint32_t status = FEELING_NORMAL;
@@ -85,7 +89,8 @@ namespace patches {
         _PlayBattleState(miiInfo, "SkillWhistleCureStart", &gInvalidTarget);
         for (uint32_t i = 0; i < GetNumberOfPartyMembers(miiInfo->mBattleInfo); i++) {
             status = Utils::Random(0, 23);
-            if (status == FEELING_FACELESS) status =+ 1;
+            if (status == FEELING_FACELESS)
+                status = +1;
             ActorInfo* selectMii = GetPartyMemberAtIndex(miiInfo->mBattleInfo, i);
             if (selectMii && IsPartyMemberAvailable(selectMii)) {
                 SetupHealingParams(1.0f, healParams, selectMii, healCalc);

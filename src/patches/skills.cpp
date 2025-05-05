@@ -91,7 +91,8 @@ namespace patches {
         return HookContext::GetCurrent().OriginalFunction<uint32_t>(r0, skillIndex, r2);
     }
 
-    void GetSkillStatus(uint32_t* outStatus, ActorInfo* miiInfo, uint32_t* skillIndex) {
+    void GetSkillStatus(uint32_t* outStatus, ActorInfo* miiInfo, uint32_t* skillIndex)
+    {
         switch (*skillIndex) {
             case SKILL_FIGHTER_09:
             case SKILL_FIGHTER_10:
@@ -111,7 +112,8 @@ namespace patches {
         HookContext::GetCurrent().OriginalFunction<uint32_t>(outStatus, miiInfo, skillIndex);
     }
 
-    uint32_t IsNotAutoSkill(uint32_t r0, uint32_t* skillIndex) {
+    uint32_t IsNotAutoSkill(uint32_t r0, uint32_t* skillIndex)
+    {
         switch (*skillIndex) {
             case SKILL_SCIENTIST_09:
                 return 0;
@@ -119,7 +121,8 @@ namespace patches {
         return HookContext::GetCurrent().OriginalFunction<uint32_t>(r0, skillIndex);
     }
 
-    uint32_t EnemySlot1Skills(ActorInfo* enemyInfo) {
+    uint32_t EnemySlot1Skills(ActorInfo* enemyInfo)
+    {
         uint8_t* skillIndex = &enemyInfo->mBattleData->mUsedSkillId;
 
         if (enemyInfo->unk_0x60)
@@ -140,7 +143,8 @@ namespace patches {
                     _PlayBattleState(enemyInfo, "MagicLock", &gInvalidTarget);
                     for (uint32_t i = 0; i < GetNumberOfPartyMembers(enemyInfo->mBattleInfo); i++) {
                         status = Utils::Random(0, 23);
-                        if (status == FEELING_FACELESS) status =+ 1;
+                        if (status == FEELING_FACELESS)
+                            status = +1;
 
                         ActorInfo* selectMii = GetPartyMemberAtIndex(enemyInfo->mBattleInfo, i);
                         if (selectMii && IsPartyMemberAvailable(selectMii)) {
@@ -169,17 +173,17 @@ namespace patches {
                     return 1;
                 }
 
-start_wide_attack:
+            start_wide_attack:
                 /* Fallback attack. */
                 *skillIndex = ENEMY_SKILL_1_WIDE_ATTACK;
-                return HookContext::GetCurrent().OriginalFunction<uint32_t>(enemyInfo);
         }
         return HookContext::GetCurrent().OriginalFunction<uint32_t>(enemyInfo);
     }
 
     void InstallSkills()
     {
-        if (!config::gConf.mSkills.active) return;
+        if (!config::gConf.mSkills.active)
+            return;
 
         InstallHookAtPattern(enemyTargettingSkills_Pattern, 0x0, (MITM_MODE), (uint32_t)EnemyTargettingSkills, 0);
         InstallHookAtPattern(allyTargettingSkills_Pattern, 0x0, (MITM_MODE), (uint32_t)AllyTargettingSkills, 0);
