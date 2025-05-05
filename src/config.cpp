@@ -1,56 +1,66 @@
 #include <3ds.h>
 #include <CTRPluginFramework.hpp>
 
-#include <tomlplusplus/toml.hpp>
+#include <inih/ini.h>
 
 #include "config.hpp"
 #include "logger.hpp"
-
-#include "config_toml.h"
 
 namespace CTRPluginFramework {
 
 namespace config {
 
-    st_randomizer randomizer;
-    st_skills skills;
-    st_controllable controllable;
+    config::Data gConf;
 
-    void load(const toml::table& table)
+    bool IniGetBoolean(const char* value, bool defaultValue)
     {
-        randomizer.active = table["randomizer"]["active"].value_or(false);
-
-        skills.active = table["skills"]["active"].value_or(false);
-
-        controllable.active = table["controllable"]["active"].value_or(false);
+        if (!strcmp(value, "true"))
+            return true;
+        else if (!strcmp(value, "false"))
+            return false;
+        return defaultValue;
     }
 
-    int init(const std::string& path)
+    int IniHandler(void* user, const char* section, const char* name, const char* value)
     {
-        File config_file;
-        void* config_buffer;
-        uint32_t config_size;
+        config::Data* userConfig = (config::Data*)user;
 
-        if (!File::Open(config_file, path, File::READ)) {
-            config_size = config_file.GetSize();
-            config_buffer = malloc(config_size);
-            config_file.Read(config_buffer, config_size);
+#define MATCH(s, n) !strcmp(section, s) && !strcmp(name, n)
+        if (MATCH("randomizer", "active")) {
+            userConfig->mRandomizer.active = IniGetBoolean(value, false);
+        } else if (MATCH("skills", "active")) {
+            userConfig->mSkills.active = IniGetBoolean(value, false);
         } else {
-            config_size = config_toml_size;
-            config_buffer = malloc(config_size);
-            memcpy(config_buffer, config_toml, config_size);
+            return 0;
         }
-        ((char*)config_buffer)[config_size - 1] = '\0'; // This is terrible
+#undef MATCH
+        return 1;
+    }
 
-        toml::parse_result res = toml::parse((const char*)config_buffer);
-        free(config_buffer);
-        if (!res) {
-            logger::write(res.error().description().data());
-            logger::write("\n");
+    int Initialize(const std::string& path)
+    {
+        File configFile;
+        void* configBuffer;
+        uint32_t configSize;
+
+        /* Fallback to default config. */
+        if (File::Open(configFile, path, File::READ))
+            return 0;
+
+        configSize = configFile.GetSize();
+        configBuffer = malloc(configSize);
+        if (!configBuffer)
+            return 1;
+
+        configFile.Read(configBuffer, configSize);
+        ((char*)configBuffer)[configSize - 1] = '\0'; // This is terrible
+
+        auto res = ini_parse_string((const char*)configBuffer, IniHandler, &gConf);
+        free(configBuffer);
+        if (res) {
+            logger::Write("Failed to parse INI\n");
             return 1;
         }
-
-        load(res.table());
 
         return 0;
     }

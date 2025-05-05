@@ -2,9 +2,9 @@
 
 namespace CTRPluginFramework {
 
-namespace hacks {
+namespace patches {
 
-void install_randomizer();
+void InstallRandomizer();
 
 }
 
