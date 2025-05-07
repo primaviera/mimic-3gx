@@ -12,7 +12,7 @@ namespace CTRPluginFramework {
 
 namespace patches {
 
-    inline void InstallHookAtPattern(const std::vector<uint32_t>& pattern, uint32_t offset, uint32_t flags,
+    inline void InstallHookAtPattern(const std::vector<uint32_t>& pattern, int32_t offset, uint32_t flags,
         uint32_t callback, uint32_t afterCallback)
     {
         if (auto res = Utils::Search<uint32_t>(0x00100000, 0x00709000, pattern)) {

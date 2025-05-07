@@ -37,18 +37,22 @@ namespace patches {
 
     uint32_t AllyTargettingSkills(ActorInfo* miiInfo, uint32_t* skillIndex, uint32_t r2, ActorInfo* targetMii)
     {
+        ActorInfo* actorArray[4] = { nullptr, nullptr, nullptr, nullptr };
+        HelperInfo helperInfo = { 0, 4, &actorArray };
         switch (*skillIndex) {
             case SKILL_FIGHTER_11:
                 if (!HasEnoughMPForSkill(miiInfo, skillIndex, 0))
                     return 0;
                 if (!targetMii)
                     return 0;
-                return FighterSingleHeal(miiInfo, skillIndex, targetMii);
+                SetupSkillHelp(miiInfo, &helperInfo, targetMii);
+                return FighterSingleHeal(miiInfo, skillIndex, targetMii, &helperInfo);
 
             case SKILL_FIGHTER_12:
                 if (!HasEnoughMPForSkill(miiInfo, skillIndex, 0))
                     return 0;
-                return FighterStatusAll(miiInfo, skillIndex);
+                SetupSkillHelp(miiInfo, &helperInfo, 0);
+                return FighterStatusAll(miiInfo, skillIndex, &helperInfo);
         }
         return HookContext::GetCurrent().OriginalFunction<uint32_t>(miiInfo, skillIndex, r2, targetMii);
     }

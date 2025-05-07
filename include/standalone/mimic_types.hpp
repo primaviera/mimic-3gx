@@ -293,6 +293,11 @@ struct BattleInfo {
     char unk_0x0;
 };
 
+struct BattleState {
+    char unk_0x0[0x60];
+    int16_t mStateTarget;
+};
+
 struct ActorInfo {
     struct BattleHelpers {
         char unk_0x0[0x30];
@@ -300,10 +305,6 @@ struct ActorInfo {
         char unk_0x34[0x14];
         uint32_t (*GetCurHp)(ActorInfo*);
         uint32_t (*GetMaxHp)(ActorInfo*);
-    };
-    struct BattleState {
-        char unk_0x0[0x60];
-        int16_t mStateTarget;
     };
 /* I don't really know what to name this. */
 #pragma pack(push, 1)
@@ -325,7 +326,7 @@ struct ActorInfo {
 };
 
 struct HelperInfo {
-    uint32_t mNum;
+    uint32_t mNum; /* Set by SetupSkillHelp. */
     uint32_t unk_0x4; /* Always 4. */
-    ActorInfo* mMiiInfos[4];
+    ActorInfo* (*mMiiInfos)[4]; /* Pointer to an array of ActorInfo. */
 };

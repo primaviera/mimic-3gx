@@ -25,7 +25,11 @@ SETUP_FUNC_PTR(HasEnoughMPForSkill, 0x0);
 SETUP_FUNC_PTR(GetSkillMPCost, 0x0);
 SETUP_FUNC_PTR(SpendSkillMP, 0x0);
 SETUP_FUNC_PTR(ShowCutIn, 0x0);
+
 SETUP_FUNC_PTR(SetupSkillHelp, 0x0);
+SETUP_FUNC_PTR(PlayBattleStateForHelp, 0x0);
+
+SETUP_FUNC_PTR(ShowBattleCaption, -0x1C);
 
 SETUP_FUNC_PTR(CalcDamage, 0x0);
 SETUP_FUNC_PTR(SetupDamageParams, 0x0);

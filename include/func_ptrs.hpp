@@ -40,7 +40,7 @@ FUNC_PTR(CanEnemyBeHit, uint32_t (*)(ActorInfo*));
 FUNC_PTR(IsPartyMemberAvailable, uint32_t (*)(ActorInfo*));
 FUNC_PTR(GetRandomEnemy, ActorInfo* (*)(BattleInfo*, uint32_t*, int32_t, uint32_t));
 
-FUNC_PTR(PlayBattleState, void (*)(uintptr_t, uintptr_t, uint32_t*, uint32_t*, uint32_t));
+FUNC_PTR(PlayBattleState, void (*)(BattleInfo*, BattleState*, uint32_t*, uint32_t*, uint32_t));
 FUNC_PTR(_PlayBattleState, void (*)(ActorInfo*, const char*, int16_t*));
 FUNC_PTR(LoadSkillEffect, void (*)(ActorInfo*, uint32_t*, uint32_t));
 FUNC_PTR(PlaySkillEffect, void (*)(ActorInfo*));
@@ -50,7 +50,11 @@ FUNC_PTR(HasEnoughMPForSkill, uint32_t (*)(ActorInfo*, uint32_t*, uint32_t));
 FUNC_PTR(GetSkillMPCost, uint32_t (*)(ActorInfo*, uint32_t*, uint32_t));
 FUNC_PTR(SpendSkillMP, void (*)(ActorInfo*, uint32_t*));
 FUNC_PTR(ShowCutIn, void (*)(ActorInfo*, uint32_t*));
-FUNC_PTR(SetupSkillHelp, void (*)(ActorInfo*, HelperInfo*, uint32_t));
+
+FUNC_PTR(SetupSkillHelp, void (*)(ActorInfo*, HelperInfo*, ActorInfo*));
+FUNC_PTR(PlayBattleStateForHelp, void (*)(ActorInfo*, ActorInfo*, uint32_t));
+
+FUNC_PTR(ShowBattleCaption, void (*)(ActorInfo*, uint32_t, const char*));
 
 FUNC_PTR(CalcDamage, void (*)(float, uint32_t*, ActorInfo*, uint32_t*, ActorInfo*, HelperInfo*));
 FUNC_PTR(SetupDamageParams, void (*)(float, uint32_t*, ActorInfo*, uint32_t*));
