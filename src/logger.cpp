@@ -9,7 +9,7 @@ namespace logger {
 
     File logFile;
 
-    // https://github.com/Anto726/CTRPluginFramework-RevolutionBase/blob/-/src/base/logger.cpp#L7
+    /* https://github.com/Anto726/CTRPluginFramework-RevolutionBase/blob/-/src/base/logger.cpp#L7 */
     std::string GetLogName()
     {
         timeval t;

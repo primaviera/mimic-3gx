@@ -1,5 +1,20 @@
 #pragma once
 
+/* https://github.com/aboood40091/sead */
+
+namespace sead {
+
+struct Random {
+    u32 mX;
+    u32 mY;
+    u32 mZ;
+    u32 mW;
+};
+
+} // namespace sead
+
+/* https://github.com/Kobazco/Miitopia-Code-Edits */
+
 enum JobSkill {
     SKILL_FIGHTER_DOUBLE = 0,
     SKILL_FIGHTER_TWICE = 1,
@@ -278,50 +293,57 @@ struct EnemyParam {
     uint32_t mHash; /* CRC32 hash of internal name. */
     const char* mModel;
     uint32_t mId; /* Some kind of decimal ID. */
-    uint16_t unk_0xC;
-    uint16_t unk_0xE;
-    uint8_t unk_0x10[0x34];
-    float mDistance[3]; /* Distance between models (X, Y, Z). */
+    uint8_t mSize;
+    uint8_t unk_0xD; /* Could be boss tag? */
+    uint8_t mActionsPerTurn;
+    uint8_t mSkill1Id; /* I'm not sure why this section is so unorganized, yikes. */
+    float mSkill1Mod;
+    uint8_t mSkill1Chance;
+    uint8_t mSkill2Id;
+    uint8_t mSkill2Chance;
+    uint8_t mSkill2Mod;
+    uint8_t mSkill3Id;
+    uint8_t mSkill4Id;
+    uint8_t mSkill3Chance;
+    uint8_t mSkill4Chance;
+    float mSkill3Mod;
+    float mSkill4Mod;
+    uint8_t unk_0x24[0x20];
+    float mDistance[3]; /* Distance between other enemies. (X, Y, Z) */
     float mScale; /* Model scale. */
-    float mSkillCam[3]; /* Camera offset from bone when using a skill (X, Y, Z). */
-    const char* mBone; /* What bone the camera targets. */
+    float mSkillCam[3]; /* Camera offset from bone when using a skill. (X, Y, Z) */
+    const char* mBone; /* What bone the camera targets when using a skill. */
     uint8_t unk_0x64[0x14];
     EnemyStatus* mEnemyStatus;
 };
 
 struct BattleInfo {
-    char unk_0x0;
+    uint8_t unk_0x0[0x4CC];
+    sead::Random* mRandomSeed;
 };
 
 struct BattleState {
-    char unk_0x0[0x60];
-    int16_t mStateTarget;
+    uint8_t unk_0x0[0x60];
+    int16_t mTarget;
 };
 
 struct ActorInfo {
     struct BattleHelpers {
-        char unk_0x0[0x30];
+        uint8_t unk_0x0[0x30];
         bool (*IsDead)(ActorInfo*);
-        char unk_0x34[0x14];
+        uint8_t unk_0x34[0x14];
         uint32_t (*GetCurHp)(ActorInfo*);
         uint32_t (*GetMaxHp)(ActorInfo*);
     };
-/* I don't really know what to name this. */
-#pragma pack(push, 1)
-    struct BattleData {
-        char unk_0x0[0xF];
-        uint8_t mUsedSkillId;
-    };
-#pragma pack(pop)
 
     BattleHelpers* mBattleHelpers;
     BattleState* mBattleState;
     BattleInfo* mBattleInfo;
-    char unk_0xC[0x2C];
-    BattleData* mBattleData;
-    char unk_0x3C[0x24];
+    uint8_t unk_0xC[0x2C];
+    EnemyParam* mEnemyParam; /* Set to 1 if ActorInfo is a Mii. */
+    uint8_t unk_0x3C[0x24];
     uint8_t unk_0x60;
-    char unk_0x61[0xB];
+    uint8_t unk_0x61[0xB];
     int16_t mWeaponStatus;
 };
 

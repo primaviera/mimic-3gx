@@ -4,7 +4,7 @@ namespace CTRPluginFramework {
 
 namespace patches {
 
-    extern int16_t gInvalidTarget;
+    extern int16_t gNoTarget;
 
     void InstallSkills();
 

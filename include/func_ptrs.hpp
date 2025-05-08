@@ -8,7 +8,7 @@
 
 namespace CTRPluginFramework {
 
-// https://github.com/shadowninja108/s2-freecam
+/* https://github.com/shadowninja108/s2-freecam */
 
 #define APPEND_IMPL(x, y) x##y
 #define APPEND(x, y) APPEND_IMPL(x, y)
@@ -28,8 +28,9 @@ namespace CTRPluginFramework {
     name = (_FUNC_TYPE(name))(Utils::Search(0x00100000, 0x00709000, name##_Pattern) + offset);
 
 FUNC_PTR(sead_HashCRC32_calcHash, uint32_t (*)(const void*, uint32_t));
-FUNC_PTR(sead_Random_getU32, uint32_t (*)(uintptr_t));
-FUNC_PTR(CalcRandPercentage, uint32_t (*)(uintptr_t, uint32_t));
+FUNC_PTR(sead_Random_init, void (*)(sead::Random*));
+FUNC_PTR(sead_Random_getU32, uint32_t (*)(sead::Random*));
+FUNC_PTR(CalcRandPercentage, bool (*)(ActorInfo*, uint32_t));
 
 FUNC_PTR(GetNumberOfPartyMembers, uint32_t (*)(BattleInfo*));
 FUNC_PTR(GetPartyMemberAtIndex, ActorInfo* (*)(BattleInfo*, uint32_t));

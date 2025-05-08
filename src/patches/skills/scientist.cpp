@@ -21,7 +21,7 @@ namespace patches {
         HelperInfo* helperInfo)
     {
         HookContext::GetCurrent().OriginalFunction<void>(s0, outCalc, miiInfo, skillIndex, target, helperInfo);
-        if (Utils::Random(0, 5) || GetSkillMPCost(miiInfo, skillIndex, 0) == 0)
+        if (!CalcRandPercentage(miiInfo, 20) || GetSkillMPCost(miiInfo, skillIndex, 0) == 0)
             return;
 
         /* Check if MiiInfo is not a traveler. */
@@ -43,14 +43,14 @@ namespace patches {
                 LoadSkillEffect(selectMii, &cureCodeSkillId, 1);
                 PlaySkillEffect(selectMii);
 
-                _PlayBattleState(selectMii, "SkillCureCodeStart", &gInvalidTarget);
+                _PlayBattleState(selectMii, "SkillCureCodeStart", &gNoTarget);
                 ShowCutIn(selectMii, &optimizeSkillId);
                 SpendSkillMP(selectMii, &optimizeSkillId);
 
                 /* BUG: The scientist says "Cure.exe!" instead of the actual skill name, this probably happens due to
                  * LoadSkillEffect but I don't really know how to fix this. */
-                _PlayBattleState(selectMii, "SkillCureCode", &miiInfo->mBattleState->mStateTarget);
-                _PlayBattleState(miiInfo, "AvoidFeelCutInReady", &gInvalidTarget);
+                _PlayBattleState(selectMii, "SkillCureCode", &miiInfo->mBattleState->mTarget);
+                _PlayBattleState(miiInfo, "AvoidFeelCutInReady", &gNoTarget);
                 PlayHeartLikeEffect(miiInfo, 0x14);
                 UpdateLoveExp(miiInfo, selectMii, 5, 0);
 

@@ -15,7 +15,7 @@ namespace CTRPluginFramework {
 
 namespace patches {
 
-    int16_t gInvalidTarget = -1;
+    int16_t gNoTarget = -1;
 
     uint32_t EnemyTargettingSkills(ActorInfo* miiInfo, uint32_t* skillIndex, ActorInfo* enemyInfo, ActorInfo* targetMii)
     {
@@ -127,10 +127,7 @@ namespace patches {
 
     uint32_t EnemySlot1Skills(ActorInfo* enemyInfo)
     {
-        uint8_t* skillIndex = &enemyInfo->mBattleData->mUsedSkillId;
-
-        if (enemyInfo->unk_0x60)
-            enemyInfo->unk_0x60 -= 1;
+        uint8_t* skillIndex = &enemyInfo->mEnemyParam->mSkill1Id;
 
         switch (*skillIndex) {
             /* Recreation of Boss Snurp's moves. */
@@ -141,10 +138,14 @@ namespace patches {
                 float phase2Hp = maxHp * 0.5f;
                 float phase3Hp = maxHp * 0.3f;
 
-                if (!enemyInfo->unk_0x60 && curHp <= phase3Hp) {
-                    enemyInfo->unk_0x60 = 5; // Block enemy from using this move for 5 more attacks
+                /* It seems like this field is only used for the Darkest Lord, so it's basically free to use it here. */
+                if (enemyInfo->unk_0x60)
+                    enemyInfo->unk_0x60 -= 1;
 
-                    _PlayBattleState(enemyInfo, "MagicLock", &gInvalidTarget);
+                if (!enemyInfo->unk_0x60 && curHp <= phase3Hp) {
+                    enemyInfo->unk_0x60 = 5; /* Block enemy from inflicting random statuses for 5 more attacks. */
+
+                    _PlayBattleState(enemyInfo, "MagicLock", &gNoTarget);
                     for (uint32_t i = 0; i < GetNumberOfPartyMembers(enemyInfo->mBattleInfo); i++) {
                         status = Utils::Random(0, 23);
                         if (status == FEELING_FACELESS)
@@ -152,20 +153,18 @@ namespace patches {
 
                         ActorInfo* selectMii = GetPartyMemberAtIndex(enemyInfo->mBattleInfo, i);
                         if (selectMii && IsPartyMemberAvailable(selectMii)) {
-                            SetMiiFeeling(selectMii, &status, &selectMii->mBattleState->mStateTarget, 0);
-                            _PlayBattleState(selectMii, "ErasedBananaEnd", &selectMii->mBattleState->mStateTarget);
-                            _PlayBattleState(selectMii, "SkillResurrectHeal", &selectMii->mBattleState->mStateTarget);
+                            SetMiiFeeling(selectMii, &status, &selectMii->mBattleState->mTarget, 0);
+                            _PlayBattleState(selectMii, "ErasedBananaEnd", &selectMii->mBattleState->mTarget);
+                            _PlayBattleState(selectMii, "SkillResurrectHeal", &selectMii->mBattleState->mTarget);
                         }
                     }
                     return 1;
                 }
 
                 if (curHp <= phase2Hp) {
-                    for (int32_t i = GetNumberOfEnemies(enemyInfo->mBattleInfo); i > -1; i--) {
+                    for (uint32_t i = 0; i < GetNumberOfEnemies(enemyInfo->mBattleInfo); i++) {
                         ActorInfo* selectEnemy = GetEnemyAtIndex(enemyInfo->mBattleInfo, i);
-                        if (selectEnemy == enemyInfo)
-                            continue;
-                        if (!selectEnemy)
+                        if (!selectEnemy || selectEnemy == enemyInfo)
                             continue;
                         /* Only summon enemies if all other enemies are dead. */
                         if (!selectEnemy->mBattleHelpers->IsDead(selectEnemy)) {
