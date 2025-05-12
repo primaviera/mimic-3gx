@@ -39,7 +39,6 @@ FUNC_PTR(GetEnemyAtIndex, ActorInfo* (*)(BattleInfo*, uint32_t));
 
 FUNC_PTR(CanEnemyBeHit, uint32_t (*)(ActorInfo*));
 FUNC_PTR(IsPartyMemberAvailable, uint32_t (*)(ActorInfo*));
-FUNC_PTR(GetRandomEnemy, ActorInfo* (*)(BattleInfo*, uint32_t*, int32_t, uint32_t));
 
 FUNC_PTR(PlayBattleState, void (*)(BattleInfo*, BattleState*, uint32_t*, uint32_t*, uint32_t));
 FUNC_PTR(_PlayBattleState, void (*)(ActorInfo*, const char*, int16_t*));
@@ -57,9 +56,14 @@ FUNC_PTR(PlayBattleStateForHelp, void (*)(ActorInfo*, ActorInfo*, uint32_t));
 
 FUNC_PTR(ShowBattleCaption, void (*)(ActorInfo*, uint32_t, const char*));
 
+FUNC_PTR(CalcFixedDamageOrHealing, void (*)(uint32_t*, uint32_t, uint32_t, uint32_t));
+
 FUNC_PTR(CalcDamage, void (*)(float, uint32_t*, ActorInfo*, uint32_t*, ActorInfo*, HelperInfo*));
 FUNC_PTR(SetupDamageParams, void (*)(float, uint32_t*, ActorInfo*, uint32_t*));
-FUNC_PTR(DamageEnemy, uint32_t (*)(ActorInfo*, ActorInfo*, uint32_t*, uint32_t));
+FUNC_PTR(DamageEnemy, uint32_t* (*)(ActorInfo*, ActorInfo*, uint32_t*, uint32_t));
+
+FUNC_PTR(UnkDamageEnemyAfter, void (*)(BattleInfo*, uint32_t*));
+FUNC_PTR(SetUnk0x58_ActorInfo, void (*)(ActorInfo*, uint32_t));
 
 FUNC_PTR(CalcHealing, void (*)(float, uint32_t*, ActorInfo*, uint32_t*, ActorInfo*, HelperInfo*));
 FUNC_PTR(SetupHealingParams, void (*)(float, uint32_t*, ActorInfo*, uint32_t*));
@@ -68,8 +72,17 @@ FUNC_PTR(HealMiiMP, void (*)(ActorInfo*, uint32_t*, int16_t*, uint32_t));
 
 FUNC_PTR(PlayHeartLikeEffect, void (*)(ActorInfo*, uint32_t));
 FUNC_PTR(UpdateLoveExp, void (*)(ActorInfo*, ActorInfo*, int32_t, uint32_t));
+FUNC_PTR(PraiseOrCrankyAfterTurn, void (*)(ActorInfo*));
+FUNC_PTR(CheckHateRelationship, bool (*)(ActorInfo*, ActorInfo*, uint32_t));
 
-FUNC_PTR(SummonEnemy, uint32_t (*)(ActorInfo*, uint32_t*, ActorInfo*, uint32_t));
+FUNC_PTR(CheckRockyAgain, bool (*)(ActorInfo*, uint32_t*));
+FUNC_PTR(CheckRockyReject, bool (*)(ActorInfo*));
+FUNC_PTR(StartRockyReject, void (*)(ActorInfo*, ActorInfo*, uint32_t, uint32_t));
+FUNC_PTR(RockyRejectAftermath, void (*)(ActorInfo*, ActorInfo*, uint32_t));
+
+FUNC_PTR(GetRandomEnemy, ActorInfo* (*)(BattleInfo*, uint32_t*, int32_t, uint32_t));
+FUNC_PTR(IsEnemyBoss, bool (*)(ActorInfo*));
 FUNC_PTR(MakeEnemyFlee, void (*)(ActorInfo*));
+FUNC_PTR(SummonEnemy, uint32_t (*)(ActorInfo*, uint32_t*, ActorInfo*, uint32_t));
 
 } // namespace CTRPluginFramework

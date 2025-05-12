@@ -32,7 +32,7 @@ namespace patches {
                     return 0;
                 return FighterHitAll(miiInfo, skillIndex);
         }
-        return HookContext::GetCurrent().OriginalFunction<uint32_t>(miiInfo, skillIndex, enemyInfo, targetMii);
+        return ORIG(uint32_t, miiInfo, skillIndex, enemyInfo, targetMii);
     }
 
     uint32_t AllyTargettingSkills(ActorInfo* miiInfo, uint32_t* skillIndex, uint32_t r2, ActorInfo* targetMii)
@@ -54,7 +54,7 @@ namespace patches {
                 SetupSkillHelp(miiInfo, &helperInfo, 0);
                 return FighterStatusAll(miiInfo, skillIndex, &helperInfo);
         }
-        return HookContext::GetCurrent().OriginalFunction<uint32_t>(miiInfo, skillIndex, r2, targetMii);
+        return ORIG(uint32_t, miiInfo, skillIndex, r2, targetMii);
     }
 
     uint32_t DoesSkillTargetEnemy(uintptr_t r0, uint32_t* skillIndex)
@@ -63,7 +63,7 @@ namespace patches {
             case SKILL_FIGHTER_09:
                 return 1;
         }
-        return HookContext::GetCurrent().OriginalFunction<uint32_t>(r0, skillIndex);
+        return ORIG(uint32_t, r0, skillIndex);
     }
 
     uint32_t DoesSkillTargetAlly(uintptr_t r0, uint32_t* skillIndex)
@@ -72,7 +72,7 @@ namespace patches {
             case SKILL_FIGHTER_11:
                 return 1;
         }
-        return HookContext::GetCurrent().OriginalFunction<uint32_t>(r0, skillIndex);
+        return ORIG(uint32_t, r0, skillIndex);
     }
 
     uint32_t CanSkillSelectEnemy(uintptr_t r0, uint32_t* skillIndex, uintptr_t r2)
@@ -82,7 +82,7 @@ namespace patches {
                 /* Select any enemy(?) */
                 *skillIndex = SKILL_FIGHTER_DOUBLE;
         }
-        return HookContext::GetCurrent().OriginalFunction<uint32_t>(r0, skillIndex, r2);
+        return ORIG(uint32_t, r0, skillIndex, r2);
     }
 
     uint32_t CanSkillSelectAlly(uintptr_t r0, uint32_t* skillIndex, uintptr_t r2)
@@ -92,7 +92,7 @@ namespace patches {
                 /* Select anyone, including yourself. */
                 *skillIndex = SKILL_PRIEST_CURE;
         }
-        return HookContext::GetCurrent().OriginalFunction<uint32_t>(r0, skillIndex, r2);
+        return ORIG(uint32_t, r0, skillIndex, r2);
     }
 
     void GetSkillStatus(uint32_t* outStatus, ActorInfo* miiInfo, uint32_t* skillIndex)
@@ -113,7 +113,7 @@ namespace patches {
                 }
                 return;
         }
-        HookContext::GetCurrent().OriginalFunction<uint32_t>(outStatus, miiInfo, skillIndex);
+        ORIG(uint32_t, outStatus, miiInfo, skillIndex);
     }
 
     uint32_t IsNotAutoSkill(uint32_t r0, uint32_t* skillIndex)
@@ -122,7 +122,7 @@ namespace patches {
             case SKILL_SCIENTIST_09:
                 return 0;
         }
-        return HookContext::GetCurrent().OriginalFunction<uint32_t>(r0, skillIndex);
+        return ORIG(uint32_t, r0, skillIndex);
     }
 
     uint32_t EnemySlot1Skills(ActorInfo* enemyInfo)
@@ -180,7 +180,7 @@ namespace patches {
                 /* Fallback attack. */
                 *skillIndex = ENEMY_SKILL_1_WIDE_ATTACK;
         }
-        return HookContext::GetCurrent().OriginalFunction<uint32_t>(enemyInfo);
+        return ORIG(uint32_t, enemyInfo);
     }
 
     void InstallSkills()

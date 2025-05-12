@@ -6,6 +6,7 @@
 #include "func_ptrs.hpp"
 #include "standalone/mimic_types.hpp"
 
+#include "patches.hpp"
 #include "patches/skills.hpp"
 #include "patches/skills/scientist.hpp"
 
@@ -20,7 +21,7 @@ namespace patches {
     void ScientistPreOptimize(float s0, uint32_t* outCalc, ActorInfo* miiInfo, uint32_t* skillIndex, ActorInfo* target,
         HelperInfo* helperInfo)
     {
-        HookContext::GetCurrent().OriginalFunction<void>(s0, outCalc, miiInfo, skillIndex, target, helperInfo);
+        ORIG(void, s0, outCalc, miiInfo, skillIndex, target, helperInfo);
         if (!CalcRandPercentage(miiInfo, 20) || GetSkillMPCost(miiInfo, skillIndex, 0) == 0)
             return;
 
@@ -38,8 +39,12 @@ namespace patches {
             ActorInfo* selectMii = GetPartyMemberAtIndex(miiInfo->mBattleInfo, i);
             if (!isOptimizeActive && selectMii && selectMii != miiInfo
                 && HasEnoughMPForSkill(selectMii, &optimizeSkillId, 0)) {
+                if (CheckHateRelationship(selectMii, miiInfo, 0))
+                    return;
+
+                /* NOTE: There is probably a way to create custom skill effects, which would be better than borrowing
+                 * effects from other skills. */
                 uint32_t cureCodeSkillId = SKILL_SCIENTIST_CURE_CODE;
-                /* Use Cure.exe effects. */
                 LoadSkillEffect(selectMii, &cureCodeSkillId, 1);
                 PlaySkillEffect(selectMii);
 
@@ -50,8 +55,20 @@ namespace patches {
                 /* BUG: The scientist says "Cure.exe!" instead of the actual skill name, this probably happens due to
                  * LoadSkillEffect but I don't really know how to fix this. */
                 _PlayBattleState(selectMii, "SkillCureCode", &miiInfo->mBattleState->mTarget);
-                _PlayBattleState(miiInfo, "AvoidFeelCutInReady", &gNoTarget);
+
+                if (CheckRockyReject(miiInfo)) {
+                    StartRockyReject(miiInfo, selectMii, 0, 0);
+                    RockyRejectAftermath(selectMii, miiInfo, 0);
+                    return;
+                }
+
+                /* Here I wanted to play just the MP heal effect but it didn't work, so now the scientist heals 0 MP,
+                 * basically the same thing. */
+                uint32_t healParams[0x10 / sizeof(uint32_t)];
+                CalcFixedDamageOrHealing(healParams, 0, 0, 0);
+                HealMiiMP(miiInfo, healParams, &selectMii->mBattleState->mTarget, 1);
                 PlayHeartLikeEffect(miiInfo, 0x14);
+                _PlayBattleState(miiInfo, "CureNormal", &selectMii->mBattleState->mTarget);
                 UpdateLoveExp(miiInfo, selectMii, 5, 0);
 
                 targetMii = miiInfo;

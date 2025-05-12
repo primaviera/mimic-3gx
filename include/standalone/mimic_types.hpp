@@ -339,7 +339,9 @@ struct ActorInfo {
     BattleHelpers* mBattleHelpers;
     BattleState* mBattleState;
     BattleInfo* mBattleInfo;
-    uint8_t unk_0xC[0x2C];
+    uint16_t mCurHp;
+    uint16_t mCurMp;
+    uint8_t unk_0x10[0x28];
     EnemyParam* mEnemyParam; /* Set to 1 if ActorInfo is a Mii. */
     uint8_t unk_0x3C[0x24];
     uint8_t unk_0x60;

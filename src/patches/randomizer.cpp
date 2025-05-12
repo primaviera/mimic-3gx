@@ -63,7 +63,7 @@ namespace patches {
     void RandomizeBattleIntro(uintptr_t r0, uintptr_t r1, int* index)
     {
         *index = GetRandU32(0, 2);
-        HookContext::GetCurrent().OriginalFunction<void>(r0, r1, index);
+        ORIG(void, r0, r1, index);
     }
 
     /* Randomize stage BGM. */
@@ -153,6 +153,8 @@ namespace patches {
 
         int maxNum = GetRandU32(1, 4);
         for (int i = 0; i < 8; i++) {
+            /* NOTE: This way of randomizing enemies is not the best, things like gold/exp drop and grubs remain
+             * unchanged. */
             uintptr_t enemyData = (uintptr_t)(r0 + i * 4);
             if (i >= maxNum) {
                 *(uint32_t*)(enemyData + 0x74) = 0;
@@ -170,7 +172,7 @@ namespace patches {
     /* Edit enemy stats in battle. */
     EnemyParam* HandleEnemyStats(EnemyParam* enemyParam)
     {
-        if (!(uintptr_t)enemyParam)
+        if (!enemyParam)
             return enemyParam;
 
         /* For testing purposes. */

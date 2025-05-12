@@ -14,7 +14,6 @@ SETUP_FUNC_PTR(GetEnemyAtIndex, 0x0);
 
 SETUP_FUNC_PTR(CanEnemyBeHit, 0x0);
 SETUP_FUNC_PTR(IsPartyMemberAvailable, 0x0);
-SETUP_FUNC_PTR(GetRandomEnemy, 0x0);
 
 SETUP_FUNC_PTR(PlayBattleState, -0x10);
 SETUP_FUNC_PTR(_PlayBattleState, 0x0);
@@ -32,9 +31,14 @@ SETUP_FUNC_PTR(PlayBattleStateForHelp, 0x0);
 
 SETUP_FUNC_PTR(ShowBattleCaption, -0x1C);
 
+SETUP_FUNC_PTR(CalcFixedDamageOrHealing, 0x0);
+
 SETUP_FUNC_PTR(CalcDamage, 0x0);
 SETUP_FUNC_PTR(SetupDamageParams, 0x0);
 SETUP_FUNC_PTR(DamageEnemy, 0x0);
+
+SETUP_FUNC_PTR(UnkDamageEnemyAfter, 0x0);
+SETUP_FUNC_PTR(SetUnk0x58_ActorInfo, 0x0);
 
 SETUP_FUNC_PTR(CalcHealing, 0x0);
 SETUP_FUNC_PTR(SetupHealingParams, 0x0);
@@ -43,8 +47,17 @@ SETUP_FUNC_PTR(HealMiiMP, 0x0);
 
 SETUP_FUNC_PTR(PlayHeartLikeEffect, 0x0);
 SETUP_FUNC_PTR(UpdateLoveExp, 0x0);
+SETUP_FUNC_PTR(PraiseOrCrankyAfterTurn, 0x0);
+SETUP_FUNC_PTR(CheckHateRelationship, 0x0);
 
-SETUP_FUNC_PTR(SummonEnemy, 0x0);
+SETUP_FUNC_PTR(CheckRockyAgain, 0x0);
+SETUP_FUNC_PTR(CheckRockyReject, 0x0);
+SETUP_FUNC_PTR(StartRockyReject, 0x0);
+SETUP_FUNC_PTR(RockyRejectAftermath, 0x0);
+
+SETUP_FUNC_PTR(GetRandomEnemy, 0x0);
+SETUP_FUNC_PTR(IsEnemyBoss, 0x0);
 SETUP_FUNC_PTR(MakeEnemyFlee, 0x0);
+SETUP_FUNC_PTR(SummonEnemy, 0x0);
 
 } // namespace CTRPluginFramework

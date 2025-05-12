@@ -42,9 +42,13 @@ namespace patches {
             ActorInfo* selectEnemy = GetEnemyAtIndex(miiInfo->mBattleInfo, i);
             if (selectEnemy && CanEnemyBeHit(selectEnemy)) {
                 SetupDamageParams(1.0f, damageParams, selectEnemy, damageCalc);
-                DamageEnemy(selectEnemy, miiInfo, damageParams, 1);
+                uint32_t* res = DamageEnemy(selectEnemy, miiInfo, damageParams, 1);
+                /* Deal damage to all enemies at the same time. */
+                UnkDamageEnemyAfter(miiInfo->mBattleInfo, res);
+                SetUnk0x58_ActorInfo(miiInfo, 1);
             }
         }
+        PraiseOrCrankyAfterTurn(miiInfo);
         return 1;
     }
 
@@ -71,7 +75,7 @@ namespace patches {
             _PlayBattleState(miiInfo, "SkillHelpEnd", &gNoTarget);
         }
 
-        _PlayBattleState(miiInfo, "DefeatEnemyHelp", &miiInfo->mBattleState->mTarget);
+        _PlayBattleState(miiInfo, "GameClear", &gNoTarget);
         ShowCutIn(miiInfo, skillIndex);
         SpendSkillMP(miiInfo, skillIndex);
 
@@ -81,8 +85,20 @@ namespace patches {
         if (miiInfo == targetMii) {
             _PlayBattleState(targetMii, "CureSelf", &miiInfo->mBattleState->mTarget);
         } else {
-            _PlayBattleState(targetMii, "CureNormal", &miiInfo->mBattleState->mTarget);
+            if (CheckRockyReject(targetMii)) {
+                StartRockyReject(targetMii, miiInfo, 0, 0);
+                RockyRejectAftermath(miiInfo, targetMii, 0);
+                return 1;
+            }
+            PlayHeartLikeEffect(targetMii, 0x14);
+            if (CheckHateRelationship(targetMii, miiInfo, 0)) {
+                _PlayBattleState(targetMii, "CureHate", &miiInfo->mBattleState->mTarget);
+            } else {
+                _PlayBattleState(targetMii, "CureNormal", &miiInfo->mBattleState->mTarget);
+            }
+            UpdateLoveExp(targetMii, miiInfo, 5, 0);
         }
+
         return 1;
     }
 
@@ -110,10 +126,11 @@ namespace patches {
             _PlayBattleState(miiInfo, "SkillHelpEnd", &gNoTarget);
         }
 
-        _PlayBattleState(miiInfo, "DefeatEnemyHelp", &miiInfo->mBattleState->mTarget);
+        _PlayBattleState(miiInfo, "GameClear", &gNoTarget);
         ShowCutIn(miiInfo, skillIndex);
         SpendSkillMP(miiInfo, skillIndex);
 
+        /* TODO: Change some of the battle states here, the camera looks very wonky. */
         _PlayBattleState(miiInfo, "SkillWhistleCureStart", &gNoTarget);
         for (uint32_t i = 0; i < GetNumberOfPartyMembers(miiInfo->mBattleInfo); i++) {
             status = Utils::Random(0, 23);

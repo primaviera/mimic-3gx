@@ -6,7 +6,7 @@
 #include "patches/randomizer.hpp"
 #include "patches/skills.hpp"
 
-#define ORIG(return_t, ...) HookContext::GetCurrent().OriginalFunction<return_t>(__VA_ARGS__);
+#define ORIG(return_t, ...) HookContext::GetCurrent().OriginalFunction<return_t>(__VA_ARGS__)
 
 namespace CTRPluginFramework {
 
