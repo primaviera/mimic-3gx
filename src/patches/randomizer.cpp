@@ -160,6 +160,7 @@ namespace patches {
                 *(uint32_t*)(enemyData + 0x74) = 0;
                 continue;
             }
+
             uint32_t randomId = GetRandU32(0, 298);
             const char* enemyName = enemyArray[randomId];
             *(uint32_t*)(enemyData + 0x74) = sead_HashCRC32_calcHash(enemyName, strlen(enemyName));
@@ -208,8 +209,8 @@ namespace patches {
             "pop {r1, pc}");
     }
 
-    /* Randomize enemy slot 3 moves. */
-    void NAKED RandomizeEnemySkills3()
+    /* Randomize enemy slot 3 and 4 moves. */
+    void NAKED RandomizeEnemySkills3And4()
     {
         asm("push {r0, lr} \n"
             "mov r0, #0 \n"
@@ -219,12 +220,12 @@ namespace patches {
             "pop {r0, pc}");
     }
 
-    /* Randomize enemy slot 4 moves. */
-    void NAKED RandomizeEnemySkills4()
+    /* Randomize enemy passive moves. */
+    void NAKED RandomizeEnemyPassives()
     {
         asm("push {r1-r2, lr} \n"
             "mov r0, #0 \n"
-            "mov r1, #13 \n"
+            "mov r1, #29 \n"
             "bl GetRandU32 \n"
             "pop {r1-r2, pc}");
     }
@@ -252,10 +253,10 @@ namespace patches {
             (uint32_t)RandomizeEnemySkills1, 0);
         InstallHookAtPattern(enemySkills2_Pattern, 0x8, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB),
             (uint32_t)RandomizeEnemySkills2, 0);
-        InstallHookAtPattern(enemySkills3_Pattern, 0x10, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB),
-            (uint32_t)RandomizeEnemySkills3, 0);
-        InstallHookAtPattern(enemySkills4_Pattern, 0xC, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB),
-            (uint32_t)RandomizeEnemySkills4, 0);
+        InstallHookAtPattern(enemySkills3And4_Pattern, 0x10, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB),
+            (uint32_t)RandomizeEnemySkills3And4, 0);
+        InstallHookAtPattern(enemyPassives_Pattern, 0xC, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB),
+            (uint32_t)RandomizeEnemyPassives, 0);
 
         InstallHookAtPattern(enemyData_Pattern, 0x10, (WRAP_SUB), 0, (uint32_t)RandomizeEnemy);
         InstallHookAtPattern(enemyParam_Pattern, 0x38, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB),

@@ -239,6 +239,7 @@ enum EnemySkills1 {
     ENEMY_SKILL_1_SUPER_SATAN = 29,
     /* Custom skills. */
     ENEMY_SKILL_1_LAST_MIMIT = 30,
+    ENEMY_SKILL_1_CRASH_ATTACK = 31
 };
 
 enum BattleFeeling {
@@ -271,6 +272,13 @@ enum BattleFeeling {
     FEELING_OVERSLEEP = 24
 };
 
+enum EnemyTags {
+    TAG_BOSS = 1 << (0 & 0xFF),
+    TAG_VISIBLEDEATH = 1 << (1 & 0xFF),
+    TAG_SKIP_CUTIN = 1 << (2 & 0xFF),
+    TAG_TEXREPEAT = 1 << (3 & 0xFF)
+};
+
 struct EnemyStatus {
     uint16_t mHp;
     uint16_t mMp;
@@ -294,7 +302,7 @@ struct EnemyParam {
     const char* mModel;
     uint32_t mId; /* Some kind of decimal ID. */
     uint8_t mSize;
-    uint8_t unk_0xD; /* Could be boss tag? */
+    uint8_t mEnemyTags;
     uint8_t mActionsPerTurn;
     uint8_t mSkill1Id; /* I'm not sure why this section is so unorganized, yikes. */
     float mSkill1Mod;
@@ -331,9 +339,13 @@ struct ActorInfo {
     struct BattleHelpers {
         uint8_t unk_0x0[0x30];
         bool (*IsDead)(ActorInfo*);
-        uint8_t unk_0x34[0x14];
+        bool (*CanBeLockedOn)(ActorInfo*);
+        uint8_t unk_0x38[0x10];
         uint32_t (*GetCurHp)(ActorInfo*);
         uint32_t (*GetMaxHp)(ActorInfo*);
+        uint32_t (*GetCurMp)(ActorInfo*);
+        uint8_t unk_0x54[0x2C];
+        uint32_t (*GetPersonality)(uint32_t*, ActorInfo*);
     };
 
     BattleHelpers* mBattleHelpers;
@@ -343,10 +355,20 @@ struct ActorInfo {
     uint16_t mCurMp;
     uint8_t unk_0x10[0x28];
     EnemyParam* mEnemyParam; /* Set to 1 if ActorInfo is a Mii. */
-    uint8_t unk_0x3C[0x24];
+    uint8_t unk_0x3C[0x3];
+    uint8_t unk_0x3F;
+    uint8_t unk0x40[0x15];
+    uint8_t mLockedOnStatus;
+    uint8_t unk_0x56[0x6];
+    uint32_t mFeeling;
     uint8_t unk_0x60;
-    uint8_t unk_0x61[0xB];
+    uint8_t unk_0x61;
+    uint8_t unk_0x62;
+    uint8_t mIsStandby;
+    uint8_t unk_0x64[0x8];
     int16_t mWeaponStatus;
+    uint8_t unk_0x6E[0x6];
+    uint32_t mJobId;
 };
 
 struct HelperInfo {

@@ -36,6 +36,8 @@ SETUP_FUNC_PTR(CalcFixedDamageOrHealing, 0x0);
 SETUP_FUNC_PTR(CalcDamage, 0x0);
 SETUP_FUNC_PTR(SetupDamageParams, 0x0);
 SETUP_FUNC_PTR(DamageEnemy, 0x0);
+SETUP_FUNC_PTR(DamageMii, 0x0);
+SETUP_FUNC_PTR(DamageMiiWithAnim, 0x0);
 
 SETUP_FUNC_PTR(UnkDamageEnemyAfter, 0x0);
 SETUP_FUNC_PTR(SetUnk0x58_ActorInfo, 0x0);

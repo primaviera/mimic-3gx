@@ -39,6 +39,8 @@ namespace patches {
             ActorInfo* selectMii = GetPartyMemberAtIndex(miiInfo->mBattleInfo, i);
             if (!isOptimizeActive && selectMii && selectMii != miiInfo
                 && HasEnoughMPForSkill(selectMii, &optimizeSkillId, 0)) {
+                if (!IsPartyMemberAvailable(selectMii) || selectMii->mBattleHelpers->IsDead(selectMii))
+                    return;
                 if (CheckHateRelationship(selectMii, miiInfo, 0))
                     return;
 

@@ -125,31 +125,48 @@ namespace patches {
         return ORIG(uint32_t, r0, skillIndex);
     }
 
+#define CHECK_SKILL(str, id, slot)                                                                                     \
+    if (!strcmp(skill, str)) {                                                                                         \
+        enemyParam->mSkill##slot##Id = id;                                                                             \
+        return;                                                                                                        \
+    }
+
+    void LoadEnemyInfoParams(EnemyParam* enemyParam, uint32_t r1, uint32_t row, uintptr_t r4)
+    {
+        switch (row) {
+            /* Enemy Slot 1 Skill */
+            case 11:
+                const char* skill = *(const char**)(r4 + 0x4);
+                CHECK_SKILL("LastMimit", ENEMY_SKILL_1_LAST_MIMIT, 1);
+                CHECK_SKILL("CrashAttack", ENEMY_SKILL_1_CRASH_ATTACK, 1);
+        }
+        ORIG(void, enemyParam, r1, row, r4);
+    }
+
+#undef CHECK_SKILL
+
     uint32_t EnemySlot1Skills(ActorInfo* enemyInfo)
     {
         uint8_t* skillIndex = &enemyInfo->mEnemyParam->mSkill1Id;
 
         switch (*skillIndex) {
             /* Recreation of Boss Snurp's moves. */
-            case ENEMY_SKILL_1_LAST_MIMIT:
-                uint32_t status = FEELING_NORMAL;
+            case ENEMY_SKILL_1_LAST_MIMIT: {
                 float curHp = (float)enemyInfo->mBattleHelpers->GetCurHp(enemyInfo);
                 float maxHp = (float)enemyInfo->mBattleHelpers->GetMaxHp(enemyInfo);
                 float phase2Hp = maxHp * 0.5f;
                 float phase3Hp = maxHp * 0.3f;
+                uint32_t statuses[] = { FEELING_CRY, FEELING_EXCITE, FEELING_NIGHTMARE, FEELING_AGING, FEELING_STONE };
 
-                /* It seems like this field is only used for the Darkest Lord, so it's basically free to use it here. */
-                if (enemyInfo->unk_0x60)
-                    enemyInfo->unk_0x60 -= 1;
-
-                if (!enemyInfo->unk_0x60 && curHp <= phase3Hp) {
-                    enemyInfo->unk_0x60 = 5; /* Block enemy from inflicting random statuses for 5 more attacks. */
+                if (!enemyInfo->unk_0x61 && curHp <= phase3Hp) {
+                    enemyInfo->mEnemyParam->mActionsPerTurn = 3;
+                    /* This field gets subtracted by 1 if it is not 0 at the end of every turn, I'm not sure if this is
+                     * used by anything important, but it's perfect for our use case. */
+                    enemyInfo->unk_0x61 = 4; /* Block enemy from inflicting random statuses for 4 more turns. */
 
                     _PlayBattleState(enemyInfo, "MagicLock", &gNoTarget);
                     for (uint32_t i = 0; i < GetNumberOfPartyMembers(enemyInfo->mBattleInfo); i++) {
-                        status = Utils::Random(0, 23);
-                        if (status == FEELING_FACELESS)
-                            status = +1;
+                        uint32_t status = statuses[Utils::Random(0, (sizeof(statuses) / sizeof(statuses[0])) - 1)];
 
                         ActorInfo* selectMii = GetPartyMemberAtIndex(enemyInfo->mBattleInfo, i);
                         if (selectMii && IsPartyMemberAvailable(selectMii)) {
@@ -166,21 +183,128 @@ namespace patches {
                         ActorInfo* selectEnemy = GetEnemyAtIndex(enemyInfo->mBattleInfo, i);
                         if (!selectEnemy || selectEnemy == enemyInfo)
                             continue;
-                        /* Only summon enemies if all other enemies are dead. */
+                        /* Only summon enemies if all other enemies are dead, otherwise return 0. (Fallbacks to Wide
+                         * Attack) */
                         if (!selectEnemy->mBattleHelpers->IsDead(selectEnemy)) {
-                            goto start_wide_attack;
+                            return 0;
                         }
                         uint32_t state = 1; /* Not really sure what this value is for. */
                         SummonEnemy(enemyInfo, &state, selectEnemy, 0);
                     }
                     return 1;
                 }
+                return 0;
+            }
+            case ENEMY_SKILL_1_CRASH_ATTACK: {
+                if (enemyInfo->unk_0x3F > 0) {
+                    ActorInfo* selectMii = GetPartyMemberAtIndex(enemyInfo->mBattleInfo, enemyInfo->unk_0x3F - 1);
+                    enemyInfo->unk_0x3F = 0;
+                    if (!selectMii || (selectMii->mLockedOnStatus & 32) == 0 || selectMii->mBattleHelpers->IsDead(selectMii)) {
+                        goto lock_on;
+                    }
+                    selectMii->mLockedOnStatus &= (255 - 32);
+                    uint32_t dmgParams[0x10 / sizeof(uint32_t)];
+                    CalcFixedDamageOrHealing(dmgParams, selectMii->mBattleHelpers->GetCurHp(selectMii) - 1, 1, 1);
+                    _PlayBattleState(enemyInfo, "MagicLockHit", &gNoTarget);
+                    const char* damageAnim;
+                    if (selectMii->mFeeling == FEELING_VACANCY)
+                        damageAnim = "DamageVacancyByMagic";
+                    else
+                        damageAnim = "DamageByMagic";
+                    uint32_t removeLockState = 0x5a;
+                    uint32_t unk_0x0 = 0x0;
+                    PlayBattleState(selectMii->mBattleInfo, selectMii->mBattleState, &removeLockState, &unk_0x0, 0);
+                    if (!IsPartyMemberAvailable(selectMii)) {
+                        if (selectMii->mFeeling != FEELING_STONE
+                            && selectMii->mFeeling != FEELING_NIGHTMARE
+                            && selectMii->mFeeling != FEELING_SLEEP
+                            && selectMii->mFeeling != FEELING_ICE)
+                            _PlayBattleState(selectMii, "EscapeWaveCannon", &enemyInfo->mBattleState->mTarget);
+                        return 1;
+                    }
+                    DamageMiiWithAnim(selectMii, enemyInfo, dmgParams, damageAnim, 1, 2);
+                    return 1;
+                } else {
+                lock_on:
+                    std::vector<uint32_t> miiIndexes;
+                    for (uint32_t i = 0; i < GetNumberOfPartyMembers(enemyInfo->mBattleInfo); i++) {
+                        ActorInfo* selectMii = GetPartyMemberAtIndex(enemyInfo->mBattleInfo, i);
+                        if (selectMii && selectMii->mBattleHelpers->CanBeLockedOn(selectMii)
+                            && (selectMii->mLockedOnStatus & 32) == 0 && IsPartyMemberAvailable(selectMii)) {
+                            miiIndexes.push_back(i);
+                        }
+                    }
+                    if (miiIndexes.size()) {
+                        uint32_t selectId = miiIndexes[Utils::Random(0, miiIndexes.size() - 1)];
+                        ActorInfo* selectMii = GetPartyMemberAtIndex(enemyInfo->mBattleInfo, selectId);
+                        selectMii->mLockedOnStatus |= 32;
+                        enemyInfo->unk_0x3F = selectId + 1;
 
-            start_wide_attack:
-                /* Fallback attack. */
-                *skillIndex = ENEMY_SKILL_1_WIDE_ATTACK;
+                        uint32_t lockState = 0x59;
+                        uint32_t unk_0x0 = 0x0;
+                        _PlayBattleState(enemyInfo, "LockOn", &selectMii->mBattleState->mTarget);
+                        PlayBattleState(selectMii->mBattleInfo, selectMii->mBattleState, &lockState, &unk_0x0, 0);
+                        _PlayBattleState(selectMii, "ToLockOn", &enemyInfo->mBattleState->mTarget);
+                        return 1;
+                    }
+                    return 0;
+                }
+            }
         }
         return ORIG(uint32_t, enemyInfo);
+    }
+
+    uint32_t EnemyPassives(ActorInfo* enemyInfo)
+    {
+        uint8_t* skillIndex = &enemyInfo->mEnemyParam->mSkill1Id;
+        switch (*skillIndex) {
+            /* BUG: For some reason this move desyncs in battle replays, not sure why this happens. */
+            case ENEMY_SKILL_1_LAST_MIMIT:
+                *skillIndex = ENEMY_SKILL_1_WIDE_ATTACK;
+                auto res = ORIG(uint32_t, enemyInfo);
+                *skillIndex = ENEMY_SKILL_1_LAST_MIMIT;
+                return res;
+        }
+        return ORIG(uint32_t, enemyInfo);
+    }
+
+    uint32_t HideSurroundingEnemies(EnemyParam* enemyParam)
+    {
+        uint8_t skillIndex = enemyParam->mSkill1Id;
+        switch (skillIndex) {
+            case ENEMY_SKILL_1_LAST_MIMIT:
+                return 1;
+        }
+        return ORIG(uint32_t, enemyParam);
+    }
+
+    /* The Juvenile Snurp's Crash Attack bypasses shields, however DamageMiiWithAnim doesn't account for this. Since
+     * r0 is supposed to be a boolean, the game never assigns it a value larger than 1. In this case, we can set it
+     * to 2 for our custom check where the shield is completely untouched. */
+    void NAKED DamageMiiIgnoreShield()
+    {
+        asm("cmp r0, #2 \n"
+            "bxeq lr \n"
+            "tst r1, #8 \n"
+            "bx lr");
+    }
+
+    /* If a Juvenile Snurp dies, reset the locked-on field and effect. */
+    uint32_t HandleEnemyDeath(ActorInfo* miiInfo, ActorInfo* enemyInfo, uint32_t r3, uint32_t r4) {
+        if (enemyInfo->mEnemyParam->mSkill1Id == ENEMY_SKILL_1_CRASH_ATTACK) {
+            uint8_t miiIndex = enemyInfo->unk_0x3F;
+            if (miiIndex > 0) {
+                ActorInfo* selectMii = GetPartyMemberAtIndex(enemyInfo->mBattleInfo, miiIndex - 1);
+                enemyInfo->unk_0x3F = 0;
+                if (selectMii) {
+                    selectMii->mLockedOnStatus &= (255 - 32);
+                    uint32_t removeLockState = 0x5a;
+                    uint32_t unk_0x0 = 0x0;
+                    PlayBattleState(selectMii->mBattleInfo, selectMii->mBattleState, &removeLockState, &unk_0x0, 0);
+                }
+            }
+        }
+        return ORIG(uint32_t, miiInfo, enemyInfo, r3, r4);
     }
 
     void InstallSkills()
@@ -202,7 +326,13 @@ namespace patches {
         InstallHookAtPattern(CalcHealing_Pattern, 0x0, (MITM_MODE), (uint32_t)ScientistPreOptimize, 0);
         InstallHookAtPattern(SpendSkillMP_Pattern, 0x24, (USE_LR_TO_RETURN), (uint32_t)ScientistOptimize, 0);
 
+        InstallHookAtPattern(loadEnemyInfoParams_Pattern, 0x0, (MITM_MODE), (uint32_t)LoadEnemyInfoParams, 0);
         InstallHookAtPattern(enemySkills1_Pattern, 0x0, (MITM_MODE), (uint32_t)EnemySlot1Skills, 0);
+        InstallHookAtPattern(enemyPassives_Pattern, -0x20, (MITM_MODE), (uint32_t)EnemyPassives, 0);
+        InstallHookAtPattern(hideSurroundingEnemies_Pattern, 0x0, (MITM_MODE), (uint32_t)HideSurroundingEnemies, 0);
+        InstallHookAtPattern(handleEnemyDeath_Pattern, 0x0, (MITM_MODE), (uint32_t)HandleEnemyDeath, 0);
+
+        InstallHookAtPattern(DamageMiiWithAnim_Pattern, 0x1C, (USE_LR_TO_RETURN), (uint32_t)DamageMiiIgnoreShield, 0);
     }
 
 } // namespace patches

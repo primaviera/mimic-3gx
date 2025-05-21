@@ -31,20 +31,33 @@ PSF 		:=	$(notdir $(TOPDIR)).plgInfo
 #---------------------------------------------------------------------------------
 ARCH		:=	-march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft
 
-CFLAGS		:=	-g -Os $(ARCH) \
-			-mword-relocations -ffunction-sections -fdata-sections \
-			-fno-strict-aliasing -fomit-frame-pointer
+CFLAGS		:=	-mword-relocations -ffunction-sections -fdata-sections \
+			-fno-strict-aliasing -fomit-frame-pointer $(ARCH)
 
 CFLAGS		+=	$(INCLUDE) -D__3DS__ $(DEFINES) -Wall -Werror
 
 CXXFLAGS	:=	$(CFLAGS) -fno-rtti -fno-exceptions -std=c++17
 
-ASFLAGS		:=	-g $(ARCH)
-LDFLAGS		:=	-g -Os -T $(TOPDIR)/3gx.ld $(ARCH) \
+ASFLAGS		:=	$(ARCH)
+LDFLAGS		:=	-T $(TOPDIR)/3gx.ld $(ARCH) \
 			-Wl,--strip-discarded,--strip-debug,--gc-sections,--section-start,.text=0x07000100
 
-LIBS 		:=	-lctrpf -lctru -lm
+LIBS		:=	-lm
 LIBDIRS		:=	$(CTRPFLIB) $(CTRULIB) $(PORTLIBS)
+
+ifeq ($(DEBUG),1)
+CXXFLAGS += -DDEBUG -g
+CFLAGS += -DDEBUG -g
+ASFLAGS += -g
+LDFLAGS += -g
+LIBS += -lctrpfd -lctrud
+else
+CXXFLAGS += -Os
+CFLAGS += -Os
+LDFLAGS += -Os
+LIBS += -lctrpf -lctru
+endif
+
 
 #---------------------------------------------------------------------------------
 # no real need to edit anything past this point unless you need to add additional

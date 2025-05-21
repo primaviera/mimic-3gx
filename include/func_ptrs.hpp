@@ -25,7 +25,7 @@ namespace CTRPluginFramework {
 
 #define SETUP_FUNC_PTR(name, offset)                                                                                   \
     _FUNC_TYPE(name)                                                                                                   \
-    name = (_FUNC_TYPE(name))(Utils::Search(0x00100000, 0x00709000, name##_Pattern) + offset);
+    name = (_FUNC_TYPE(name))(Utils::Search(0x00100000, 0x00709000, name##_Pattern) + offset)
 
 FUNC_PTR(sead_HashCRC32_calcHash, uint32_t (*)(const void*, uint32_t));
 FUNC_PTR(sead_Random_init, void (*)(sead::Random*));
@@ -61,6 +61,8 @@ FUNC_PTR(CalcFixedDamageOrHealing, void (*)(uint32_t*, uint32_t, uint32_t, uint3
 FUNC_PTR(CalcDamage, void (*)(float, uint32_t*, ActorInfo*, uint32_t*, ActorInfo*, HelperInfo*));
 FUNC_PTR(SetupDamageParams, void (*)(float, uint32_t*, ActorInfo*, uint32_t*));
 FUNC_PTR(DamageEnemy, uint32_t* (*)(ActorInfo*, ActorInfo*, uint32_t*, uint32_t));
+FUNC_PTR(DamageMii, uint32_t* (*)(ActorInfo*, int16_t*, uint32_t*, uint32_t));
+FUNC_PTR(DamageMiiWithAnim, uint32_t (*)(ActorInfo*, ActorInfo*, uint32_t*, const char*, uint32_t, uint32_t));
 
 FUNC_PTR(UnkDamageEnemyAfter, void (*)(BattleInfo*, uint32_t*));
 FUNC_PTR(SetUnk0x58_ActorInfo, void (*)(ActorInfo*, uint32_t));

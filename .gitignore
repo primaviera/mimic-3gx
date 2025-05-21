@@ -2,6 +2,3 @@
 
 *.3gx
 *.elf
-
-/romfs/*
-!/romfs/**/*.sarc

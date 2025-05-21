@@ -130,8 +130,8 @@ namespace patches {
         ShowCutIn(miiInfo, skillIndex);
         SpendSkillMP(miiInfo, skillIndex);
 
-        /* TODO: Change some of the battle states here, the camera looks very wonky. */
-        _PlayBattleState(miiInfo, "SkillWhistleCureStart", &gNoTarget);
+        if (!helperInfo->mNum)
+            _PlayBattleState(miiInfo, "SkillWhistleCureStart", &gNoTarget);
         for (uint32_t i = 0; i < GetNumberOfPartyMembers(miiInfo->mBattleInfo); i++) {
             status = Utils::Random(0, 23);
             if (status == FEELING_FACELESS)
