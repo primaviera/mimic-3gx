@@ -357,7 +357,7 @@ struct ActorInfo {
     EnemyParam* mEnemyParam; /* Set to 1 if ActorInfo is a Mii. */
     uint8_t unk_0x3C[0x3];
     uint8_t unk_0x3F;
-    uint8_t unk0x40[0x15];
+    uint8_t unk_0x40[0x15];
     uint8_t mLockedOnStatus;
     uint8_t unk_0x56[0x6];
     uint32_t mFeeling;
