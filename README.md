@@ -18,9 +18,3 @@ You need the following:
 Make sure to clone this repo recursively (``git clone --recursive https://github.com/primaviera/mimic-3gx``)
 
 After that, you can just use ``make``.
-
-## Known Issues
-
-### Closing Miitopia crashes the console
-
-As of writing this (2025/05/07), manually installing [CTRPluginFramework on the fb5bc8ec commit](https://gitlab.com/thepixellizeross/ctrpluginframework/-/tree/fb5bc8ec58f78e88f17d3f531971182642aec9ed) to compile the plugin seems to fix the issue, this could change in the future.
