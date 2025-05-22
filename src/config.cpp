@@ -43,17 +43,19 @@ namespace config {
         void* configBuffer;
         uint32_t configSize;
 
-        /* Fallback to default config. */
+        /* If this fails, use default config. */
         if (File::Open(configFile, path, File::READ))
             return 0;
 
+        /* Allocate space for the file (and a null terminator). */
         configSize = configFile.GetSize();
-        configBuffer = malloc(configSize);
+        configBuffer = malloc(configSize + 1);
         if (!configBuffer)
             return 1;
 
+        /* Read the file and use the extra byte to insert a null terminator. */
         configFile.Read(configBuffer, configSize);
-        ((char*)configBuffer)[configSize - 1] = '\0'; // This is terrible
+        ((char*)configBuffer)[configSize] = '\0';
 
         auto res = ini_parse_string((const char*)configBuffer, IniHandler, &gConf);
         free(configBuffer);
