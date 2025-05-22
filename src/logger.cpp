@@ -44,9 +44,20 @@ namespace logger {
     {
         Directory logDir;
         std::string logName = std::string(path + GetLogName());
+        std::vector<std::string> files;
 
         if (Directory::Open(logDir, path, true))
             return 1;
+        logDir.ListFiles(files, ".log");
+        if (!files.empty()) {
+            /* The vector can be sorted alphabetically. */
+            std::sort(files.begin(), files.end());
+            while (files.size() > 2) {
+                std::string pathToDelete = std::string(path + files.front());
+                files.erase(files.begin());
+                File::Remove(pathToDelete);
+            }
+        }
         if (File::Open(logFile, logName, (File::WRITE | File::CREATE | File::APPEND | File::SYNC)))
             return 1;
 
