@@ -1,4 +1,6 @@
 /build
-
 *.3gx
 *.elf
+
+/compile_commands.json
+/.cache

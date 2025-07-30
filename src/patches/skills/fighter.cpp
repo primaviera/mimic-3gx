@@ -7,6 +7,9 @@
 #include "patches/skills.hpp"
 #include "patches/skills/fighter.hpp"
 
+/* These custom skills were made just to showcase that they're possible to create, otherwise they
+ * serve no purpose. These should probably be deleted. */
+
 namespace CTRPluginFramework {
 
 namespace patches {
@@ -25,8 +28,8 @@ namespace patches {
 
     uint32_t FighterHitAll(ActorInfo* miiInfo, uint32_t* skillIndex)
     {
-        uint32_t damageCalc[0x24 / sizeof(uint32_t)];
-        uint32_t damageParams[0x10 / sizeof(uint32_t)];
+        uint8_t damageCalc[0x24];
+        uint8_t damageParams[0x10];
 
         /* Use Jump Slash stats for now. */
         uint32_t tmpSkill = SKILL_FIGHTER_DOUBLE;
@@ -42,7 +45,7 @@ namespace patches {
             ActorInfo* selectEnemy = GetEnemyAtIndex(miiInfo->mBattleInfo, i);
             if (selectEnemy && CanEnemyBeHit(selectEnemy)) {
                 SetupDamageParams(1.0f, damageParams, selectEnemy, damageCalc);
-                uint32_t* res = DamageEnemy(selectEnemy, miiInfo, damageParams, 1);
+                auto res = DamageEnemy(selectEnemy, miiInfo, damageParams, 1);
                 /* Deal damage to all enemies at the same time. */
                 UnkDamageEnemyAfter(miiInfo->mBattleInfo, res);
                 SetUnk0x58_ActorInfo(miiInfo, 1);
@@ -54,8 +57,8 @@ namespace patches {
 
     uint32_t FighterSingleHeal(ActorInfo* miiInfo, uint32_t* skillIndex, ActorInfo* targetMii, HelperInfo* helperInfo)
     {
-        uint32_t healCalc[0x24 / sizeof(uint32_t)];
-        uint32_t healParams[0x10 / sizeof(uint32_t)];
+        uint8_t healCalc[0x24];
+        uint8_t healParams[0x10];
 
         uint32_t tmpSkill = SKILL_PRIEST_CURE;
         CalcHealing(1.0f, healCalc, miiInfo, &tmpSkill, targetMii, helperInfo);
@@ -104,8 +107,8 @@ namespace patches {
 
     uint32_t FighterStatusAll(ActorInfo* miiInfo, uint32_t* skillIndex, HelperInfo* helperInfo)
     {
-        uint32_t healCalc[0x24 / sizeof(uint32_t)];
-        uint32_t healParams[0x10 / sizeof(uint32_t)];
+        uint8_t healCalc[0x24];
+        uint8_t healParams[0x10];
         uint32_t status = FEELING_NORMAL;
 
         uint32_t tmpSkill = SKILL_PRIEST_CURE3;
@@ -133,7 +136,7 @@ namespace patches {
         if (!helperInfo->mNum)
             _PlayBattleState(miiInfo, "SkillWhistleCureStart", &gNoTarget);
         for (uint32_t i = 0; i < GetNumberOfPartyMembers(miiInfo->mBattleInfo); i++) {
-            status = Utils::Random(0, 23);
+            status = sead_Random_getU32(&miiInfo->mBattleInfo->mRandomSeed) % 23;
             if (status == FEELING_FACELESS)
                 status = FEELING_NORMAL;
             ActorInfo* selectMii = GetPartyMemberAtIndex(miiInfo->mBattleInfo, i);

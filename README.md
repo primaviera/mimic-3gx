@@ -2,9 +2,9 @@
 
 3GX plugin for Miitopia (3DS), written for fun.
 
-This plugin has only been used on the US version of Miitopia, other versions might have bugs.
+This plugin has only been used on the US and EU versions of Miitopia, other versions will most likely have bugs.
 
-And most importantly, this is all WIP. You can see what features have been added by looking at the [TODO list](https://github.com/primaviera/mimic-3gx/issues/1).
+All of this is WIP, you can see what features have been added by looking at the [TODO list](https://github.com/primaviera/mimic-3gx/issues/1).
 
 ## Building
 

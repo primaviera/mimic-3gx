@@ -1,11 +1,11 @@
 #!/bin/sh
-set -x
+set -e
 
 cd $(dirname "$0") && cd ..
 
 _3DS_IP=$1
 TITLE_ID=$2
-[ "$1" ] || _3DS_IP="192.168.15.151:5000"
+[ "$1" ] || _3DS_IP="192.168.15.5:5000"
 [ "$2" ] || TITLE_ID="00040000001B4E00"
 
 [ -f mimic-3gx.3gx ] || { make || exit 1; }
@@ -13,3 +13,5 @@ TITLE_ID=$2
 [ -d romfs ] && { find romfs -type f -exec curl --ftp-create-dirs -T {} ftp://${_3DS_IP}/luma/titles/${TITLE_ID}/{} \; ; }
 
 curl --ftp-create-dirs -T mimic-3gx.3gx ftp://${_3DS_IP}/luma/plugins/${TITLE_ID}/mimic-3gx.3gx
+
+echo "Tranferred files to console, exiting..."

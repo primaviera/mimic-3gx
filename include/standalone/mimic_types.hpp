@@ -5,17 +5,17 @@
 namespace sead {
 
 struct Random {
-    u32 mX;
-    u32 mY;
-    u32 mZ;
-    u32 mW;
+    uint32_t mX;
+    uint32_t mY;
+    uint32_t mZ;
+    uint32_t mW;
 };
 
 } // namespace sead
 
 /* https://github.com/Kobazco/Miitopia-Code-Edits */
 
-enum JobSkill {
+enum JobSkill : uint32_t {
     SKILL_FIGHTER_DOUBLE = 0,
     SKILL_FIGHTER_TWICE = 1,
     SKILL_FIGHTER_SPIN = 2,
@@ -186,7 +186,7 @@ enum JobSkill {
     SKILL_ELF_12 = 167
 };
 
-enum SkillStatus {
+enum SkillStatus : uint32_t {
     SKILL_STATUS_ENABLE = 0,
     SKILL_STATUS_NO_NEED = 1,
     SKILL_STATUS_NO_MP = 2,
@@ -206,7 +206,7 @@ enum SkillStatus {
     SKILL_STATUS_NO_TEA = 16
 };
 
-enum EnemySkills1 {
+enum EnemySkill1 : uint32_t {
     ENEMY_SKILL_1_NONE = 0,
     ENEMY_SKILL_1_SHOT = 1,
     ENEMY_SKILL_1_HARD_ATTACK = 2,
@@ -242,7 +242,7 @@ enum EnemySkills1 {
     ENEMY_SKILL_1_CRASH_ATTACK = 31
 };
 
-enum BattleFeeling {
+enum BattleFeeling : int32_t {
     FEELING_RESET = -2,
     FEELING_NULL = -1,
     FEELING_NORMAL = 0,
@@ -272,12 +272,7 @@ enum BattleFeeling {
     FEELING_OVERSLEEP = 24
 };
 
-enum EnemyTags {
-    TAG_BOSS = 1 << (0 & 0xFF),
-    TAG_VISIBLEDEATH = 1 << (1 & 0xFF),
-    TAG_SKIP_CUTIN = 1 << (2 & 0xFF),
-    TAG_TEXREPEAT = 1 << (3 & 0xFF)
-};
+enum EnemyTag : uint8_t { TAG_BOSS = 1, TAG_VISIBLE_DEATH = 2, TAG_SKIP_CUT_IN = 4, TAG_TEX_REPEAT = 8 };
 
 struct EnemyStatus {
     uint16_t mHp;
@@ -302,7 +297,7 @@ struct EnemyParam {
     const char* mModel;
     uint32_t mId; /* Some kind of decimal ID. */
     uint8_t mSize;
-    uint8_t mEnemyTags;
+    EnemyTag mEnemyTag;
     uint8_t mActionsPerTurn;
     uint8_t mSkill1Id; /* I'm not sure why this section is so unorganized, yikes. */
     float mSkill1Mod;
@@ -317,17 +312,18 @@ struct EnemyParam {
     float mSkill3Mod;
     float mSkill4Mod;
     uint8_t unk_0x24[0x20];
-    float mDistance[3]; /* Distance between other enemies. (X, Y, Z) */
+    float mDistance[3]; /* Distance between other enemies (X, Y, Z). */
     float mScale; /* Model scale. */
-    float mSkillCam[3]; /* Camera offset from bone when using a skill. (X, Y, Z) */
+    float mSkillCam[3]; /* Camera offset from bone when using a skill (X, Y, Z). */
     const char* mBone; /* What bone the camera targets when using a skill. */
     uint8_t unk_0x64[0x14];
     EnemyStatus* mEnemyStatus;
+    uint32_t unk_0x7C;
 };
 
 struct BattleInfo {
     uint8_t unk_0x0[0x4CC];
-    sead::Random* mRandomSeed;
+    sead::Random mRandomSeed;
 };
 
 struct BattleState {
@@ -355,17 +351,22 @@ struct ActorInfo {
     uint16_t mCurMp;
     uint8_t unk_0x10[0x28];
     EnemyParam* mEnemyParam; /* Set to 1 if ActorInfo is a Mii. */
-    uint8_t unk_0x3C[0x3];
+    uint16_t unk_0x3C;
+    uint8_t unk_0x3E;
     uint8_t unk_0x3F;
     uint8_t unk_0x40[0x15];
     uint8_t mLockedOnStatus;
-    uint8_t unk_0x56[0x6];
+    uint8_t unk_0x56[0x2];
+    int16_t unk_0x58;
+    int16_t unk_0x5A;
     uint32_t mFeeling;
     uint8_t unk_0x60;
     uint8_t unk_0x61;
     uint8_t unk_0x62;
     uint8_t mIsStandby;
-    uint8_t unk_0x64[0x8];
+    uint8_t unk_0x64;
+    uint8_t unk_0x65;
+    uint8_t unk_0x66[0x6];
     int16_t mWeaponStatus;
     uint8_t unk_0x6E[0x6];
     uint32_t mJobId;
@@ -375,4 +376,47 @@ struct HelperInfo {
     uint32_t mNum; /* Set by SetupSkillHelp. */
     uint32_t unk_0x4; /* Always 4. */
     ActorInfo* (*mMiiInfos)[4]; /* Pointer to an array of ActorInfo. */
+};
+
+struct MenuSelector {
+    uint8_t unk_0x0[0xB4];
+    ActorInfo* mMiiInfo;
+    uint8_t unk_0xB8[0x9];
+    int8_t mSelectedMagicPage;
+    uint8_t unk_0xC2[0x2];
+    int32_t mSelectedMainEntry;
+    int32_t mSelectedMagicEntry;
+    int32_t mSelectedItemEntry;
+    int32_t mSelectedEnemyEntry;
+    int32_t mSelectedPartyEntry;
+};
+
+enum StepSound : uint16_t {
+    STEP_SOUND_NULL = 0,
+    STEP_SOUND_HARD = 1,
+    STEP_SOUND_SOFT = 2,
+    STEP_SOUND_GRASS = 3,
+    STEP_SOUND_REVERB = 4,
+    STEP_SOUND_SAND = 5,
+    STEP_SOUND_SAND_REVERB = 6,
+    STEP_SOUND_SNOW = 7,
+    STEP_SOUND_WATER = 8,
+    STEP_SOUND_WATER_REVERB = 9,
+    STEP_SOUND_SILENT = 10,
+};
+
+struct BGData {
+    uint32_t mHash; /* Hash of mName. */
+    char* mName; /* Cave00, Plain00, Desert00, etc. */
+    char* mBattleBG; /* BG/Battle/Bt + mName. */
+    char* mMapBG; /* BG/MapS/MapS + mName. */
+    char* mOtherBG; /* BG/Other/ + mName. */
+    uint32_t mMusicId;
+    uint32_t mEnvGroupId;
+    uint32_t mEnvSEId;
+    uint16_t mStepSoundIndex;
+    uint16_t unk_0x22;
+    char* mInnBG;
+    char* mMealBG;
+    uint8_t unk_0x2C[0xB];
 };

@@ -14,24 +14,28 @@ namespace CTRPluginFramework {
 
 namespace patches {
 
+    static sead::Random sRandomizerSeed;
+    static void** sBGDataManager;
+
     extern "C" {
         extern const char* bgmArray[];
         extern const char* bgArray[];
         extern const char* enemyArray[];
-        extern const char* enemySummonArray[];
-        extern uint32_t stageBgm;
 
         int GetRandU32(int min, int max)
         {
-            /* TODO: Use sead::Random::getU32. */
-            return Utils::Random(min, max);
+            if (!sRandomizerSeed.mX && !sRandomizerSeed.mY && !sRandomizerSeed.mZ && !sRandomizerSeed.mW)
+                sead_Random_init(&sRandomizerSeed);
+            return min + sead_Random_getU32(&sRandomizerSeed) % (max + 1 - min);
         }
     }
 
-    /* Randomize battle BGM. */
-    const char* RandomizeBattleBgm()
+    /* Randomize battle BGM (for now). */
+    uint32_t RandomizeBattleData(uintptr_t arg1, uintptr_t arg2, uintptr_t arg3)
     {
-        return bgmArray[GetRandU32(0, 74)];
+        auto res = ORIG(uint32_t, arg1, arg2, arg3);
+        *(uint32_t*)(arg2 + 0x60) = GetBGMId(bgmArray[GetRandU32(0, 74)]);
+        return res;
     }
 
     /* Randomize Darker Lord Second Phase BGM. */
@@ -46,33 +50,64 @@ namespace patches {
             "pop {r0, r2, pc}");
     }
 
-    /* Randomize battle background. */
-    void NAKED RandomizeBattleBg()
-    {
-        asm("push {r0-r2, lr} \n"
-            "mov r0, #0 \n"
-            "mov r1, #41 \n"
-            "bl GetRandU32 \n"
-            "ldr r1, =bgArray \n"
-            "ldr r0, [r1, r0, lsl #2] \n"
-            "str r0, [r9, #4] \n"
-            "pop {r0-r2, pc}");
-    }
-
     /* Randomize battle intro jingle. */
-    void RandomizeBattleIntro(uintptr_t r0, uintptr_t r1, int* index)
+    void RandomizeBattleIntro(uintptr_t arg1, uintptr_t arg2, uint32_t* index)
     {
         *index = GetRandU32(0, 2);
-        ORIG(void, r0, r1, index);
+        ORIG(void, arg1, arg2, index);
+    }
+
+    /* Randomize enemies in battles. */
+    void RandomizeEnemy(uintptr_t arg1, uintptr_t arg2)
+    {
+#ifdef DEBUG
+        logger::Write("[Randomizer] ");
+#endif // DEBUG
+        int maxNum = GetRandU32(1, 4);
+        for (int i = 0; i < 8; i++) {
+            uint32_t* enemyHash = (uint32_t*)(arg1 + (i * 0x10) + 0x8);
+            if (i >= maxNum) {
+                *enemyHash = 0;
+                continue;
+            }
+            uint32_t randomId = GetRandU32(0, 299);
+            const char* enemyName = enemyArray[randomId];
+            *enemyHash = sead_HashCRC32_calcHash(enemyName, strlen(enemyName));
+#ifdef DEBUG
+            logger::Write(Utils::Format("%s:(%d) ", enemyName, randomId));
+#endif // DEBUG
+        }
+#ifdef DEBUG
+        logger::Write("\n");
+#endif // DEBUG
+        ORIG(void, arg1, arg2);
+    }
+
+    /* Edit enemy stats in battle. */
+    EnemyParam* HandleEnemyStats(EnemyParam* enemyParam)
+    {
+        if (!enemyParam)
+            return enemyParam;
+#ifdef TESTING
+        /* For testing purposes. */
+        enemyParam->mEnemyStatus->mHp = 1;
+        enemyParam->mEnemyStatus->mMp = 0;
+        enemyParam->mEnemyStatus->mAtk = 0;
+        enemyParam->mEnemyStatus->mDef = 0;
+        enemyParam->mEnemyStatus->mMag = 0;
+        enemyParam->mEnemyStatus->mSpd = 0;
+        enemyParam->mEnemyStatus->mGold = 0x7FFF;
+        enemyParam->mEnemyStatus->mExp = 0x7FFF;
+#endif // TESTING
+        return enemyParam;
     }
 
     /* Randomize stage BGM. */
-    uint32_t stageBgm = 0;
     void NAKED RandomizeStageBgm()
     {
         /* Only randomize the BGM when r7 is 0 (at the start of a level). */
         asm("push {r4, lr} \n"
-            "ldr r4, =stageBgm \n"
+            "add r4, pc, #0x28 \n"
             "ldr r0, [r4] \n"
             "cmp r7, #0 \n"
             "moveq r0, #0 \n"
@@ -81,19 +116,16 @@ namespace patches {
             "str r0, [r4] \n"
             "ldr r1, =bgmArray \n"
             "ldr r0, [r1, r0, lsl #2] \n"
-            "pop {r4, pc}");
+            "pop {r4, pc} \n"
+            ".word 0x00000000");
     }
 
     /* Randomize stage background. */
-    uintptr_t randomize_stage_bg(uintptr_t r0)
+    BGData* RandomizeStageBg(void* bgDataManager, uint32_t* hash)
     {
-        /* BUG: This currently crashes. */
-        if (!r0)
-            return r0;
-
-        /* For testing purposes. */
-        *(char**)(r0 + 0xC) = (char*)"BG/MapS/MapSCave00";
-        return r0;
+        const char* randomBg = bgArray[GetRandU32(0, 36)];
+        *hash = sead_HashCRC32_calcHash(randomBg, strlen(randomBg));
+        return GetBGDataWithHash(bgDataManager, hash);
     }
 
     /* Randomize title BGM. */
@@ -145,102 +177,32 @@ namespace patches {
             "pop {r1-r2, pc}");
     }
 
-    /* Randomize enemies in battles. */
-    uintptr_t RandomizeEnemy(uintptr_t r0)
-    {
-        logger::Clear();
-        logger::Write("[ RANDOMIZED ENEMIES ]\n");
-
-        int maxNum = GetRandU32(1, 4);
-        for (int i = 0; i < 8; i++) {
-            /* NOTE: This way of randomizing enemies is not the best, things like gold/exp drop and grubs remain
-             * unchanged. */
-            uintptr_t enemyData = (uintptr_t)(r0 + i * 4);
-            if (i >= maxNum) {
-                *(uint32_t*)(enemyData + 0x74) = 0;
-                continue;
-            }
-
-            uint32_t randomId = GetRandU32(0, 298);
-            const char* enemyName = enemyArray[randomId];
-            *(uint32_t*)(enemyData + 0x74) = sead_HashCRC32_calcHash(enemyName, strlen(enemyName));
-
-            logger::Write(Utils::Format("%s (%d)\n", enemyName, randomId));
-        }
-        return r0;
-    }
-
-    /* Edit enemy stats in battle. */
-    EnemyParam* HandleEnemyStats(EnemyParam* enemyParam)
-    {
-        if (!enemyParam)
-            return enemyParam;
-
-        /* For testing purposes. */
-        enemyParam->mEnemyStatus->mHp = 1;
-        enemyParam->mEnemyStatus->mMp = 0;
-        enemyParam->mEnemyStatus->mAtk = 0;
-        enemyParam->mEnemyStatus->mDef = 0;
-        enemyParam->mEnemyStatus->mMag = 0;
-        enemyParam->mEnemyStatus->mSpd = 0;
-        enemyParam->mEnemyStatus->mGold = 0x7FFF;
-        enemyParam->mEnemyStatus->mExp = 0x7FFF;
-        return enemyParam;
-    }
-
-    /* Randomize enemy slot 1 moves. */
-    void NAKED RandomizeEnemySkills1()
-    {
-        asm("push {r0, lr} \n"
-            "mov r0, #0 \n"
-            "mov r1, #29 \n"
-            "bl GetRandU32 \n"
-            "mov r1, r0 \n"
-            "pop {r0, pc}");
-    }
-
-    /* Randomize enemy slot 2 moves. */
-    void NAKED RandomizeEnemySkills2()
-    {
-        asm("push {r1, lr} \n"
-            "mov r0, #0 \n"
-            "mov r1, #25 \n"
-            "bl GetRandU32 \n"
-            "pop {r1, pc}");
-    }
-
-    /* Randomize enemy slot 3 and 4 moves. */
-    void NAKED RandomizeEnemySkills3And4()
-    {
-        asm("push {r0, lr} \n"
-            "mov r0, #0 \n"
-            "mov r1, #17 \n"
-            "bl GetRandU32 \n"
-            "mov r1, r0 \n"
-            "pop {r0, pc}");
-    }
-
-    /* Randomize enemy passive moves. */
-    void NAKED RandomizeEnemyPassives()
-    {
-        asm("push {r1-r2, lr} \n"
-            "mov r0, #0 \n"
-            "mov r1, #29 \n"
-            "bl GetRandU32 \n"
-            "pop {r1-r2, pc}");
-    }
-
     void InstallRandomizer()
     {
-        if (!config::gConf.mRandomizer.active)
+        if (!config::gUserConfig.mRandomizer.active)
             return;
 
-        InstallHookAtPattern(battleBgm_Pattern, -0x4, (WRAP_SUB), 0, (uint32_t)RandomizeBattleBgm);
+        logger::Write("[Randomizer] Installing...\n");
+
+        /* Get pointer required to get BGData via GetBGDataWithHash. */
+        if (auto res = SEARCH_PATTERN(uint32_t, bgDataManagerAddr_Pattern)) {
+            uint32_t addr;
+            Process::Read32(res + 0x10, addr);
+            sBGDataManager = (void**)(addr);
+#ifdef DEBUG
+            logger::Write(Utils::Format("[Randomizer] sBGDataManager -> %08X\n", addr));
+#endif // DEBUG
+        }
+
+        InstallHookAtPattern(battleData_Pattern, 0x0, (MITM_MODE), (uint32_t)RandomizeBattleData, 0);
         InstallHookAtPattern(transBgm_Pattern, 0x10, (WRAP_SUB), (uint32_t)RandomizeTransBgm, 0);
-        InstallHookAtPattern(battleBg_Pattern, 0xC, (USE_LR_TO_RETURN | EXECUTE_OI_BEFORE_CB),
-            (uint32_t)RandomizeBattleBg, 0);
         InstallHookAtPattern(battleIntro_Pattern, 0x0, (MITM_MODE), (uint32_t)RandomizeBattleIntro, 0);
 
+        InstallHookAtPattern(enemyData_Pattern, 0x0, (MITM_MODE), (uint32_t)RandomizeEnemy, 0);
+        InstallHookAtPattern(enemyParam_Pattern, 0x38, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB),
+            (uint32_t)HandleEnemyStats, 0);
+
+        InstallHookAtPattern(stageBg_Pattern, -0x4, (USE_LR_TO_RETURN), (uint32_t)RandomizeStageBg, 0);
         InstallHookAtPattern(stageBgm_Pattern, -0x4, (WRAP_SUB), 0, (uint32_t)RandomizeStageBgm);
         InstallHookAtPattern(titleBg_Pattern, 0, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB), (uint32_t)RandomizeTitleBg,
             0);
@@ -248,19 +210,7 @@ namespace patches {
         InstallHookAtPattern(titleBgm_Pattern, 0x18, (WRAP_SUB), (uint32_t)RandomizeTitleBgm, 0);
         InstallHookAtPattern(mapBgm_Pattern, -0xC, (WRAP_SUB), (uint32_t)RandomizeMapBgm, 0);
         InstallHookAtPattern(townBgm_Pattern, 0x10, (WRAP_SUB), (uint32_t)RandomizeTownBgm, 0);
-
-        InstallHookAtPattern(enemySkills1_Pattern, 0xC, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB),
-            (uint32_t)RandomizeEnemySkills1, 0);
-        InstallHookAtPattern(enemySkills2_Pattern, 0x8, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB),
-            (uint32_t)RandomizeEnemySkills2, 0);
-        InstallHookAtPattern(enemySkills3And4_Pattern, 0x10, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB),
-            (uint32_t)RandomizeEnemySkills3And4, 0);
-        InstallHookAtPattern(enemyPassives_Pattern, 0xC, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB),
-            (uint32_t)RandomizeEnemyPassives, 0);
-
-        InstallHookAtPattern(enemyData_Pattern, 0x10, (WRAP_SUB), 0, (uint32_t)RandomizeEnemy);
-        InstallHookAtPattern(enemyParam_Pattern, 0x38, (USE_LR_TO_RETURN | EXECUTE_OI_AFTER_CB),
-            (uint32_t)HandleEnemyStats, 0);
+        InstallHookAtPattern(innBgm_Pattern, 0x44, (WRAP_SUB), (uint32_t)RandomizeMapBgm, 0);
     }
 
     // clang-format off
@@ -344,48 +294,49 @@ namespace patches {
     };
 
     const char* bgArray[] = {
-        "BG/Battle/BtBigTree00",
-        "BG/Battle/BtBlizzard00",
-        "BG/Battle/BtCave00",
-        "BG/Battle/BtCave01",
-        "BG/Battle/BtCave02",
-        "BG/Battle/BtCollapse00",
-        "BG/Battle/BtCreek00",
-        "BG/Battle/BtCreek01",
-        "BG/Battle/BtCyberPank00",
-        "BG/Battle/BtCyberPank01",
-        "BG/Battle/BtCyberPank02",
-        "BG/Battle/BtDesert00",
-        "BG/Battle/BtDevilCastle00",
-        "BG/Battle/BtDummy00",
-        "BG/Battle/BtElfForest00",
-        "BG/Battle/BtForest00",
-        "BG/Battle/BtGiant00",
-        "BG/Battle/BtGlassWay00",
-        "BG/Battle/BtHeatLand00",
-        "BG/Battle/BtHighTech00",
-        "BG/Battle/BtIceCave00",
-        "BG/Battle/BtMansion00",
-        "BG/Battle/BtMountain00",
-        "BG/Battle/BtOasis00",
-        "BG/Battle/BtOtherCastle00",
-        "BG/Battle/BtPanorama00",
-        "BG/Battle/BtPanorama01",
-        "BG/Battle/BtPanorama02",
-        "BG/Battle/BtPlain00",
-        "BG/Battle/BtPsychedelic00",
-        "BG/Battle/BtRuins00",
-        "BG/Battle/BtSandCave00",
-        "BG/Battle/BtSea00",
-        "BG/Battle/BtSkyLand00",
-        "BG/Battle/BtSnow00",
-        "BG/Battle/BtSpace00",
-        "BG/Battle/BtSpace01",
-        "BG/Battle/BtSpace02",
-        "BG/Battle/BtSubspace00",
-        "BG/Battle/BtSubspace02",
-        "BG/Battle/BtTower00",
-        "BG/Battle/BtVolcano00"
+        "BigTree00",
+        "Blizzard00",
+        "Cave00",
+        "Cave01",
+        "Cave02",
+        "Collapse00",
+        "Creek00",
+        "Creek01",
+        "CyberPank00",
+        "CyberPank02",
+        "Desert00",
+        "DevilCastle00",
+        "ElfForest00",
+        "Forest00",
+        "Giant00",
+        "GlassWay00",
+        "HeatLand00",
+        "HighTech00",
+        "IceCave00",
+        "Mansion00",
+        "Mountain00",
+        "Panorama00",
+        "Panorama01",
+        "Panorama02",
+        "Plain00",
+        "Psychedelic00",
+        "Ruins00",
+        "SandCave00",
+        "Sea00",
+        "SkyLand00",
+        "Snow00",
+        "Space00",
+        "Space01",
+        "Subspace00",
+        "Subspace02",
+        "Tower00",
+        "Volcano00",
+        /* These backgrounds only apply to battles. */
+        "CyberPank01",
+        "Dummy00",
+        "Oasis00",
+        "OtherCastle00",
+        "Space02",
     };
 
     const char* enemyArray[] = { 
@@ -689,17 +640,6 @@ namespace patches {
         "Wind4",
         "Yeti0",
         "Yeti1"
-    };
-
-    /* These enemies can summon other enemies. */
-    const char* enemySummonArray[] = { 
-        "Cobra0",
-        "Cobra4",
-        "Cobra5",
-        "Monitor3",
-        "Satan0",
-        "SuperSatanCenter0",
-        "SuperSatanCenter1"
     };
 
     // clang-format on

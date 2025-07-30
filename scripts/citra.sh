@@ -1,5 +1,5 @@
 #!/bin/sh
-set -x
+set -e
 
 cd $(dirname "$0") && cd ..
 
@@ -18,3 +18,5 @@ ROMFS_PATH="$CITRA_PATH/load/mods/$TITLE_ID/"
 
 mkdir -p $PLUGIN_PATH
 cp *.3gx $PLUGIN_PATH
+
+echo "Copied files to emulator, exiting..."

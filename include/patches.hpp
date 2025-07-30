@@ -3,6 +3,9 @@
 #include <3ds.h>
 #include <CTRPluginFramework.hpp>
 
+#include "logger.hpp"
+#include "patches/common.hpp"
+#include "patches/controllable.hpp"
 #include "patches/randomizer.hpp"
 #include "patches/skills.hpp"
 
@@ -13,25 +16,34 @@ namespace CTRPluginFramework {
 
 namespace patches {
 
-    inline std::vector<Hook> gRandomizerHooks;
-    inline std::vector<Hook> gSkillsHooks;
-
     inline void InstallHookAtPattern(const std::vector<uint32_t>& pattern, int32_t offset, uint32_t flags,
-        uint32_t callback, uint32_t afterCallback, std::vector<Hook>* hookVector = nullptr)
+        uint32_t callback, uint32_t afterCallback)
     {
-        if (auto res = SEARCH_PATTERN(uint32_t, pattern)) {
+        auto res = SEARCH_PATTERN(uint32_t, pattern);
+        if (res) {
             Hook hook;
-            hook.InitializeForSubWrap(res + offset, (uint32_t)callback, (uint32_t)afterCallback);
+            hook.InitializeForSubWrap(res + offset, callback, afterCallback);
             hook.SetFlags(flags);
-            hook.Enable();
-
-            if (hookVector)
-                hookVector->push_back(hook);
+            if (hook.Enable() != HookResult::Success)
+                logger::Write("Failed to enable hook\n");
+            return;
         }
+        logger::Write("Failed to find pattern\n");
+    }
+
+    inline void InstallHookAtAddress(uint32_t address, uint32_t flags, uint32_t callback, uint32_t afterCallback)
+    {
+        Hook hook;
+        hook.InitializeForSubWrap(address, callback, afterCallback);
+        hook.SetFlags(flags);
+        if (hook.Enable() != HookResult::Success)
+            logger::Write("Failed to enable hook\n");
     }
 
     inline void Install()
     {
+        InstallCommon();
+        InstallControllable();
         InstallSkills();
         InstallRandomizer();
     }

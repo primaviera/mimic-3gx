@@ -1,4 +1,11 @@
 Author: primaviera
+
+Targets: 0x1B4E00, 0x1B4F00, 0x178800
+
+Title: mimic-3gx
+
 Compatibility: Any
+
 MemorySize: 5MiB
+
 UsePrivateMemory: false

@@ -1,8 +1,6 @@
 #include <3ds.h>
 #include <CTRPluginFramework.hpp>
 
-#include <cmath>
-
 #include "func_ptrs.hpp"
 #include "standalone/mimic_types.hpp"
 
@@ -14,18 +12,17 @@ namespace CTRPluginFramework {
 
 namespace patches {
 
-    bool isOptimizeActive = false;
     ActorInfo* targetMii;
 
     /* This skill was created by Kobazco, originally modded in the switch version, credits to them! */
-    void ScientistPreOptimize(float s0, uint32_t* outCalc, ActorInfo* miiInfo, uint32_t* skillIndex, ActorInfo* target,
-        HelperInfo* helperInfo)
+    void ScientistPreOptimize(float arg1, uint32_t* outCalc, ActorInfo* miiInfo, uint32_t* skillIndex,
+        ActorInfo* target, HelperInfo* helperInfo)
     {
-        ORIG(void, s0, outCalc, miiInfo, skillIndex, target, helperInfo);
+        ORIG(void, arg1, outCalc, miiInfo, skillIndex, target, helperInfo);
         if (!CalcRandPercentage(miiInfo, 20) || GetSkillMPCost(miiInfo, skillIndex, 0) == 0)
             return;
 
-        /* Check if MiiInfo is not a traveler. */
+        /* Check if miiInfo is not a traveler. */
         for (uint32_t i = 0; i < GetNumberOfPartyMembers(miiInfo->mBattleInfo); i++) {
             ActorInfo* selectMii = GetPartyMemberAtIndex(miiInfo->mBattleInfo, i);
             if (miiInfo == selectMii)
@@ -37,15 +34,14 @@ namespace patches {
         uint32_t optimizeSkillId = SKILL_SCIENTIST_09;
         for (uint32_t i = 0; i < GetNumberOfPartyMembers(miiInfo->mBattleInfo); i++) {
             ActorInfo* selectMii = GetPartyMemberAtIndex(miiInfo->mBattleInfo, i);
-            if (!isOptimizeActive && selectMii && selectMii != miiInfo
-                && HasEnoughMPForSkill(selectMii, &optimizeSkillId, 0)) {
+            if (selectMii && selectMii != miiInfo && HasEnoughMPForSkill(selectMii, &optimizeSkillId, 0)) {
                 if (!IsPartyMemberAvailable(selectMii) || selectMii->mBattleHelpers->IsDead(selectMii))
                     return;
                 if (CheckHateRelationship(selectMii, miiInfo, 0))
                     return;
 
-                /* NOTE: There is probably a way to create custom skill effects, which would be better than borrowing
-                 * effects from other skills. */
+                /* There is probably a way to create custom skill effects, which would be better than borrowing effects
+                 * from other skills. */
                 uint32_t cureCodeSkillId = SKILL_SCIENTIST_CURE_CODE;
                 LoadSkillEffect(selectMii, &cureCodeSkillId, 1);
                 PlaySkillEffect(selectMii);
@@ -66,7 +62,7 @@ namespace patches {
 
                 /* Here I wanted to play just the MP heal effect but it didn't work, so now the scientist heals 0 MP,
                  * basically the same thing. */
-                uint32_t healParams[0x10 / sizeof(uint32_t)];
+                uint8_t healParams[0x10];
                 CalcFixedDamageOrHealing(healParams, 0, 0, 0);
                 HealMiiMP(miiInfo, healParams, &selectMii->mBattleState->mTarget, 1);
                 PlayHeartLikeEffect(miiInfo, 0x14);
@@ -74,7 +70,6 @@ namespace patches {
                 UpdateLoveExp(miiInfo, selectMii, 5, 0);
 
                 targetMii = miiInfo;
-                isOptimizeActive = true;
             }
         }
     }
@@ -82,10 +77,9 @@ namespace patches {
     uint32_t ScientistOptimize(ActorInfo* miiInfo, uint32_t* skillIndex)
     {
         uint32_t cost = GetSkillMPCost(miiInfo, skillIndex, 0);
-        if (isOptimizeActive && miiInfo == targetMii) {
-            isOptimizeActive = false;
+        if (miiInfo == targetMii) {
             targetMii = 0;
-            return (uint32_t)std::round(cost / 2);
+            return cost / 2;
         }
         return cost;
     }

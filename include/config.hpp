@@ -4,19 +4,22 @@ namespace CTRPluginFramework {
 
 namespace config {
 
-    struct Data {
-        struct Randomizer {
+    struct Configuration {
+        struct {
+            bool active = true;
+            bool showAutoBattle = true;
+            bool saveMenuSelection = true;
+        } mControllable;
+        struct {
             bool active = false;
-        };
-        struct Skills {
+        } mRandomizer;
+        struct {
             bool active = false;
-        };
-
-        Randomizer mRandomizer;
-        Skills mSkills;
+            bool jobSkills = false;
+        } mSkills;
     };
 
-    extern Data gConf;
+    extern Configuration gUserConfig;
 
     int Initialize(const std::string& path);
 

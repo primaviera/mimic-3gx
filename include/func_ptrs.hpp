@@ -32,6 +32,9 @@ FUNC_PTR(sead_Random_init, void (*)(sead::Random*));
 FUNC_PTR(sead_Random_getU32, uint32_t (*)(sead::Random*));
 FUNC_PTR(CalcRandPercentage, bool (*)(ActorInfo*, uint32_t));
 
+FUNC_PTR(GetBGDataWithHash, BGData* (*)(void*, uint32_t*));
+FUNC_PTR(GetBGMId, uint32_t (*)(const char*));
+
 FUNC_PTR(GetNumberOfPartyMembers, uint32_t (*)(BattleInfo*));
 FUNC_PTR(GetPartyMemberAtIndex, ActorInfo* (*)(BattleInfo*, uint32_t));
 FUNC_PTR(GetNumberOfEnemies, uint32_t (*)(BattleInfo*));
@@ -56,21 +59,21 @@ FUNC_PTR(PlayBattleStateForHelp, void (*)(ActorInfo*, ActorInfo*, uint32_t));
 
 FUNC_PTR(ShowBattleCaption, void (*)(ActorInfo*, uint32_t, const char*));
 
-FUNC_PTR(CalcFixedDamageOrHealing, void (*)(uint32_t*, uint32_t, uint32_t, uint32_t));
+FUNC_PTR(CalcFixedDamageOrHealing, void (*)(void*, uint32_t, uint32_t, uint32_t));
 
-FUNC_PTR(CalcDamage, void (*)(float, uint32_t*, ActorInfo*, uint32_t*, ActorInfo*, HelperInfo*));
-FUNC_PTR(SetupDamageParams, void (*)(float, uint32_t*, ActorInfo*, uint32_t*));
-FUNC_PTR(DamageEnemy, uint32_t* (*)(ActorInfo*, ActorInfo*, uint32_t*, uint32_t));
-FUNC_PTR(DamageMii, uint32_t* (*)(ActorInfo*, int16_t*, uint32_t*, uint32_t));
-FUNC_PTR(DamageMiiWithAnim, uint32_t (*)(ActorInfo*, ActorInfo*, uint32_t*, const char*, uint32_t, uint32_t));
+FUNC_PTR(CalcDamage, void (*)(float, void*, ActorInfo*, uint32_t*, ActorInfo*, HelperInfo*));
+FUNC_PTR(SetupDamageParams, void (*)(float, void*, ActorInfo*, void*));
+FUNC_PTR(DamageEnemy, void* (*)(ActorInfo*, ActorInfo*, void*, uint32_t));
+FUNC_PTR(DamageMii, void* (*)(ActorInfo*, int16_t*, void*, uint32_t));
+FUNC_PTR(DamageMiiWithAnim, uint32_t (*)(ActorInfo*, ActorInfo*, void*, const char*, uint32_t, uint32_t));
 
-FUNC_PTR(UnkDamageEnemyAfter, void (*)(BattleInfo*, uint32_t*));
+FUNC_PTR(UnkDamageEnemyAfter, void (*)(BattleInfo*, void*));
 FUNC_PTR(SetUnk0x58_ActorInfo, void (*)(ActorInfo*, uint32_t));
 
-FUNC_PTR(CalcHealing, void (*)(float, uint32_t*, ActorInfo*, uint32_t*, ActorInfo*, HelperInfo*));
-FUNC_PTR(SetupHealingParams, void (*)(float, uint32_t*, ActorInfo*, uint32_t*));
-FUNC_PTR(HealMiiHP, void (*)(ActorInfo*, uint32_t*, int16_t*, uint32_t));
-FUNC_PTR(HealMiiMP, void (*)(ActorInfo*, uint32_t*, int16_t*, uint32_t));
+FUNC_PTR(CalcHealing, void (*)(float, void*, ActorInfo*, uint32_t*, ActorInfo*, HelperInfo*));
+FUNC_PTR(SetupHealingParams, void (*)(float, void*, ActorInfo*, void*));
+FUNC_PTR(HealMiiHP, void (*)(ActorInfo*, void*, int16_t*, uint32_t));
+FUNC_PTR(HealMiiMP, void (*)(ActorInfo*, void*, int16_t*, uint32_t));
 
 FUNC_PTR(PlayHeartLikeEffect, void (*)(ActorInfo*, uint32_t));
 FUNC_PTR(UpdateLoveExp, void (*)(ActorInfo*, ActorInfo*, int32_t, uint32_t));
